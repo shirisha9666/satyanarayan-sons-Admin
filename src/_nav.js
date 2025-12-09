@@ -2,6 +2,7 @@ import React from "react";
 import CIcon from "@coreui/icons-react";
 import { TbDeviceIpadMinus } from "react-icons/tb";
 import { cilCreditCard, cilReceipt } from "@coreui/icons";
+    import { cilBullhorn } from '@coreui/icons';
 
 import {
   cibMaterialDesign,
@@ -82,6 +83,14 @@ const _nav = [
         name: "Home Page Banner",
         icon: <CIcon icon={cilImage} customClassName="nav-icon" />,
         to: "/banner",
+        group: "Settings",
+      },
+  
+       {
+        component: CNavItem,
+        name: "Campaigning banner",
+        icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
+        to: "/Campaigning/banner",
         group: "Settings",
       },
   // {

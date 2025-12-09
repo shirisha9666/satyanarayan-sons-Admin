@@ -146,9 +146,9 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
-                    <h1>{appName || "Knowdible"}</h1>
+                    <h1>{appName || "P. Satyanarayan Sons Jewellers"}</h1>
                     <p className="text-medium-emphasis">
-                      Sign In to Your {appName || "Knowdible"} Dashboard Account.
+                      Sign In to Your {appName || "P. Satyanarayan Sons Jewellers"} Dashboard Account.
                     </p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>

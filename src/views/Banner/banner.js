@@ -249,6 +249,7 @@ const Banners = () => {
 
           setBannerImage("");
           setOlderImage("");
+          getHomebanners(page,itemPerPage)
           swal({
             title: "Added",
             text: "New Banner added successfully!",
@@ -637,7 +638,7 @@ const Banners = () => {
                           fetchBanner &&
                           fetchBanner.map((item, i) => (
                             <tr key={i}>
-                              <td>Dec 08 2025</td>
+                              <td>{item?.createdAt}</td>
                               <td>{item?.name}</td>
 
                               <td>{item?.subtitle}</td>

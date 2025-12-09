@@ -62,9 +62,9 @@ const Invoice = () => {
                 </div>
               </div>
               <div className="inv-company">
-                <div className="inv-company-name">{appName || "Knowdible"}</div>
+                <div className="inv-company-name">{appName || "P. Satyanarayan Sons Jewellers"}</div>
                 <div className="inv-company-addr">
-                  Your trusted {appName || "Knowdible"} platform
+                  Your trusted {appName || "P. Satyanarayan Sons Jewellers"} platform
                 </div>
               </div>
             </div>
