@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import logo from "src/assets/PSSJ Jewellers.png"
 
 import {
   CSidebar,
@@ -14,7 +15,7 @@ import CIcon from "@coreui/icons-react";
 
 import { AppSidebarNav } from "./AppSidebarNav";
 
-import { logoNegative } from "src/assets/brand/logo-negative";
+
 import { sygnet } from "src/assets/brand/sygnet";
 
 import SimpleBar from "simplebar-react";
@@ -146,12 +147,12 @@ const AppSidebar = () => {
         to="/"
       >
 
-      {logos.map((val, index) => (
+      {/* {logos.map((val, index) => (
   <div 
     key={index} 
     className=" d-flex align-items-center justify-content-between px-3 py-2"
     style={{
-      // backgroundColor: "#1A237E",
+ 
       borderBottom: "1px solid #3949AB",
     }}
   >
@@ -161,10 +162,11 @@ const AppSidebar = () => {
       style={{ gap: "12px" }}
     >
       <img 
-        src={val?.Headerlogo?.fileUrl} 
+        src={logo || val?.Headerlogo?.fileUrl } 
         alt="logo" 
         style={{ width: "3.5rem", height: "3.5rem", objectFit: "contain" }} 
       />
+
 
       <h5 
         className="m-0 text-white"
@@ -174,14 +176,50 @@ const AppSidebar = () => {
       </h5>
     </Link>
 
-    {/* Close button for mobile */}
+ 
     <CCloseButton 
       className="d-lg-none" 
       white 
       onClick={() => dispatch(toggleChange(false))} 
     />
   </div>
-))}
+))} */}
+
+  <div 
+
+    className=" d-flex align-items-center justify-content-between px-3 py-2"
+    style={{
+ 
+      borderBottom: "1px solid #3949AB",
+    }}
+  >
+    <Link 
+      to="/dashboard" 
+      className="d-flex align-items-center text-decoration-none"
+      style={{ gap: "12px" }}
+    >
+      <img 
+        src={logo || val?.Headerlogo?.fileUrl } 
+        alt="logo" 
+        style={{ width: "100%", height: "5rem", objectFit: "contain" }} 
+      />
+
+
+      <h5 
+        className="m-0 text-white"
+        style={{ fontSize: "1.4rem", fontWeight: "600" }}
+      >
+        {appName}
+      </h5>
+    </Link>
+
+ 
+    <CCloseButton 
+      className="d-lg-none" 
+      white 
+      onClick={() => dispatch(toggleChange(false))} 
+    />
+  </div>
 
         {/* {AdminlogoUrl ? (
           <>
