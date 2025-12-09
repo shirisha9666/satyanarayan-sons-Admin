@@ -9,20 +9,23 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBanner } from "./bannerContext";
 
 const CampaigningBanner = () => {
-  const [loading, setLoading] = useState(false);
-  const [bannerType, setBannerType] = useState("Home Banner");
+
   const navigate = useNavigate();
+  const { banner, getHomebanners, setPage, setItemPerPage, setBannerType, bannertype, itemPerPage,loading,page } = useBanner()
   const tableHeadering = [
     "createdAt",
     "Name",
+    "Type",
     "SubTitle",
     "Content",
     "Image",
     "Actions",
   ];
-  let fetchBanner = [];
+  let fetchBanner = banner?.result;
+  console.log("fetchBanner", banner)
 
   return (
     <div className="row">
@@ -36,11 +39,11 @@ const CampaigningBanner = () => {
                     Show
                     <select
                       style={{ width: "10%" }}
-                      //    onChange={(e) => {
-                      //      let val = e.target.value;
-                      //      setItemPerPage(Number(val));
-                      //      getHomebanners(page, Number(val));
-                      //    }}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        setItemPerPage(Number(val));
+                        getHomebanners(page, Number(val), bannertype);
+                      }}
                       className="
                                        select-w
                                        custom-select custom-select-sm
@@ -74,7 +77,11 @@ const CampaigningBanner = () => {
               </div>
               <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
                 <Button
-                  onClick={() => setBannerType("Home Banner")}
+                  onClick={() => {
+                    setBannerType("Home Banner")
+
+                    getHomebanners(page, itemPerPage, "Home Banner");
+                  }}
                   variant="contained"
                   style={{
                     background: "#D4AF37",
@@ -90,7 +97,10 @@ const CampaigningBanner = () => {
                 </Button>
 
                 <Button
-                  onClick={() => setBannerType("Campaign Banner")}
+                  onClick={() => {
+                    setBannerType("Campaign Banner")
+                    getHomebanners(page, itemPerPage, "Campaign Banner");
+                  }}
                   variant="contained"
                   style={{
                     background: "#1B1A1A",
@@ -142,6 +152,7 @@ const CampaigningBanner = () => {
                       <tr key={i}>
                         <td>{item?.createdAt}</td>
                         <td>{item?.name}</td>
+                          <td>{item?.bannerType || null}</td>
 
                         <td>{item?.subtitle}</td>
                         <td>{item?.content}</td>
@@ -188,7 +199,7 @@ const CampaigningBanner = () => {
                                            btn-table
                                        
                                          "
-                            //  onClick={() => handleDelete(item._id)}
+                          //  onClick={() => handleDelete(item._id)}
                           >
                             Delete
                           </button>
@@ -201,15 +212,15 @@ const CampaigningBanner = () => {
             </div>
 
             <div style={{ display: "flex", justifyContent: "right" }}>
-              {/* <Pagination
-                             count={banner?.totalPages}
-                             page={page}
-                             onChange={(e, value) => {
-                               setPage(value);
-                               getHomebanners(value, itemPerPage);
-                             }}
-                             color="primary"
-                           /> */}
+              <Pagination
+                count={banner?.totalPages}
+                page={page}
+                onChange={(e, value) => {
+                  setPage(value);
+                  getHomebanners(value, itemPerPage, bannertype);
+                }}
+                color="primary"
+              />
             </div>
           </div>
         </div>
