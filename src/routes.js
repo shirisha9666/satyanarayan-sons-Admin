@@ -203,6 +203,8 @@ import BilingInvoice from "./views/billing/BilingInvoice";
 import UserInvoiceTable from "./views/billing/UserInvoiceTable";
 import Invoice from "./views/billing/Invoice";
 import CampaigningBanner from "./views/campaigningBanner/CampaigningBanner";
+import CampaigningBannerUpdate from "./views/campaigningBanner/CampaigningBannerUpdate";
+import CampaigningBannerAdd from "./views/campaigningBanner/CampaigningBannerAdd";
 
 
 
@@ -706,10 +708,23 @@ const routes = [
     element: Banners,
     navName: "Settings",
   },
+  // CampaigningBanner
     {
     path: "/Campaigning/banner",
     name: "Banners",
     element: CampaigningBanner,
+    navName: "Settings",
+  },
+  {
+    path: "/Campaigning/banner/add",
+    name: "Banners",
+    element: CampaigningBannerAdd,
+    navName: "Settings",
+  },
+  {
+    path: "/Campaigning/banner/update/:id",
+    name: "Banners",
+    element: CampaigningBannerUpdate,
     navName: "Settings",
   },
   {

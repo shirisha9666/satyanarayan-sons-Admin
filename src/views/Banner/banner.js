@@ -93,6 +93,7 @@ const Banners = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("response?.data",response?.data)
       setBanner(response?.data);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
@@ -286,11 +287,12 @@ const Banners = () => {
   const handeldeleteImage = () => {
     setBannerImage("");
   };
-  let fetchBanner = banner?.homeBanner;
+  let fetchBanner = banner?.result;
 
   useEffect(() => {
     getHomebanners(page, itemPerPage);
   }, []);
+  console.log("fetchBanner",fetchBanner)
 
   return (
     <div className="main-content">
