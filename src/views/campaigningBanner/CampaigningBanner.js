@@ -98,8 +98,8 @@ const CampaigningBanner = () => {
 
                 <Button
                   onClick={() => {
-                    setBannerType("Campaign Banner")
-                    getHomebanners(page, itemPerPage, "Campaign Banner");
+                    setBannerType("Campaign banner")
+                    getHomebanners(page, itemPerPage, "Campaign banner");
                   }}
                   variant="contained"
                   style={{
