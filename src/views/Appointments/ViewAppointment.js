@@ -1,124 +1,153 @@
-
 import axios from "axios";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import swal from 'sweetalert';
+import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
-import { Link, useParams } from "react-router-dom";
-import { isAutheticated } from "../../auth";
+const ViewAppointment = () => {
+  const [appointmentData, setAppointmentData] = useState();
 
-function ViewAppointment() {
-    const [appointment, setAppointment] = useState([])
-    const { id } = useParams();
-    const token = isAutheticated();
+  const [loading, setLoading] = useState(false);
 
-    const getAppointment = useCallback(async () => {
-        let res = await axios.get(
-            `/api/appointment/getOne/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+  const { id } = useParams();
+
+  const getAppointment = () => {
+    setLoading(true);
+    axios
+      .get(`/api/appointment/get/${id}`)
+      .then(async (res) => {
+        res.data.appointment.date = await new Date(
+          res.data.appointment?.date
+        ).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+
+        // add leading zeros to single digit dates
+        res.data.appointment.date = await res.data.appointment.date.replace(
+          /(\d{1,2})\s(\w{3})\s(\d{4})/,
+          function (match, day, month, year) {
+            return `${day.padStart(2, "0")} ${month} ${year}`;
+          }
         );
-        setAppointment(res.data.appointment)
+        setAppointmentData(res.data.appointment);
+        setLoading(false);
+      })
+      .catch((err) => {
+        swal("Error", "Could not get data", "error");
+        setLoading(false);
+      });
+  };
 
+  useEffect(() => {
+    getAppointment();
+  }, []);
 
-    }, [token]);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        getAppointment();
-    }, [getAppointment]);
+  return (
+    <div>
+      <div className="col-12">
+        <div
+          className="
+                    page-title-box
+                    d-flex
+                    align-items-center
+                    justify-content-between
+                  "
+        >
+          <div style={{ fontSize: "22px" }} className="fw-bold">
+            Appointment
+          </div>
 
-
-
-
-
-    //change time formate
-    function formatAMPM(date) {
-        var hours = new Date(date).getHours();
-        var minutes = new Date(date).getMinutes();
-        var ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
-        return strTime;
-    }
-
-
-    return (
-        <div className=" main-content">
-            <div className="  my-3 page-content">
-                <div className="container-fluid">
-                    {/* <!-- start page title --> */}
-                    <div className="row">
-                        <div className="col-12">
-                            <div className="page-title-box d-flex align-items-center justify-content-between">
-                                <h4 className="mb-3">Appointment</h4>
-                                <Link to="/appointments"><button type="button" className="btn btn-info float-end mb-3 ml-4">Back</button></Link>
-
-                            </div>
-                        </div>
-                    </div>
-                    {/* <!-- end page title --> */}
-
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="row ml-0 mr-0  mb-10">
-
-                                    </div>
-                                    <div className="table-responsive table-shoot">
-                                        <table className="table table-centered table-nowrap mb-0">
-                                            <thead className="thead-light">
-
-                                                <tr><th>Id</th> <td><h5>{appointment?._id}</h5></td></tr>
-                                                <tr><th>Name</th>                                                        <td>{appointment?.name}</td></tr>
-
-
-                                                {appointment?.email && <tr><th> Email</th><td>{appointment?.email}</td></tr>}
-                                                {appointment?.mobile && <tr><th> Mobile</th><td>{appointment?.mobile}</td></tr>}
-                                                {appointment?.description && <tr><th> Description</th><td>{appointment?.description}</td></tr>}
-                                                {appointment?.date && <tr><th> Appointment Date</th><td>{new Date(`${appointment?.date}`).toDateString()}</td></tr>}
-
-                                                {appointment?.time && <tr><th> Appointment Time</th><td>{appointment?.time}</td></tr>}
-
-
-
-
-
-                                                {/* <tr><th>Appointment Time</th><td>{appointment?.time}</td></tr>
-                                                <tr><th>Location</th><td>{appointment?.location}</td></tr> */}
-                                                <tr><th> Appoinment Created</th><td>
-                                                    {new Date(`${appointment?.createdAt}`).toDateString()}<span> , {`${formatAMPM(appointment?.createdAt)}`}</span>
-                                                </td></tr>
-                                                {/* <tr><th>Updated At</th>
-                                                    <td>
-                                                        {new Date(`${appointment?.updatedAt}`).toDateString()}<span> , {`${formatAMPM(appointment?.updatedAt)}`}</span>
-                                                    </td>
-                                                </tr> */}
-
-                                            </thead>
-                                            <tbody>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-
-                                    {/* <!-- end table-responsive --> */}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* <!-- container-fluid --> */}
-            </div>
+          <div className="page-title-right">
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                fontWeight: "bold",
+                marginBottom: "1rem",
+                textTransform: "capitalize",
+              }}
+              onClick={() => {
+                navigate("/appointments/", { replace: true });
+              }}
+            >
+              Back
+            </Button>
+          </div>
         </div>
-    );
+      </div>
 
-}
+      {loading && <div>Loading...</div>}
+      {!loading && !appointmentData && <div>No data found</div>}
+      {!loading && appointmentData && (
+        <div>
+          <table className="table table-striped">
+            <tbody>
+              <tr>
+                <th scope="col">Appointment ID</th>
+                <td>{appointmentData?._id}</td>
+              </tr>
+              <tr>
+                <th scope="col">Appointment Number</th>
+                <td>{appointmentData?.appointmentNumber}</td>
+              </tr>
+              <tr>
+                <th scope="col">Patient Name</th>
+                <td>{appointmentData?.patientName}</td>
+              </tr>
+              <tr>
+                <th scope="col">Patient Phone</th>
+                <td>{appointmentData?.patientPhone}</td>
+              </tr>
+              <tr>
+                <th scope="col">Doctor Name</th>
+                <td>{appointmentData?.doctorName}</td>
+              </tr>
+              <tr>
+                <th scope="col">Appointment Date</th>
+                <td>
+                  {appointmentData?.date ? (
+                    appointmentData?.date
+                  ) : (
+                    <span className="text-danger">Not Set</span>
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th scope="col">Appointment Time</th>
+                <td>
+                  {new Date(appointmentData?.time).toLocaleTimeString("en-IN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                </td>
+              </tr>
+              <tr>
+                <th scope="col">Appointment Created</th>
+                <td>
+                  {new Date(appointmentData?.createdAt).toLocaleDateString(
+                    "en-IN",
+                    {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
 
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default ViewAppointment
+export default ViewAppointment;

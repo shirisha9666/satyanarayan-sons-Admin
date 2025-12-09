@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
-import Button from '@mui/material/Button'
+import Button from '@material-ui/core/Button'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import axios from 'axios'
 
 import swal from 'sweetalert'
-import { isAutheticated } from '../../../auth'
-
+import { isAutheticated } from 'src/auth'
 
 const States = () => {
     const token = isAutheticated()

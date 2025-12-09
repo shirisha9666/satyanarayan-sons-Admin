@@ -4,8 +4,7 @@ import swal from "sweetalert";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { isAutheticated } from "../../auth";
-
+import { isAutheticated } from "src/auth";
 
 function Logo() {
   const [loading, setLoading] = useState(false);
@@ -72,7 +71,7 @@ function Logo() {
         swal("Success!", res.data.message, res.data.status);
       })
       .catch((error) => {
-        console.log(error);
+        setLoading(false);
       });
   }
 
@@ -97,8 +96,10 @@ function Logo() {
                                   <label
                                     htmlFor="basicpill-phoneno-input"
                                     className="label-100 mt-3"
+                                    style={{ fontWeight: "bold" }}
                                   >
-                                    {/* Logo htmlFor Website Header(148 x 48 px) */}
+                                    Header Logo for user Website(250 x 100
+                                    pixels) <br />
                                   </label>
                                   <div>
                                     <input
@@ -130,74 +131,91 @@ function Logo() {
                                             ? HeaderlogoUrl.image
                                             : Headerlogo
                                         }
-                                        alt="header logo"
+                                        alt=""
                                       />
                                     ) : (
                                       ""
                                     )}
                                   </div>
-                                  {/*
-                                                                    <label
-                                                                        htmlFor="basicpill-phoneno-input"
-                                                                        className="label-100 mt-3"
-                                                                    >
-                                                              
-                                                                    </label>
-                                                                    <input
-                                                                        type="file"
-                                                                        name="Logo htmlFor Website Footer(148 x 48 px)"
-                                                                        onChange={(e) => {
-                                                                            setFooterlogo(e.target.files[0])
+                                  <label
+                                    htmlFor="basicpill-phoneno-input"
+                                    className="label-100 mt-3"
+                                    style={{ fontWeight: "bold" }}
+                                  >
+                                    {/* Logo htmlFor Website Footer(148 x 48 px) */}
+                                    Footer logo for user Website(250 x 100
+                                    pixels) <br />
+                                  </label>
+                                  <br />
+                                  <input
+                                    type="file"
+                                    name="Logo htmlFor Website Footer(148 x 48 px)"
+                                    onChange={(e) => {
+                                      setFooterlogo(e.target.files[0]);
 
-                                                                            if (e.target.files && e.target.files[0]) {
-                                                                                setFooterlogoUrl({
-                                                                                    image: URL.createObjectURL(e.target.files[0]),
-                                                                                })
-                                                                            }
-                                                                        }}
-                                                                        className="form-control input-field mt-1 col-md-6 d-inline-block"
-                                                                        id="basicpill-phoneno-input"
-                                                                    />{' '}
-                                                                    {display ? (
-                                                                        <img
-                                                                            style={{ width: '100px' }}
-                                                                            src={FooterlogoUrl.image ? FooterlogoUrl.image : Footerlogo}
-                                                                            alt="Footer logo"
-                                                                        />
-                                                                    ) : (
-                                                                        ''
-                                                                    )}
-                                                                    <label
-                                                                        htmlFor="basicpill-phoneno-input"
-                                                                        className="label-100 mt-2 row ms-1"
-                                                                    >
-                                                              
-                                                                    </label>
-                                                                    <input
-                                                                        type="file"
-                                                                        name="Logo htmlFor Admin Header(148 x 48 px)"
-                                                                        onChange={(e) => {
-                                                                            setAdminlogo(e.target.files[0])
+                                      if (e.target.files && e.target.files[0]) {
+                                        setFooterlogoUrl({
+                                          image: URL.createObjectURL(
+                                            e.target.files[0]
+                                          ),
+                                        });
+                                      }
+                                    }}
+                                    className="form-control input-field mt-1 col-md-6 d-inline-block"
+                                    id="basicpill-phoneno-input"
+                                  />{" "}
+                                  {display ? (
+                                    <img
+                                      style={{ width: "100px" }}
+                                      src={
+                                        FooterlogoUrl.image
+                                          ? FooterlogoUrl.image
+                                          : Footerlogo
+                                      }
+                                      alt=""
+                                    />
+                                  ) : (
+                                    ""
+                                  )}
+                                  <label
+                                    htmlFor="basicpill-phoneno-input"
+                                    className="label-100 mt-2 row ms-1"
+                                    style={{ fontWeight: "bold" }}
+                                  >
+                                    {/* Logo htmlFor Admin Header(148 x 48 px) */}
+                                    Logo for admin website(250 x 100 pixels){" "}
+                                    <br />
+                                  </label>
+                                  <input
+                                    type="file"
+                                    name="Logo htmlFor Admin Header(148 x 48 px)"
+                                    onChange={(e) => {
+                                      setAdminlogo(e.target.files[0]);
 
-                                                                            if (e.target.files && e.target.files[0]) {
-                                                                                setAdminlogoUrl({
-                                                                                    image: URL.createObjectURL(e.target.files[0]),
-                                                                                })
-                                                                            }
-                                                                        }}
-                                                                        className="form-control input-field col-md-6 d-inline-block"
-                                                                        id="basicpill-phoneno-input"
-                                                                    />{' '}
-                                                                    {display ? (
-                                                                        <img
-                                                                            style={{ width: '100px' }}
-                                                                            src={AdminlogoUrl.image ? AdminlogoUrl.image : Adminlogo}
-                                                                            alt="Admin logo"
-                                                                        />
-                                                                    ) : (
-                                                                        ''
-                                                                    )}
-                                                                */}
+                                      if (e.target.files && e.target.files[0]) {
+                                        setAdminlogoUrl({
+                                          image: URL.createObjectURL(
+                                            e.target.files[0]
+                                          ),
+                                        });
+                                      }
+                                    }}
+                                    className="form-control input-field col-md-6 d-inline-block"
+                                    id="basicpill-phoneno-input"
+                                  />{" "}
+                                  {display ? (
+                                    <img
+                                      style={{ width: "100px" }}
+                                      src={
+                                        AdminlogoUrl.image
+                                          ? AdminlogoUrl.image
+                                          : Adminlogo
+                                      }
+                                      alt=""
+                                    />
+                                  ) : (
+                                    ""
+                                  )}
                                 </>
                               </div>
                             </div>
@@ -207,6 +225,11 @@ function Logo() {
                               <div className="form-group text-left">
                                 <button
                                   type="button"
+                                  disabled={
+                                    Adminlogo === "" ||
+                                    Footerlogo === "" ||
+                                    Headerlogo === ""
+                                  }
                                   onClick={handelSubmit}
                                   className="btn btn-success btn-login waves-effect waves-light mr-3 pt-2 pb-2 pr-4 pl-4"
                                 >

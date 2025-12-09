@@ -11,12 +11,11 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
-import swal from 'sweetalert'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import ClipLoader from "react-spinners/ClipLoader";
 import axios from 'axios'
-
+import { isAutheticated } from 'src/auth'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 

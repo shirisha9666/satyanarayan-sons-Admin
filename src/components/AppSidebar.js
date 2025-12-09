@@ -1,38 +1,125 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 
-import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import { AppSidebarNav } from './AppSidebarNav'
+import {
+  CSidebar,
+  CSidebarBrand,
+  CSidebarNav,
+  CSidebarToggler,
+  CCloseButton,
+  CSpinner
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 
+import { AppSidebarNav } from "./AppSidebarNav";
 
-import { sygnet } from '../assets/brand/sygnet'
-import 'simplebar-react/dist/simplebar.min.css'
+import { logoNegative } from "src/assets/brand/logo-negative";
+import { sygnet } from "src/assets/brand/sygnet";
+
+import SimpleBar from "simplebar-react";
+import "simplebar/dist/simplebar.min.css";
 
 // sidebar nav config
-import navigation from '../_nav'
-
-import axios from 'axios'
-import { Link } from 'react-router-dom'
-import SimpleBar from 'simplebar-react'
-import { isAutheticated } from '../auth'
+import navigation from "../_nav";
+import { isAutheticated } from "src/auth";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { toggleChange, toggleUnfold } from "src/redux/reducers/toggler";
+import { useBilling } from "src/views/billing/billingContext";
 
 const AppSidebar = () => {
-  const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const dispatch = useDispatch();
 
-  ///----------------------//
-  const [loading, setLoading] = useState(false)
+  const unfoldable = useSelector((state) => state.header.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.header.sidebarShow);
 
-  const token = isAutheticated()
+  const [navigationItem, setNavigationItem] = useState([]);
+  const [isNavigationLoading, setIsNavigationLoading] = useState(true);
+      const { address } = useBilling();
+      const logos = address?.[0]?.logo ||[];
+     const appName = address?.[0]?.appName ;
+ 
+  
+
+
+  const [userdata, setUserData] = useState(null);
+  const token = isAutheticated();
+
+  useEffect(() => {
+    const getUser = async () => {
+      let existanceData = localStorage.getItem("authToken");
+      if (!existanceData) {
+        setUserData(false);
+        setIsNavigationLoading(false);
+      } else {
+        try {
+          let response = await axios.get(`/api/v1/user/details`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = response.data;
+          if (
+            (data.success && data.user.role === "admin") ||
+            data.user.role === "Employee"
+          ) {
+            setUserData(data.user);
+          } else {
+            setUserData(false);
+          }
+        } catch (err) {
+          setUserData(false);
+          console.log(err);
+        } finally {
+          setIsNavigationLoading(false);
+        }
+      }
+    };
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    if (!isNavigationLoading) {
+      if (userdata && userdata.role === "Employee") {
+        // For employees, include Dashboard and Product Management with all its sub-items
+        const allowedItems = ["Dashboard", "Product Management","Settings","Customer Service","Customers","Orders","Billing"];
+        const filteredNavigation = navigation.filter((item) =>
+          allowedItems.includes(item.name)
+        );
+        setNavigationItem(filteredNavigation);
+      } else if (userdata && userdata.role === "admin" && userdata.accessTo) {
+        // For admins, filter based on accessTo permissions
+        const filteredNavigation = navigation
+          .filter((item) => {
+            if (item.component === "CNavGroup") {
+              // For groups like Product Management, check if any sub-item is accessible
+              return item.items.some((subItem) => userdata.accessTo[subItem.name]);
+            }
+            return userdata.accessTo[item.name];
+          })
+          .map((item) => {
+            if (item.component === "CNavGroup") {
+              // Filter sub-items in groups
+              return {
+                ...item,
+                items: item.items.filter((subItem) => userdata.accessTo[subItem.name])
+              };
+            }
+            return item;
+          });
+        setNavigationItem(filteredNavigation);
+      } else {
+        // Default case: show all navigation items if no specific restrictions
+        setNavigationItem(navigation);
+      }
+    }
+  }, [userdata, isNavigationLoading]);
+
+  const [loading, setLoading] = useState(false);
 
   // urlcreated images
-  const [AppName, setAppName] = useState('')
-  const [HeaderlogoUrl, setHeaderlogoUrl] = useState('')
-  const [FooterlogoUrl, setFooterlogoUrl] = useState('')
-  const [AdminlogoUrl, setAdminlogoUrl] = useState('')
+
 
   useEffect(() => {
     async function getConfiguration() {
@@ -40,45 +127,93 @@ const AppSidebar = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      setAppName(configDetails.data.result[0]?.appName)
-      configDetails.data.result.map((item) => {
-        setHeaderlogoUrl(item?.logo[0]?.Headerlogo)
-        setFooterlogoUrl(item?.logo[0]?.Footerlogo)
-        setAdminlogoUrl(item?.logo[0]?.Adminlogo)
-      })
+      });
+   
     }
-    getConfiguration()
-  }, [])
+    getConfiguration();
+  }, []);
 
-  //---------------------------//
   return (
     <CSidebar
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
       onVisibleChange={(visible) => {
-        dispatch({ type: 'set', sidebarShow: visible })
+        dispatch(toggleChange(visible))
       }}
     >
-      <CSidebarBrand className="d-none  d-md-flex" style={{ background: 'rgb(140, 213, 213)' }} to="/">
-        {/* <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} /> */}
+      <CSidebarBrand
+        to="/"
+      >
 
-        {HeaderlogoUrl ? <Link to='/dashboard'><img src={HeaderlogoUrl} alt='' /></Link> : { AppName } ? <h2>Jatin Mor </h2> : ''}
-        {/* <CIcon className="sidebar-brand-narrow"  height={35} /> */}
+      {logos.map((val, index) => (
+  <div 
+    key={index} 
+    className=" d-flex align-items-center justify-content-between px-3 py-2"
+    style={{
+      // backgroundColor: "#1A237E",
+      borderBottom: "1px solid #3949AB",
+    }}
+  >
+    <Link 
+      to="/dashboard" 
+      className="d-flex align-items-center text-decoration-none"
+      style={{ gap: "12px" }}
+    >
+      <img 
+        src={val?.Headerlogo?.fileUrl} 
+        alt="logo" 
+        style={{ width: "3.5rem", height: "3.5rem", objectFit: "contain" }} 
+      />
+
+      <h5 
+        className="m-0 text-white"
+        style={{ fontSize: "1.4rem", fontWeight: "600" }}
+      >
+        {appName}
+      </h5>
+    </Link>
+
+    {/* Close button for mobile */}
+    <CCloseButton 
+      className="d-lg-none" 
+      white 
+      onClick={() => dispatch(toggleChange(false))} 
+    />
+  </div>
+))}
+
+        {/* {AdminlogoUrl ? (
+          <>
+            <Link to="/dashboard" className="bg-warning">
+              <img src={AdminlogoUrl} alt="" width="100%" />
+            </Link>
+            <CCloseButton className="d-lg-none mx-2" white onClick={() => dispatch(toggleChange(false))} />
+          </>
+        ) : { AppName } ? (
+         <div className="bg-primary " style={{padding:"14px"}}>
+             <h5 className="" style={{fontSize:"1.5rem"}}>Audio Stream Admin </h5>
+          </div>
+         
+        ) : (
+          ""
+        )} */}
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
       </CSidebarBrand>
+
       <CSidebarNav>
         <SimpleBar>
-          <AppSidebarNav items={navigation} />
+          {isNavigationLoading ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '200px' }}>
+              <CSpinner color="primary" />
+            </div>
+          ) : (
+            <AppSidebarNav items={navigationItem} />
+          )}
         </SimpleBar>
       </CSidebarNav>
-      <CSidebarToggler
-        className="d-none d-lg-flex"
-        onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-      />
     </CSidebar>
-  )
-}
+  );
+};
 
-export default React.memo(AppSidebar)
+export default React.memo(AppSidebar);

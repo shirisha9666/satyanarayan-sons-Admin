@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { CFooter } from '@coreui/react'
-
-import axios from 'axios'
-import { isAutheticated } from '../auth'
+import React, { useEffect, useState } from "react";
+import { CFooter } from "@coreui/react";
+import { isAutheticated } from "src/auth";
+import axios from "axios";
 
 const AppFooter = () => {
-  const token = isAutheticated()
+  const token = isAutheticated();
 
-  const [copyright, setCopyright] = useState('')
+  const [copyright, setCopyright] = useState("");
 
   useEffect(() => {
     async function getConfiguration() {
@@ -15,24 +14,23 @@ const AppFooter = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
+      });
       configDetails.data.result.map((item) => {
-        setCopyright(item?.copyrightMessage)
-
-      })
+        setCopyright(item?.copyrightMessage);
+      });
     }
-    getConfiguration()
-  }, [])
+    getConfiguration();
+  }, []);
 
   return (
     <CFooter>
       <div>
-
-        <span className="ms-1">{new Date().getFullYear()} &copy; {copyright ? copyright : ''} .</span>
+        <span className="ms-1">
+          {/* {new Date().getFullYear()} &copy; {copyright ? copyright : ""} . */}
+        </span>
       </div>
-
     </CFooter>
-  )
-}
+  );
+};
 
-export default React.memo(AppFooter)
+export default React.memo(AppFooter);

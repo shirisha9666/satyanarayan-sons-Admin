@@ -1,51 +1,52 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
-import { isAutheticated } from '../../auth'
-
-
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { isAutheticated } from "src/auth";
 
 function CancelledOrders() {
-  const token = isAutheticated()
-  const [loading, setLoading] = useState(true)
-  const [success, setSuccess] = useState(true)
-  const [cancelledOrdersData, setCancelledOrdersData] = useState([])
+  const token = isAutheticated();
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(true);
+  const [cancelledOrdersData, setCancelledOrdersData] = useState([]);
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemPerPage, setItemPerPage] = useState(10)
-  const [showData, setShowData] = useState(cancelledOrdersData)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
+  const [showData, setShowData] = useState(cancelledOrdersData);
 
   const handleShowEntries = (e) => {
-    setCurrentPage(1)
-    setItemPerPage(e.target.value)
-  }
+    setCurrentPage(1);
+    setItemPerPage(e.target.value);
+  };
 
   useEffect(() => {
     function getProcessingOrder() {
       axios
-        .get(`/api/order/list/cancelled`, {
-          headers: { 'Access-Control-Allow-Origin': '*', Authorization: `Bearer ${token}` },
+        .get(`/api/order/getAll/cancelled`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${token}`,
+          },
         })
         .then((res) => {
-          setCancelledOrdersData(res.data.data)
-          setLoading(false)
+          setCancelledOrdersData(res.data.order);
+          setLoading(false);
         })
         .catch((err) => {
-          console.log(err)
-          setLoading(false)
-        })
+          console.log(err);
+          setLoading(false);
+        });
     }
-    getProcessingOrder()
-  }, [])
+    getProcessingOrder();
+  }, []);
 
   useEffect(() => {
     const loadData = () => {
-      const indexOfLastPost = currentPage * itemPerPage
-      const indexOfFirstPost = indexOfLastPost - itemPerPage
-      setShowData(cancelledOrdersData.slice(indexOfFirstPost, indexOfLastPost))
-    }
-    loadData()
-  }, [currentPage, itemPerPage, cancelledOrdersData])
+      const indexOfLastPost = currentPage * itemPerPage;
+      const indexOfFirstPost = indexOfLastPost - itemPerPage;
+      setShowData(cancelledOrdersData.slice(indexOfFirstPost, indexOfLastPost));
+    };
+    loadData();
+  }, [currentPage, itemPerPage, cancelledOrdersData]);
 
   return (
     <div className="main-content">
@@ -61,7 +62,7 @@ function CancelledOrders() {
                     justify-content-between
                   "
               >
-                <div style={{ fontSize: '22px' }} className="fw-bold">
+                <div style={{ fontSize: "22px" }} className="fw-bold">
                   Cancelled Orders
                 </div>
               </div>
@@ -77,7 +78,7 @@ function CancelledOrders() {
                         <label className="w-100">
                           Show
                           <select
-                            style={{ width: '10%' }}
+                            style={{ width: "10%" }}
                             name=""
                             onChange={(e) => handleShowEntries(e)}
                             className="
@@ -100,14 +101,17 @@ function CancelledOrders() {
                   <div className="table-responsive table-shoot mt-3">
                     <table
                       className="table table-centered table-nowrap"
-                      style={{ border: '1px solid' }}
+                      style={{ border: "1px solid" }}
                     >
-                      <thead className="thead-light" style={{ background: '#ecdddd' }}>
+                      <thead
+                        className="thead-light"
+                        style={{ background: "#ecdddd" }}
+                      >
                         <tr>
                           <th className="text-start">Order ID</th>
-                          <th className="text-start">Parent Name</th>
-                          <th className="text-start">Amount</th>
-                          <th className="text-start">Placed On</th>
+                          <th className="text-start">Customer</th>
+                          <th className="text-start">Order value</th>
+                          <th className="text-start">Order At</th>
                           <th className="text-start">Status</th>
                           <th className="text-start">Actions</th>
                         </tr>
@@ -130,34 +134,48 @@ function CancelledOrders() {
                           showData.map((order, i) => {
                             return (
                               <tr key={i}>
-                                <td className="text-start">{order.order_id}</td>
-                                <td className="text-start">{order.parent.name}</td>
-                                <td className="text-start">{order?.total_amount}</td>
+                                <td className="text-start">{order?.orderID}</td>
                                 <td className="text-start">
-                                  {new Date(order?.placed_on).toLocaleString('en-IN', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: 'numeric',
-                                    hour12: true,
-                                  })}
+                                  {order?.user?.name}
                                 </td>
                                 <td className="text-start">
-                                  <span className="badge text-bg-success text-white">
-                                    {order?.status}
+                                  {order?.currency}
+                                  {order?.total_amount}
+                                </td>
+                                <td className="text-start">
+                                  {new Date(order?.paidAt).toLocaleString(
+                                    "en-GB",
+                                    {
+                                      timeZone: "Europe/London", // Set the time zone to UK
+
+                                      weekday: "short",
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric",
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                      hour12: true,
+                                    }
+                                  )}
+                                </td>
+                                <td className="text-start">
+                                  <span className="badge text-bg-danger text-white">
+                                    {order?.orderStatus}
                                   </span>
                                 </td>
                                 <td className="text-start">
-                                  <Link to={`/orders/${order.status}/${order._id}`}>
+                                  {/* <Link to={`/orders/${order.orderStatus}/${order._id}`}> */}
+                                  <Link
+                                    to={`/orders/${order.orderStatus}/${order._id}`}
+                                  >
                                     <button
-                                      style={{ color: 'white' }}
+                                      style={{ color: "white" }}
                                       type="button"
                                       className="
                                       btn btn-primary btn-sm
                                     waves-effect waves-light
                                     btn-table
-                                    ms-2
+                                    ms-2 mt-1
                                   "
                                     >
                                       View
@@ -165,7 +183,7 @@ function CancelledOrders() {
                                   </Link>
                                 </td>
                               </tr>
-                            )
+                            );
                           })
                         )}
                       </tbody>
@@ -180,9 +198,12 @@ function CancelledOrders() {
                         role="status"
                         aria-live="polite"
                       >
-                        Showing {currentPage * itemPerPage - itemPerPage + 1} to{' '}
-                        {Math.min(currentPage * itemPerPage, cancelledOrdersData.length)} of{' '}
-                        {cancelledOrdersData.length} entries
+                        Showing {currentPage * itemPerPage - itemPerPage + 1} to{" "}
+                        {Math.min(
+                          currentPage * itemPerPage,
+                          cancelledOrdersData.length
+                        )}{" "}
+                        of {cancelledOrdersData.length} entries
                       </div>
                     </div>
 
@@ -192,13 +213,13 @@ function CancelledOrders() {
                           <li
                             className={
                               currentPage === 1
-                                ? 'paginate_button page-item previous disabled'
-                                : 'paginate_button page-item previous'
+                                ? "paginate_button page-item previous disabled"
+                                : "paginate_button page-item previous"
                             }
                           >
                             <span
                               className="page-link"
-                              style={{ cursor: 'pointer' }}
+                              style={{ cursor: "pointer" }}
                               onClick={() => setCurrentPage((prev) => prev - 1)}
                             >
                               Previous
@@ -209,8 +230,10 @@ function CancelledOrders() {
                             <li className="paginate_button page-item">
                               <span
                                 className="page-link"
-                                style={{ cursor: 'pointer' }}
-                                onClick={(e) => setCurrentPage((prev) => prev - 1)}
+                                style={{ cursor: "pointer" }}
+                                onClick={(e) =>
+                                  setCurrentPage((prev) => prev - 1)
+                                }
                               >
                                 {currentPage - 1}
                               </span>
@@ -218,7 +241,10 @@ function CancelledOrders() {
                           )}
 
                           <li className="paginate_button page-item active">
-                            <span className="page-link" style={{ cursor: 'pointer' }}>
+                            <span
+                              className="page-link"
+                              style={{ cursor: "pointer" }}
+                            >
                               {currentPage}
                             </span>
                           </li>
@@ -230,9 +256,9 @@ function CancelledOrders() {
                               <li className="paginate_button page-item ">
                                 <span
                                   className="page-link"
-                                  style={{ cursor: 'pointer' }}
+                                  style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    setCurrentPage((prev) => prev + 1)
+                                    setCurrentPage((prev) => prev + 1);
                                   }}
                                 >
                                   {currentPage + 1}
@@ -246,13 +272,13 @@ function CancelledOrders() {
                                 (currentPage + 1) * itemPerPage - itemPerPage >
                                 cancelledOrdersData.length - 1
                               )
-                                ? 'paginate_button page-item next'
-                                : 'paginate_button page-item next disabled'
+                                ? "paginate_button page-item next"
+                                : "paginate_button page-item next disabled"
                             }
                           >
                             <span
                               className="page-link"
-                              style={{ cursor: 'pointer' }}
+                              style={{ cursor: "pointer" }}
                               onClick={() => setCurrentPage((prev) => prev + 1)}
                             >
                               Next
@@ -269,7 +295,7 @@ function CancelledOrders() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default CancelledOrders
+export default CancelledOrders;

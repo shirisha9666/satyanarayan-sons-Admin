@@ -1,20 +1,19 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { isAutheticated } from "src/auth";
 
-
-import { Link } from 'react-router-dom'
-import swal from 'sweetalert'
-import { isAutheticated } from '../../../auth'
+import { Link } from "react-router-dom";
+import swal from "sweetalert";
 
 function Tax() {
-  const [taxList, settaxList] = useState([])
-  const [success, setSuccess] = useState(true)
-  const [loading, setLoading] = useState(true)
-  const token = isAutheticated()
-
+  const [taxList, settaxList] = useState([]);
+  const [success, setSuccess] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const token = isAutheticated();
+  // console.log(token);
   useEffect(() => {
     function getTaxes() {
-      setLoading(true)
+      setLoading(true);
       axios
         .get(`/api/tax/view_tax`, {
           headers: {
@@ -22,13 +21,14 @@ function Tax() {
           },
         })
         .then((res) => {
-          setLoading(false)
-          settaxList(res.data)
+          setLoading(false);
+          // console.log(res.data);
+          settaxList(res.data);
         })
-        .catch((err) => setLoading(false))
+        .catch((err) => setLoading(false));
     }
-    getTaxes()
-  }, [success])
+    getTaxes();
+  }, [success]);
 
   function handleDelete(id) {
     axios
@@ -38,8 +38,50 @@ function Tax() {
         },
       })
       .then((res) => setSuccess((prev) => !prev))
-      .catch((err) => swal('Error!', 'Something went wrong!', 'error'))
+      .catch((err) => swal("Error!", "Something went wrong!", "error"));
   }
+
+  const handleStatus = () => {
+    swal({
+      title: "Are you sure?",
+      icon: "warning",
+      buttons: {
+        Yes: { text: "Yes", value: true },
+        Cancel: { text: "Cancel", value: "cancel" },
+      },
+    }).then((value) => {
+      if (value === true) {
+        axios
+          .patch(
+            `/api/tax/update`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((res) => {
+            swal({
+              title: "Changed",
+              text: "status changed successfully!",
+              icon: "success",
+              button: "ok",
+            });
+            setSuccess((prev) => !prev);
+          })
+          .catch((err) => {
+            swal({
+              title: "Warning",
+              text: "Something went wrong!",
+              icon: "error",
+              button: "Retry",
+              dangerMode: true,
+            });
+          });
+      }
+    });
+  };
   return (
     <div className="main-content">
       <div className="page-content">
@@ -50,19 +92,27 @@ function Tax() {
                 <div className="card-body">
                   <div className="row ml-0 mr-0 mb-10">
                     <div className="col-sm-12 col-md-6"></div>
-                    <div className="col-sm-12 col-md-6 text-end">
-                      <div className="dropdown d-block">
+                    <div className="col-sm-12 col-md-6">
+                      <div className="m-1 d-flex align-items-center justify-content-end gap-3">
+                        <button
+                          type="button"
+                          className=" btn btn-warning text-white  "
+                          onClick={() => handleStatus()}
+                        >
+                          <i className="fa fa-plus mb-2" aria-hidden="true"></i>{" "}
+                          Change Status
+                        </button>
                         <Link to="/tax/add">
                           <button
                             type="button"
                             className="
-                                btn btn-primary
-                                add-btn
-                                waves-effect waves-light
-                                float-right
-                              "
+                                btn btn-primary"
                           >
-                            <i className="fa fa-plus mb-2" aria-hidden="true"></i> Add New Tax Rate
+                            <i
+                              className="fa fa-plus mb-2"
+                              aria-hidden="true"
+                            ></i>{" "}
+                            Add New GST Rate
                           </button>
                         </Link>
                       </div>
@@ -70,10 +120,14 @@ function Tax() {
                   </div>
                   <div className="table-responsive table-shoot mt-2">
                     <table className="table table-centered table-nowrap mb-0">
-                      <thead className="thead" style={{ background: 'rgb(140, 213, 213)' }}>
+                      <thead
+                        className="thead"
+                        style={{ background: "rgb(140, 213, 213)" }}
+                      >
                         <tr>
                           <th>Name</th>
-                          <th>Tax Rate</th>
+                          <th>GST Rate</th>
+                          <th>Status</th>
                           <th>Action</th>
                         </tr>
                       </thead>
@@ -89,16 +143,37 @@ function Tax() {
                           return (
                             <tr key={index}>
                               <td>{tax.name}</td>
-                              <td>{tax.tax}%</td>
+                              <td>{tax.Gst}%</td>
+                              <td
+                                className={`badge mt-1 text-white ${
+                                  tax?.active === true
+                                    ? "text-bg-success"
+                                    : "text-bg-secondary"
+                                }`}
+                              >
+                                {" "}
+                                {tax?.active ? "Active" : "Not Active"}
+                              </td>
+
                               <td>
-                                <Link to={`/tax/edit/${tax._id}`}>
+                                {tax?.active ? (
+                                  <Link to={`/tax/edit/${tax._id}`}>
+                                    <button
+                                      type="button"
+                                      className="btn btn-primary btn-sm waves-effect waves-light btn-table me-2"
+                                    >
+                                      Edit
+                                    </button>
+                                  </Link>
+                                ) : (
                                   <button
                                     type="button"
                                     className="btn btn-primary btn-sm waves-effect waves-light btn-table me-2"
+                                    disabled
                                   >
                                     Edit
                                   </button>
-                                </Link>
+                                )}
 
                                 <button
                                   type="button"
@@ -107,6 +182,7 @@ function Tax() {
                                     btn-table
                                     ml-2
                                   "
+                                  disabled={!tax?.active}
                                   onClick={() => handleDelete(tax._id)}
                                   id="sa-params"
                                 >
@@ -114,7 +190,7 @@ function Tax() {
                                 </button>
                               </td>
                             </tr>
-                          )
+                          );
                         })}
                       </tbody>
                     </table>
@@ -212,7 +288,7 @@ function Tax() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Tax
+export default Tax;

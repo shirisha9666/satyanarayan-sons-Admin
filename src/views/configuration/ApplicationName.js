@@ -4,8 +4,7 @@ import ClipLoader from 'react-spinners/ClipLoader'
 
 import swal from 'sweetalert'
 import axios from 'axios'
-import { isAutheticated } from '../../auth'
-
+import { isAutheticated } from 'src/auth'
 
 function ApplicationName() {
     const [loading, setLoading] = useState(false)
@@ -46,6 +45,7 @@ function ApplicationName() {
             setLoading(false)
             console.log(res)
             swal('Success!', res.data.message, res.data.status)
+            setAppName("")
         }
     }
     return (

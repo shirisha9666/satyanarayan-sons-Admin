@@ -1,11 +1,10 @@
 import React from 'react'
 import { CForm, CCol, CFormLabel, CContainer, CRow, CCardGroup, CCard, CCardBody, CFormInput, CButton } from '@coreui/react'
-import swal from 'sweetalert'
+
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { isAutheticated } from '../../auth'
-
+import { isAutheticated } from 'src/auth'
 
 const EditProfile = () => {
 

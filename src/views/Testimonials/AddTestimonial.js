@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Button from '@mui/material/Button'
+import Button from "@material-ui/core/Button";
 import { Link, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 import axios from "axios";
-import { isAutheticated } from "../../auth";
-
+import { isAutheticated } from "src/auth";
 // import { WebsiteURL } from '../WebsiteURL'
 
 const AddTestimonial = () => {
@@ -56,6 +55,7 @@ const AddTestimonial = () => {
   const handleSubmit = () => {
     if (
       data.name.trim() === "" ||
+      data.company.trim() === "" ||
       data.image === "" ||
       data.testimonial.trim() === ""
     ) {
@@ -235,7 +235,7 @@ const AddTestimonial = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="image" className="form-label">
-                  Photo (optional)*
+                  Photo*
                 </label>
                 <input
                   type="file"

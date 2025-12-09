@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Button from '@mui/material/Button'
+import Button from "@material-ui/core/Button";
 import { useNavigate } from "react-router-dom";
-import swal from 'sweetalert'
 import axios from "axios";
-import { isAutheticated } from "../../auth";
-
+import { isAutheticated } from "src/auth";
 
 const Testimonials = () => {
   const token = isAutheticated();
@@ -190,9 +188,7 @@ const Testimonials = () => {
                               <tr key={i}>
                                 <td className="text-start">{item.name}</td>
 
-                                <td className="text-start">
-                                  {item.testimonial}
-                                </td>
+                                <td className="text-start">{item.company}</td>
                                 <td className="text-start">
                                   {new Date(item.createdAt).toLocaleString(
                                     "en-IN",
@@ -226,23 +222,48 @@ const Testimonials = () => {
                                       View
                                     </button>
                                   </Link>
-
-                                  <button
-                                    style={{ color: "white" }}
-                                    type="button"
-                                    className="
-                                        btn btn-danger btn-sm
-                                        waves-effect waves-light
-                                        btn-table
-                                        mx-1
-                                        mt-1
-                                    "
-                                    onClick={() => {
-                                      handleDelete(item._id);
+                                  <Link to={`/testimonial/edit/${item._id}`}>
+                                    <button
+                                      style={{
+                                        color: "white",
+                                        marginRight: "1rem",
+                                      }}
+                                      type="button"
+                                      className="
+                                      btn btn-info btn-sm
+                                    waves-effect waves-light
+                                    btn-table
+                                    mt-1
+                                    mx-1
+                                  "
+                                    >
+                                      Edit
+                                    </button>
+                                  </Link>
+                                  <Link
+                                    to={"#"}
+                                    style={{
+                                      marginRight: "1rem",
                                     }}
                                   >
-                                    Delete
-                                  </button>
+                                    <button
+                                      style={{ color: "white" }}
+                                      type="button"
+                                      className="
+                                    btn btn-danger btn-sm
+                                    waves-effect waves-light
+                                    btn-table
+                                    mt-1
+                                    mx-1
+                                    
+                                  "
+                                      onClick={() => {
+                                        handleDelete(item._id);
+                                      }}
+                                    >
+                                      Delete
+                                    </button>
+                                  </Link>
                                 </td>
                               </tr>
                             );

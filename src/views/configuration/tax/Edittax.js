@@ -1,33 +1,30 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import swal from 'sweetalert'
-import { Link, useParams, useNavigate } from 'react-router-dom'
-import { isAutheticated } from '../../../auth'
-
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { isAutheticated } from "src/auth";
 
 function Edittax() {
-  const { id } = useParams()
-  const token = isAutheticated()
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
+  const { id } = useParams();
+  const token = isAutheticated();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
-    name: '',
-    tax: '',
-    hsn_code: '',
-  })
+    name: "",
+    Gst: "",
+    hsn_code: "",
+  });
   const [limiter, setLimiter] = useState({
     name: 50,
     namehas: 50,
-    tax: 2,
+    Gst: 2,
     taxhas: 2,
     hsn_code: 10,
     hsn_codehas: 10,
-  })
+  });
 
   useEffect(() => {
     function getTax() {
-      setLoading(true)
+      setLoading(true);
       axios
         .get(`/api/tax/view_tax/${id}`, {
           headers: {
@@ -35,43 +32,49 @@ function Edittax() {
           },
         })
         .then((res) => {
-          setLoading(false)
+          setLoading(false);
           setData((prev) => ({
             ...prev,
             name: res.data?.name,
-            tax: res.data?.tax?.toString(),
+            Gst: res.data?.Gst?.toString(),
             hsn_code: res.data?.hsn_code?.toString(),
-          }))
+          }));
           setLimiter((prev) => ({
             ...prev,
             namehas: prev.name - res.data?.name.length,
-            taxhas: prev.tax - res.data?.tax?.toString().length,
+            taxhas: prev.Gst - res.data?.Gst?.toString().length,
             hsn_codehas: prev.hsn_code - res.data?.hsn_code.toString()?.length,
-          }))
+          }));
         })
         .catch((res) => {
-          setLoading(false)
-          navigate('/tax', { replace: true })
-        })
+          setLoading(false);
+          navigate("/tax", { replace: true });
+        });
     }
-    getTax()
-  }, [])
+    getTax();
+  }, []);
 
   const handleChange = (e) => {
-    if ((e.target.name === 'tax' || e.target.name === 'hsn_code') && /^\D+$/.test(e.target.value))
-      return
-    setData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    if (
+      (e.target.name === "Gst" || e.target.name === "hsn_code") &&
+      /^\D+$/.test(e.target.value)
+    )
+      return;
+    setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setLimiter((prev) => ({
       ...prev,
-      [e.target.name + 'has']: prev[e.target.name] - e.target.value.length,
-    }))
-  }
+      [e.target.name + "has"]: prev[e.target.name] - e.target.value.length,
+    }));
+  };
 
   function handleSubmit() {
-    if ((data.name.trim() === '' || data.tax.trim() === '', data.hsn_code.trim() === '')) {
-      return swal('Error', 'All fields are required!', 'error')
+    if (
+      (data.name.trim() === "" || data.Gst.trim() === "",
+      data.hsn_code.trim() === "")
+    ) {
+      return swal("Error", "All fields are required!", "error");
     }
-    setLoading(true)
+    setLoading(true);
     axios
       .patch(`/api/tax/update_tax/${id}`, data, {
         headers: {
@@ -79,14 +82,14 @@ function Edittax() {
         },
       })
       .then((res) => {
-        setLoading(false)
-        swal('Success', 'Tax updated successfully', 'success')
-        navigate('/tax', { replace: true })
+        setLoading(false);
+        swal("Success", "Tax updated successfully", "success");
+        navigate("/gst", { replace: true });
       })
       .catch((err) => {
-        swal('Error', 'Something went wrong!', 'error')
-        setLoading(false)
-      })
+        swal("Error", "Something went wrong!", "error");
+        setLoading(false);
+      });
   }
 
   return (
@@ -109,7 +112,7 @@ function Edittax() {
                   Save
                 </button>
 
-                <Link to="/tax">
+                <Link to="/gst">
                   <button
                     type="button"
                     className="
@@ -135,7 +138,10 @@ function Edittax() {
                         <div className="row">
                           <div className="col-lg-12">
                             <div className="form-group">
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
                                 Name*
                               </label>
                               <input
@@ -146,7 +152,10 @@ function Edittax() {
                                 className="form-control input-field"
                                 maxLength={limiter.name}
                               />
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
                                 Remaining Characters: {limiter.namehas}
                               </label>
                             </div>
@@ -156,7 +165,10 @@ function Edittax() {
                         <div className="row mt-2">
                           <div className="col-lg-12">
                             <div className="form-group">
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
                                 HSN Code*
                               </label>
                               <input
@@ -167,7 +179,10 @@ function Edittax() {
                                 maxLength={limiter.hsn_code}
                                 className="form-control input-field"
                               />
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
                                 Remaining Characters: {limiter.hsn_codehas}
                               </label>
                             </div>
@@ -177,18 +192,24 @@ function Edittax() {
                         <div className="row mt-2">
                           <div className="col-lg-12">
                             <div className="form-group">
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
-                                Tax Rate (in %)*
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
+                                GST Rate (in %)*
                               </label>
                               <input
-                                value={data.tax}
+                                value={data.Gst}
                                 onChange={(e) => handleChange(e)}
                                 type="text"
-                                name="tax"
-                                maxLength={limiter.tax}
+                                name="Gst"
+                                maxLength={limiter.Gst}
                                 className="form-control input-field"
                               />
-                              <label htmlFor="basicpill-phoneno-input" className="label-100">
+                              <label
+                                htmlFor="basicpill-phoneno-input"
+                                className="label-100"
+                              >
                                 Remaining Characters: {limiter.taxhas}
                               </label>
                             </div>
@@ -204,7 +225,7 @@ function Edittax() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Edittax
+export default Edittax;

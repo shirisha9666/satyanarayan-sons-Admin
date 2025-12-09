@@ -4,15 +4,13 @@ import React, { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Link } from "react-router-dom";
 import swal from "sweetalert";
-import { isAutheticated } from "../../auth";
-
+import { isAutheticated } from "src/auth";
 
 function Address() {
   const token = isAutheticated();
   const [loading, setLoading] = useState(false);
-  // const [company, setCompany] = useState('')
-  const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
+  const [company, setCompany] = useState("");
+  const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
@@ -20,7 +18,8 @@ function Address() {
   const [website, setWebsite] = useState("");
   const [contact, setContact] = useState("");
   const [email, setEmail] = useState("");
-  //   const [gstin, setGSTIN] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   useEffect(() => {
     async function getConfiguration() {
@@ -31,8 +30,8 @@ function Address() {
       });
       configDetails.data.result.map((item) => {
         item.address.map((el) => {
-          setAddressLine1(el.addressLine1);
-          setAddressLine2(el.addressLine2);
+          setCompany(el.company);
+          setAddress(el.address);
           setCity(el.city);
           setState(el.state);
           setCountry(el.country);
@@ -40,17 +39,18 @@ function Address() {
           setWebsite(el.website);
           setContact(el.contact);
           setEmail(el.email);
-          //   setGSTIN(el?.gstin);
+          setLatitude(el.latitude);
+          setLongitude(el.longitude);
         });
       });
     }
     getConfiguration();
   }, []);
   async function handelChange(e) {
-    if (e.target.name.toLowerCase() === "address line 1") {
-      setAddressLine1(e.target.value);
-    } else if (e.target.name.toLowerCase() === "address line 2") {
-      setAddressLine2(e.target.value);
+    if (e.target.name.toLowerCase() === "address") {
+      setAddress(e.target.value);
+    } else if (e.target.name.toLowerCase() === "company name") {
+      setCompany(e.target.value);
     } else if (e.target.name.toLowerCase() === "city") {
       setCity(e.target.value);
     } else if (e.target.name.toLowerCase() === "state") {
@@ -65,16 +65,33 @@ function Address() {
       setContact(e.target.value);
     } else if (e.target.name.toLowerCase() === "email") {
       setEmail(e.target.value);
+    } else if (e.target.name.toLowerCase() === "latitude") {
+      setLatitude(e.target.value);
+    } else if (e.target.name.toLowerCase() === "longitude") {
+      setLongitude(e.target.value);
     }
-    // else if (e.target.name.toLowerCase() === "gstin") {
-    //   setGSTIN(e.target.value);
-    // }
   }
   async function handelSubmit() {
     setLoading(true);
+    if (
+      !company ||
+      !address ||
+      !city ||
+      !state ||
+      !country ||
+      !pincode ||
+      !website ||
+      !contact ||
+      !email ||
+      !longitude ||
+      !latitude
+    ) {
+      setLoading(false);
+      return swal("Fill all the required filed!");
+    }
     let data = {
-      addressLine1,
-      addressLine2,
+      company,
+      address,
       city,
       state,
       country,
@@ -82,8 +99,10 @@ function Address() {
       website,
       contact,
       email,
-      //   gstin,
+      longitude,
+      latitude,
     };
+
     let res = await axios.post(`/api/config/address`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -93,7 +112,11 @@ function Address() {
     if (res) {
       setLoading(false);
       console.log(res);
-      swal("Success!", res.data.message, res.data.status);
+
+      swal("Success!", res.data.message);
+    } else {
+      setLoading(false);
+      swal("something went wrong!", res.data.message);
     }
   }
 
@@ -119,30 +142,30 @@ function Address() {
                                     htmlFor="basicpill-phoneno-input"
                                     className="label-100 mt-3"
                                   >
-                                    Address Line 1
+                                    Company Name
                                   </label>
                                   <input
-                                    value={addressLine1}
                                     type="text"
-                                    name="address line 1"
-                                    onChange={(e) => handelChange(e)}
-                                    className="form-control input-field "
-                                    id="basicpill-phoneno-input"
-                                  />{" "}
-                                  <label
-                                    htmlFor="basicpill-phoneno-input"
-                                    className="label-100 mt-3"
-                                  >
-                                    Address Line 2
-                                  </label>
-                                  <input
-                                    value={addressLine2}
-                                    type="text"
-                                    name="address line 2"
+                                    name="company name"
+                                    value={company}
                                     onChange={(e) => handelChange(e)}
                                     className="form-control input-field "
                                     id="basicpill-phoneno-input"
                                   />
+                                  <label
+                                    htmlFor="basicpill-phoneno-input"
+                                    className="label-100 mt-3"
+                                  >
+                                    Address
+                                  </label>
+                                  <input
+                                    value={address}
+                                    type="text"
+                                    name="address"
+                                    onChange={(e) => handelChange(e)}
+                                    className="form-control input-field "
+                                    id="basicpill-phoneno-input"
+                                  />{" "}
                                   <label
                                     htmlFor="basicpill-phoneno-input"
                                     className="label-100 mt-3"
@@ -237,6 +260,34 @@ function Address() {
                                     value={email}
                                     type="text"
                                     name="email"
+                                    onChange={(e) => handelChange(e)}
+                                    className="form-control input-field "
+                                    id="basicpill-phoneno-input"
+                                  />
+                                  <label
+                                    htmlFor="basicpill-phoneno-input"
+                                    className="label-100 mt-3"
+                                  >
+                                    Latitude
+                                  </label>
+                                  <input
+                                    value={latitude}
+                                    type="text"
+                                    name="latitude"
+                                    onChange={(e) => handelChange(e)}
+                                    className="form-control input-field "
+                                    id="basicpill-phoneno-input"
+                                  />
+                                  <label
+                                    htmlFor="basicpill-phoneno-input"
+                                    className="label-100 mt-3"
+                                  >
+                                    Longitude
+                                  </label>
+                                  <input
+                                    value={longitude}
+                                    type="text"
+                                    name="longitude"
                                     onChange={(e) => handelChange(e)}
                                     className="form-control input-field "
                                     id="basicpill-phoneno-input"

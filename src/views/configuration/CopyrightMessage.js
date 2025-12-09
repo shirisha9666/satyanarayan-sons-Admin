@@ -6,8 +6,7 @@ import ClipLoader from 'react-spinners/ClipLoader'
 
 import swal from 'sweetalert'
 import axios from 'axios'
-import { isAutheticated } from '../../auth'
-
+import { isAutheticated } from 'src/auth'
 
 function CopyrightMessage() {
     const [loading, setLoading] = useState(false)

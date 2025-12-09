@@ -1,0 +1,258 @@
+/* Simple billing page styles matching the provided mockup */
+.billing-page{
+  display:flex;
+  min-height:100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:#fff;
+}
+
+.billing-sidebar{
+  width:220px;
+  background:#4a3f3f;
+  color:#fff;
+  padding:24px 12px;
+  box-sizing:border-box;
+  position:relative;
+}
+.invoice-preview{
+  background:#fff;
+  color:#333;
+  padding:12px;
+  width:120px;
+  font-weight:600;
+  font-size:12px;
+  border-radius:4px;
+}
+
+.billing-main{
+  flex:1;
+  padding:24px;
+}
+
+.billing-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+.date-range{
+  background:#fff;
+  border:1px solid #eee;
+  padding:10px 14px;
+  border-radius:4px;
+}
+.create-btn{
+  background:#2e6df6;
+  color:#fff;
+  border:none;
+  padding:10px 18px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.summary-cards{
+  display:flex;
+  gap:14px;
+  /* margin-bottom:18px; */
+}
+.card{
+  flex:1;
+  background:#fff;
+  border:1px solid #f0f0f0;
+  /* padding:4px; */
+  border-radius:4px;
+}
+.card-title{ color:#c0a7a7; font-size:14px; }
+.card-value{ font-size:20px; font-weight:700; }
+
+.billing-table-wrap{ background:#fff; border:1px solid #eee; border-radius:6px; padding:12px; }
+.billing-table{ width:100%; border-collapse:collapse; }
+.billing-table thead th{ text-align:left; padding:12px; background:#fafafa; border-bottom:1px solid #eee; }
+.billing-table tbody td{ padding:14px 12px; border-bottom:1px solid #f6f6f6; }
+.billing-table tbody tr.odd{ background:#fff; }
+.billing-table tbody tr.even{ background:#fcfcfc; }
+
+/* responsive */
+@media (max-width:900px){
+  .billing-page{ flex-direction:column; }
+  .billing-sidebar{ width:100%; display:flex; justify-content:center; }
+}
+
+.biling-view-btn {
+  background: #232a3d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 1px 18px;
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.billing-search {
+  /* width: 320px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #dbe2ea;
+  font-size: 16px;
+  background: #fff; */
+    background:#fff;
+  border: 1px solid #dbe2ea;
+  outline: none;
+  padding:10px 14px;
+  border-radius:4px;
+  width: 320px;
+}
+
+.date-range-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.date-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.date-input {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 120px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  background-color: #3399cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  background-color: #287aa5;
+}
+
+
+/* paggination styles */
+
+.orders-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.page-nav-btn,
+.page-num-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Regular number buttons */
+.page-num-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.page-num-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Active page */
+.page-num-btn.active {
+  background-color: #1e88e5;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(30, 136, 229, 0.3);
+}
+
+/* Navigation arrows */
+.page-nav-btn {
+  background-color: #43a047;
+  color: white;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background-color: #2e7d32;
+}
+
+/* Disabled buttons */
+.page-nav-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* pagination styles */
+
+
+.orders-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.page-nav-btn,
+.page-num-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Regular number buttons */
+.page-num-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.page-num-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Active page */
+.page-num-btn.active {
+  background-color: #1e88e5;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(30, 136, 229, 0.3);
+}
+
+/* Navigation arrows */
+.page-nav-btn {
+  background-color: #43a047;
+  color: white;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background-color: #2e7d32;
+}
+
+/* Disabled buttons */
+.page-nav-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

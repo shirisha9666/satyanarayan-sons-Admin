@@ -1,271 +1,184 @@
-import React, { useEffect, useState } from "react";
-import Button from '@mui/material/Button'
-import { Link, useNavigate } from "react-router-dom";
-import swal from "sweetalert";
+import React, { useState, useEffect } from "react";
+import { Button } from "@mui/material";
 import axios from "axios";
-
-import { CFormSelect, CFormSwitch } from "@coreui/react";
-import { isAutheticated } from "../../auth";
-// import { WebsiteURL } from '../WebsiteURL'
+// import { API } from "src/API";
+//  import { isAutheticated } from "../../components/auth/authhelper";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  CCard,
+  CCardBody,
+  CCardGroup,
+  CCol,
+  CContainer,
+  CRow,
+} from "@coreui/react";
+import ProductDetails from "./Productcomponents/ProductDetails.js";
+import ProductVarients from "./Productcomponents/ProductVarients.js";
+import ProductsImages from "./Productcomponents/ProductImages.js";
+import { isAutheticated } from "src/auth.js";
+// import ReleventProduct from "./Productcomponents/ReleventProduct";
+// import ProductFabric from "./Productcomponents/ProductFabric.js";
 
 const AddProduct = () => {
   const token = isAutheticated();
+  const [productId, setProductId] = useState("");
+  const [viewState, setViewState] = useState(1);
+  const [images, setImages] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [taxes, setTaxes] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [relevantProduct, setRelevantProduct] = useState([]);
+  const [allreleventSelectedProduct, setallReleventSelectedProduct] = useState(
+    []
+  );
+
   const navigate = useNavigate();
-  const [data, setData] = useState({
-    image: [],
-    imageURL: [],
-    name: "",
-    description: "",
-    productCode: "",
-    purity: "",
-    color: "",
-    grossWeight: "",
-    netWeight: "",
-    carats: "",
-    clarity: "",
-    NoOfDiamonds: "",
-    price: "",
-    stock: "",
-    settingType: "",
-    otherInfo: "",
-    productCollection: "",
-    category: "",
-    setAsFeatured: false,
-  });
-
-  const colorOptions = [
-    { value: "", label: "Select Color" },
-    { value: "White", label: "White" },
-    { value: "Yellow", label: "Yellow" },
-    { value: "Rose", label: "Rose" },
-    { value: "Yellow Gold", label: "Yellow Gold" },
-    { value: "White Gold", label: "White Gold" },
-    { value: "Gold", label: "Gold" },
-    { value: "Rose Gold", label: "Rose Gold" },
-    { value: "Silver", label: "Silver" },
-    { value: "Platinum", label: "Platinum" },
-  ];
-
-  const [loadingCategories, setLoadingCategories] = useState(false);
-  const [productCategoriesData, setProductCategoriesData] = useState([]);
-  const [loadingCollections, setLoadingCollections] = useState(false);
-  const [productCollectionsData, setProductCollectionsData] = useState([]);
-
-  const getProductCategoriesData = async () => {
-    axios
-      .get(`api/productCategory/getAll`)
-      .then((res) => {
-        setLoadingCategories(true);
-        setProductCategoriesData(res.data.productCategory);
-        setLoadingCategories(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoadingCategories(false);
-      });
-  };
-
-  const getProductCollectionsData = async () => {
-    axios
-      .get(`api/productCollection/getAll`)
-      .then((res) => {
-        setLoadingCollections(true);
-        setProductCollectionsData(res.data.productCollection);
-        setLoadingCollections(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoadingCollections(false);
-      });
-  };
-
-  useEffect(() => {
-    getProductCategoriesData();
-    getProductCollectionsData();
-  }, []);
-
-  // set category options for select
-  const categoryOptions = [
-    { value: "", label: "Select Category" },
-    ...productCategoriesData.map((item) => ({
-      value: item.name,
-      label: item.name,
-    })),
-
-    // { value: 'Diamond', label: 'Diamond' },
-  ];
-
-  // set collection options for select
-  const productCollectionOptions = [
-    { value: "", label: "Select Collection" },
-    ...productCollectionsData.map((item) => ({
-      value: item.name,
-      label: item.name,
-    })),
-  ];
-
   const [loading, setLoading] = useState(false);
 
-  const [imagesPreview, setImagesPreview] = useState([]);
-  // const [allimage, setAllImage] = useState([]);
+  const [data, setData] = useState({
+    name: "",
+    category: "",
+    // sku: "",
+    description: "",
+    master_price: "",
+    master_GST: "",
 
-  const handleSwitchChange = (e) => {
-    setData((prev) => ({
-      ...prev,
-      setAsFeatured: !prev.setAsFeatured,
-    }));
-  };
+    // discontinue_on: "",
+    // hsn_code: "",
+    product_Status: "",
 
-  const handleChange = (e) => {
-    if (e.target.id === "image") {
-      const file = e.target.files[0];
-      const fileSize = file.size / 1024;
-      const maxSize = 5130;
-      if (fileSize > maxSize) {
-        swal({
-          title: "warning",
-          text: "Image size should not exceed 5MB.",
-          icon: "error",
-          button: "Close",
-          dangerMode: true,
-        });
-        return;
-      }
-      if (
-        e.target.files[0]?.type === "image/jpeg" ||
-        e.target.files[0]?.type === "image/png" ||
-        e.target.files[0]?.type === "image/jpg"
-      ) {
-        if (imagesPreview.length > 6) {
-          swal({
-            title: "Warning",
-            text: "maximum  image Upload limit",
-            icon: "error",
-            button: "Close",
-            dangerMode: true,
-          });
-          return;
-        }
-        // only for file preview------------------------------------
-        const files = Array.from(e.target.files);
-        files.forEach((file) => {
-          const reader = new FileReader();
+    special_instructions: "",
+    // productImages.length == 0 ||
+    // gst_amount === "" ||
+    // price === "" ||
+    // totalAmt === "" ||
+    // gst_amount === "" ||
+  });
 
-          reader.onload = () => {
-            if (reader.readyState === 2) {
-              setImagesPreview((old) => [...old, reader.result]);
-            }
-          };
+  const [varients, setVarients] = useState([
+    {
+      variant_Name: "",
+      weight: "",
+      volume: "",
+      price: "",
 
-          reader.readAsDataURL(file);
-        });
-        // -----------------------------------------------------------------------------
+      gst_Id: "",
+    },
+    {
+      variant_Name: "",
+      weight: "",
+      volume: "",
+      price: "",
 
-        setData((prev) => ({
-          ...prev,
+      gst_Id: "",
+    },
 
-          image: [...data.image, ...e.target.files],
-        }));
-        return;
-      } else {
-        swal({
-          title: "Warning",
-          text: "Upload jpg, jpeg, png only.",
-          icon: "error",
-          button: "Close",
-          dangerMode: true,
-        });
-        setData((prev) => ({
-          ...prev,
-          imageURL: "",
-          image: "",
-        }));
-        e.target.value = null;
-        return;
-      }
-    }
-    setData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-  };
+    {
+      variant_Name: "",
+      weight: "",
+      volume: "",
+      price: "",
 
-  console.log(data);
-  const handleSubmit = () => {
-    if (
-      data.name.trim() === "" ||
-      data.description.trim() === "" ||
-      data.image === ""
-    ) {
-      swal({
-        title: "Warning",
-        text: "Fill all mandatory fields",
-        icon: "error",
-        button: "Close",
-        dangerMode: true,
-      });
-      return;
-    }
-    setLoading(true);
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("description", data.description);
+      gst_Id: "",
+    },
+  ]);
+  const [allFabrics, setAllFabrics] = useState([]);
+  const [fabrics, setFabrics] = useState([
+    { _id: "", fabric_Name: "", for_Part: "" },
+    { _id: "", fabric_Name: "", for_Part: "" },
+    { _id: "", fabric_Name: "", for_Part: "" },
+  ]);
 
-    formData.append("productCode", data.productCode);
-    formData.append("purity", data.purity);
-    formData.append("color", data.color);
-    formData.append("grossWeight", data.grossWeight);
-    formData.append("netWeight", data.netWeight);
-    formData.append("carats", data.carats);
-    formData.append("clarity", data.clarity);
-    formData.append("NoOfDiamonds", data.NoOfDiamonds);
-    formData.append("price", data.price);
-    formData.append("stock", data.stock);
-    formData.append("settingType", data.settingType);
-    formData.append("otherInfo", data.otherInfo);
-    formData.append("productCollection", data.productCollection);
-    formData.append("category", data.category);
-    formData.append("setAsFeatured", data.setAsFeatured);
-
-    data.image.forEach((Singleimage) => {
-      // console.log(Singleimage)
-      formData.append("image", Singleimage);
-    });
-
+  const getCategories = () => {
     axios
-      .post(`/api/product/create/`, formData, {
+      .get(`/api/category/getCategories`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/formdata",
           "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        swal({
-          title: "Added",
-          text: "Product added successfully!",
-          icon: "success",
-          button: "ok",
-        });
+        setCategories(res?.data?.categories);
         setLoading(false);
-        navigate("/products", { replace: true });
       })
       .catch((err) => {
         setLoading(false);
-        const message = err.response?.data?.message
-          ? err.response?.data?.message
-          : "Something went wrong!";
-        swal({
-          title: "Warning",
-          text: message,
-          icon: "error",
-          button: "Retry",
-          dangerMode: true,
-        });
       });
   };
 
+  const getTaxes = () => {
+    axios
+      .get(`/api/tax/view_tax`, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setTaxes(res.data);
+      });
+  };
+
+  // const getSizes = () => {
+  //   axios
+  //     .get(`/api/erp/sizemaster/size`, {
+  //       headers: {
+  //         "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setSizes(res.data?.data);
+  //     });
+  // };
+  // const getItemWhichcontaiNameFabric = () => {
+  //   axios
+  //     .get(`/api/erp/item/name_contain_fabric`, {
+  //       headers: {
+  //         "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       console.log(res?.data);
+  //       // setSizes(res.data?.data)
+  //       setAllFabrics(res?.data?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  // const getProductsData = async () => {
+  //   axios
+  //     .get(`/api/product`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setRelevantProduct(res.data?.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+  useEffect(() => {
+    getCategories();
+    getTaxes();
+    // getSizes();
+    // getProductsData();
+    // getItemWhichcontaiNameFabric();
+  }, []);
+  const handleView = (n) => {
+    if (viewState === n) return;
+    setViewState(n);
+  };
+
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12">
+    <CContainer>
+      <CRow className="mt-3">
+        <CCol md={12}>
           <div
             className="
                     page-title-box
@@ -275,27 +188,9 @@ const AddProduct = () => {
                   "
           >
             <div style={{ fontSize: "22px" }} className="fw-bold">
-              Add Product
+              Add Product : {data?.name && data?.name}
             </div>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <h4 className="mb-0"></h4>
-            </div>
-
             <div className="page-title-right">
-              <Button
-                variant="contained"
-                color="primary"
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: "1rem",
-                  textTransform: "capitalize",
-                  marginRight: "5px",
-                }}
-                onClick={() => handleSubmit()}
-                disabled={loading}
-              >
-                {loading ? "Loading" : "Save"}
-              </Button>
               <Link to="/products">
                 <Button
                   variant="contained"
@@ -311,322 +206,141 @@ const AddProduct = () => {
               </Link>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-lg-12 col-md-12  col-sm-12 my-1">
-          <div className="card h-100">
-            <div className="card-body px-5">
-              <div className="mb-3">
-                <label htmlFor="title" className="form-label">
-                  Product Name*
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="name"
-                  value={data.name}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="title" className="form-label">
-                  Description*
-                </label>
-                <textarea
-                  cols="20"
-                  rows="2"
-                  type="text"
-                  className="form-control"
-                  id="description"
-                  value={data.description}
-                  onChange={(e) => handleChange(e)}
-                ></textarea>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="image" className="form-label">
-                  Product Image*
-                </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  id="image"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => handleChange(e)}
-                />
-                <p className="pt-1 pl-2 text-secondary">
-                  Upload jpg, jpeg and png only*
-                </p>
-              </div>
-              <div>
-                <strong className="fs-6 fst-italic">
-                  *Please Upload maximum four images
-                </strong>
-              </div>
-
-              <div id="createProductFormImage" className="w-25 d-flex">
-                {imagesPreview.map((image, index) => (
-                  <img
-                    className=" w-50 p-1 "
-                    key={index}
-                    src={image}
-                    alt="Product Preview"
+        </CCol>
+      </CRow>
+      <CRow>
+        <CCol md={9} className="mt-1">
+          <CCardGroup>
+            <CCard className="p-4 mb-3">
+              <CCardBody>
+                {viewState === 1 && (
+                  <ProductDetails
+                    data={{ data, setData }}
+                    categories={categories}
+                    taxes={taxes}
+                    ProductId={{ productId, setProductId }}
+                    loading={{ loading, setLoading }}
                   />
-                ))}
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="productCode" className="form-label">
-                  Product Code
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="productCode"
-                  value={data.productCode}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="purity" className="form-label">
-                  Purity
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="purity"
-                  value={data.purity}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="color" className="form-label">
-                  Color
-                </label>
-                <CFormSelect
-                  id="color"
-                  value={data.color}
-                  onChange={(e) => handleChange(e)}
-                  options={colorOptions}
-                ></CFormSelect>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="grossWeight" className="form-label">
-                  Gross Weight
-                  <span className="text-secondary fst-italic">
-                    {" "}
-                    (enter units also)
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="grossWeight"
-                  value={data.grossWeight}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="netWeight" className="form-label">
-                  Net Weight
-                  <span className="text-secondary fst-italic">
-                    {" "}
-                    (enter units also)
-                  </span>
-                </label>
-
-                <input
-                  type="text"
-                  className="form-control"
-                  id="netWeight"
-                  value={data.netWeight}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="carats" className="form-label">
-                  Carats
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="carats"
-                  value={data.carats}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="clarity" className="form-label">
-                  Clarity
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="clarity"
-                  value={data.clarity}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="NoOfDiamonds" className="form-label">
-                  No Of Diamonds
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="NoOfDiamonds"
-                  value={data.NoOfDiamonds}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="price" className="form-label">
-                  Price
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="price"
-                  value={data.price}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="stock" className="form-label">
-                  Stock
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="stock"
-                  value={data.stock}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="settingType" className="form-label">
-                  Setting Type
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="settingType"
-                  value={data.settingType}
-                  onChange={(e) => handleChange(e)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="otherInfo" className="form-label">
-                  Other Info
-                </label>
-                <textarea
-                  cols="20"
-                  rows="2"
-                  type="text"
-                  className="form-control"
-                  id="otherInfo"
-                  value={data.otherInfo}
-                  maxLength="100"
-                  onChange={(e) => handleChange(e)}
-                ></textarea>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="productCollection" className="form-label">
-                  productCollection
-                </label>
-                <CFormSelect
-                  id="productCollection"
-                  value={data.productCollection}
-                  onChange={(e) => handleChange(e)}
-                  options={productCollectionOptions}
-                ></CFormSelect>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="category" className="form-label">
-                  Category
-                </label>
-                <CFormSelect
-                  id="category"
-                  value={data.category}
-                  onChange={(e) => handleChange(e)}
-                  options={categoryOptions}
-                ></CFormSelect>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="setAsFeatured" className="form-label">
-                  Set as Featured
-                </label>
-                <CFormSwitch
-                  id="setAsFeatured"
-                  checked={data.setAsFeatured}
-                  onChange={handleSwitchChange}
-                ></CFormSwitch>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* <div className="col-lg-6 col-md-6  col-sm-12 my-1">
-                    <div className="card h-100">
-                        <div className="card-body px-5">
-
-
-                            <div className="mb-3 me-3">
-                                <label htmlFor="title" className="form-label">
-                                    Price (optional)
-                                </label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="price"
-                                    value={Math.abs(data.price)}
-                                    onChange={(e) => handleChange(e)}
-
-                                />
-                            </div>
-
-
-
-
-
-
-
-
-                            {allTax.length > 0 && <div className=" mb-3">
-                                <label htmlFor="title" className="form-label">
-                                    Tax*
-                                </label>  <select className="   form-control" name="" id=""
-                                    onChange={(e) => TaxRatechange(e)}
-                                >
-                                    <option value="" disabled>-----</option>
-
-                                    {allTax.map((t, i) =>
-                                        <option key={i} value={`tax:${t.tax},name:${t.name}  ,taxId:${t._id}`}>{t.tax}% {t.name}</option>
-                                    )}
-                                </select>
-                            </div>
-                            }
-                        </div>
-                    </div> */}
-        {/* </div> */}
-      </div>
-    </div>
+                )}
+                {viewState === 2 && (
+                  <ProductVarients
+                    productId={productId}
+                    data={{ varients, setVarients }}
+                    taxes={taxes}
+                    sizes={sizes}
+                    loading={{ loading, setLoading }}
+                  />
+                )}
+                {viewState === 3 && (
+                  <ProductsImages
+                    productId={productId}
+                    data={{ images, setImages }}
+                    loading={{ loading, setLoading }}
+                  />
+                )}
+                {/* {viewState === 4 && (
+                  <ProductFabric
+                    productId={productId}
+                    data={{ fabrics, setFabrics }}
+                    allFabrics={allFabrics}
+                    loading={{ loading, setLoading }}
+                  />
+                )}
+                {viewState === 5 && (
+                  <ReleventProduct
+                    data={{ data, setData }}
+                    ProductId={productId}
+                    AllreleventSelectedPro={{
+                      allreleventSelectedProduct,
+                      setallReleventSelectedProduct,
+                    }}
+                    ReleventProduct={relevantProduct}
+                    loading={{ loading, setLoading }}
+                  />
+                )} */}
+                {/* {viewState === 5 && (
+                  <ProductFabric
+                    data={{ data, setData }}
+                    ProductId={productId}
+                    AllreleventSelectedPro={{
+                      allreleventSelectedProduct,
+                      setallReleventSelectedProduct,
+                    }}
+                    ReleventProduct={relevantProduct}
+                    loading={{ loading, setLoading }}
+                  />
+                )} */}
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+        <CCol md={3} className="mt-1">
+          <CCardGroup>
+            <CCard>
+              <CCardBody>
+                <div className="d-grid gap-2">
+                  <button
+                    className={
+                      viewState === 1
+                        ? "btn btn-light"
+                        : "btn btn-info text-white"
+                    }
+                    type="button"
+                    onClick={() => handleView(1)}
+                  >
+                    Product Details
+                  </button>
+                  {/* <button
+                    className={
+                      viewState === 2
+                        ? "btn btn-light"
+                        : "btn btn-info text-white"
+                    }
+                    type="button"
+                    onClick={() => handleView(2)}
+                  >
+                    Variants
+                  </button> */}
+                  <button
+                    className={
+                      viewState === 3
+                        ? "btn btn-light"
+                        : "btn btn-info text-white"
+                    }
+                    type="button"
+                    onClick={() => handleView(3)}
+                  >
+                    Images
+                  </button>
+                  {/* <button
+                    className={
+                      viewState === 4
+                        ? "btn btn-light"
+                        : "btn btn-info text-white"
+                    }
+                    type="button"
+                    onClick={() => handleView(4)}
+                  >
+                    Fabric
+                  </button> */}
+                  {/* <button
+                    className={
+                      viewState === 5
+                        ? "btn btn-light"
+                        : "btn btn-info text-white"
+                    }
+                    type="button"
+                    onClick={() => handleView(5)}
+                  >
+                    + Relevent Product
+                  </button> */}
+                </div>
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+      </CRow>
+    </CContainer>
   );
 };
 

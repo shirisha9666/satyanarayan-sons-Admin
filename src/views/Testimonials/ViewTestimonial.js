@@ -4,11 +4,10 @@
 
 import axios from "axios";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import swal from 'sweetalert'
+import swal from 'sweetalert';
 
 import { Link, useParams } from "react-router-dom";
-import { isAutheticated } from "../../auth";
-
+import { isAutheticated } from "src/auth";
 
 function ViewTestimonial() {
     const [testimonial, setTestimonial] = useState([])
@@ -27,7 +26,7 @@ function ViewTestimonial() {
         setTestimonial(res.data.testimonial)
 
 
-    }, [token]);
+    }, []);
 
     useEffect(() => {
         getTestimonial();

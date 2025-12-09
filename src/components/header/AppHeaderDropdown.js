@@ -32,11 +32,36 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 
-
+import { getUser as AuthUserId } from "src/loginUserdetails";
 const AppHeaderDropdown = () => {
+
+
+
+  // Custom CSS styles for the avatar
+  const avatarStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#007bff', // Background color
+    color: '#fff',              // Text color (white)
+    fontSize: '1.5rem',         // Font size for initial
+    fontWeight: 'bold',         // Bold text
+    borderRadius: '50%',        // Circular shape
+    width: '40px',              // Custom size (width)
+    height: '40px',             // Custom size (height)
+  };
+
+
+
+
+
   const [userData, setUserData] = useState()
+    const user = AuthUserId();
+    const userId = user?.id;
+    console.log("userId log out",userId)
   let history = useNavigate();
   const signout = async () => {
+
     localStorage.removeItem('authToken')
     swal("success!", "Logged Out", "success");
     history("/");
@@ -54,6 +79,7 @@ const AppHeaderDropdown = () => {
       })
 
       if (response.data.success === true) {
+        // console.log(response.data.user)
         setUserData(response.data.user)
 
       }
@@ -69,64 +95,37 @@ const AppHeaderDropdown = () => {
     getUser()
   }, [])
 
+  const getInitial = (name) => {
+    if (!name) return '';
+    return name.charAt(0).toUpperCase();
+  };
+
+
+
+
+
+
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
-        {/* {userData && userData ? <CAvatar src={userData.avatar.url} size="md" /> : */}
-        <CAvatar src={userImage} size="md" />
+        {/* {userData && userData?.avatar ? <CAvatar src={userData?.avatar?.url} size="md" /> : userData?.name ? <p>{userData?.name}</p> :
+          <CAvatar src={userImage} size="md" />} */}
+
+        {userData && userData?.avatar ? (
+          <CAvatar src={userData?.avatar?.url} size="md" />
+        ) : userData && userData?.name ? (
+          <CAvatar size="md" style={avatarStyle}>
+            {getInitial(userData?.name)}
+          </CAvatar>
+        ) : (
+          <CAvatar src={userImage} size="md" />
+        )}
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
         <CDropdownItem href="#">
-          {/* <CIcon icon={cilBell} className="me-2" />
-          Updates
-          <CBadge color="info" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilEnvelopeOpen} className="me-2" />
-          Messages
-          <CBadge color="success" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilTask} className="me-2" />
-          Tasks
-          <CBadge color="danger" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilCommentSquare} className="me-2" />
-          Comments
-          <CBadge color="warning" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownHeader className="bg-light fw-semibold py-2">Settings</CDropdownHeader>
-        <CDropdownItem href="#">
-          <CIcon icon={cilUser} className="me-2" />
-          Profile
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilSettings} className="me-2" />
-          Settings
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilCreditCard} className="me-2" />
-          Payments
-          <CBadge color="secondary" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilFile} className="me-2" />
-          Projects
-          <CBadge color="primary" className="ms-2">
-            42
-          </CBadge> */}
+       
         </CDropdownItem>
         {/* <CDropdownDivider /> */}
         <Link to='/profile/edit'>
@@ -143,7 +142,7 @@ const AppHeaderDropdown = () => {
         </Link>
         <CDropdownItem href="#">
           <CIcon icon={cilLockLocked} className="me-2" />
-          <span onClick={signout} >Log Out</span>
+          <span onClick={signout}>Log Out</span>
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

@@ -18,9 +18,8 @@ import {
 } from '@coreui/react'
 import { useState } from 'react'
 import axios from 'axios';
-
+import { isAutheticated } from 'src/auth';
 import { useNavigate } from 'react-router-dom';
-import { isAutheticated } from '../../auth';
 
 const Profile = () => {
     // const user = JSON.parse(localStorage.getItem('auth')).user

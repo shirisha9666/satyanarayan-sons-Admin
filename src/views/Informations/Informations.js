@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import swal from 'sweetalert'
-import Button from '@mui/material/Button'
+import Button from '@material-ui/core/Button'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { isAutheticated } from '../../auth'
-
+import { isAutheticated } from 'src/auth'
 
 const Informations = () => {
     const token = isAutheticated()
