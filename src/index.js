@@ -22,6 +22,7 @@ import { CustomerProvider } from "./views/CustomerSupport/CustomerContext";
 import { PlanProvider } from "./views/plans/PlanContext";
 import { AdsProvider } from "./views/Advertisement/AdContext";
 import { BillingProvider } from "./views/billing/billingContext";
+import { BannerProvider } from "./views/campaigningBanner/bannerContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -50,25 +51,25 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
-    <BillingProvider>
-
-    <PlanProvider>
-      <AdsProvider>
-    <CustomerProvider>
-      <TrendingPrivoder>
-        <AdminProvider>
-          <SeriesProvider>
-            {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
-            <App />
-            <Toaster />
-          </SeriesProvider>
-        </AdminProvider>
-      </TrendingPrivoder>
-    </CustomerProvider>
-       </AdsProvider>
-    </PlanProvider>
-    </BillingProvider>
- 
+    <BannerProvider>
+      <BillingProvider>
+        <PlanProvider>
+          <AdsProvider>
+            <CustomerProvider>
+              <TrendingPrivoder>
+                <AdminProvider>
+                  <SeriesProvider>
+                    {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
+                    <App />
+                    <Toaster />
+                  </SeriesProvider>
+                </AdminProvider>
+              </TrendingPrivoder>
+            </CustomerProvider>
+          </AdsProvider>
+        </PlanProvider>
+      </BillingProvider>
+    </BannerProvider>
   </Provider>
 );
 
