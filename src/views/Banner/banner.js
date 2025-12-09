@@ -48,13 +48,18 @@ const Banners = () => {
   const [error, setError] = useState("");
   const [bannerId, setBannerId] = useState("");
   const [banner, setBanner] = useState([]);
-  const [itemPerPage, setItemPerPage] = useState(10);
+  const [oneBaner, setOneBanner] = useState([]);
+  const [itemPerPage, setItemPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
   const [olderBannerName, setOlderBaannerName] = useState("");
   const [olderImage, setOlderImage] = useState("");
+  const [bannerDetails, setBannerDetails] = useState({
+    name: "",
+    subtitle: "",
+    content: "",
+  });
   const { genres } = useSeries();
-
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -67,33 +72,52 @@ const Banners = () => {
     setOlderImage("");
     setBannerImage("");
   };
+  const tableHeadering = [
+    "createdAt",
+    "Name",
+    "SubTitle",
+    "Content",
+    "Image",
+    "Actions",
+  ];
 
-  const getBanner = async () => {
+  const getHomebanners = async (page = 1, itemPerPage) => {
     try {
-      const response = await axios.get("/api/banner/getBanners", {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+      setLoading(true);
+      const response = await axios.get("/api/homeBanner/getAll/", {
+        params: {
+          page,
+          limit: itemPerPage,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-
-      if (response.status === 200) {
-        setBanner(response?.data?.banners);
-        setLoading(false);
-      }
+      setBanner(response?.data);
     } catch (error) {
-      swal({
-        title: error,
-        text: " please login to access the resource ",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
+      const errormssage = error.response && error.response.data.message;
+      console.log("errormssage", errormssage);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getOneHomebanner = async (bannerId) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/api/homeBanner/getOne/${bannerId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      setOneBanner(response?.data);
+    } catch (error) {
+      const errormssage = error.response && error.response.data.message;
+      console.log("errormssage", errormssage);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getBanner();
-  }, []);
   // }, [token, banner]);
 
   const handleEditClick = (_id, bannerName, bannerImage) => {
@@ -106,14 +130,8 @@ const Banners = () => {
     setEdit(true);
     // setUpdating(false);
   };
-  const bannerNamesArray = [];
 
   const handleUpdate = () => {
-  
- 
-
-  
-    
     setUpdating(false);
     const formData = new FormData();
     formData.append("generId", genreId);
@@ -145,8 +163,7 @@ const Banners = () => {
           icon: "success",
           button: "OK",
         });
-        getBanner();
-        // getCategories(); // Refresh the category list after updating
+        getHomebanners(page, itemPerPage);
       })
       .catch((err) => {
         swal({
@@ -171,7 +188,7 @@ const Banners = () => {
     }).then((value) => {
       if (value === true) {
         axios
-          .delete(`/api/banner/delete/${_id}`, {
+          .delete(`/api/homeBanner/delete/${_id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -183,7 +200,7 @@ const Banners = () => {
               icon: "success",
               button: "OK",
             });
-            getBanner();
+            getHomebanners(page, itemPerPage);
             // getCategories(); // Refresh the category list after deleting
           })
           .catch((err) => {
@@ -199,19 +216,28 @@ const Banners = () => {
     });
   };
 
+  const handelChange = (e) => {
+    setBannerDetails((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   const handleSaveBanner = async () => {
     setSaveLoading(false);
     setLoading(true);
     const formData = new FormData();
-    formData.append("generId", genreId);
-    formData.append("bannerImage", bannerImage);
- 
+    formData.append("name", bannerDetails.name);
+    formData.append("subtitle", bannerDetails.subtitle);
+    formData.append("content", bannerDetails.content);
+    formData.append("banner", bannerImage);
+
+    console.log("bannerDetails", bannerDetails);
 
     axios
-      .post("/api/banner/add", formData, {
+      .post("/api/homeBanner/create/", formData, {
         headers: {
-          Authorization: `Bearer ${token}`
-         
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -244,7 +270,7 @@ const Banners = () => {
   };
 
   const getPageCount = () => {
-    return Math.max(1, Math.ceil(banner.length / itemPerPage));
+    return Math.max(1, Math.ceil(banner?.length / itemPerPage));
   };
 
   const handleFileChange = (e) => {
@@ -259,6 +285,12 @@ const Banners = () => {
   const handeldeleteImage = () => {
     setBannerImage("");
   };
+  let fetchBanner = banner?.homeBanner;
+
+  useEffect(() => {
+    getHomebanners(page, itemPerPage);
+  }, []);
+
   return (
     <div className="main-content">
       <div className="page-content">
@@ -315,21 +347,51 @@ const Banners = () => {
                         </IconButton>
                       </Box>
                       <hr />
-                      <Grid item xs={12} style={{ margin: "10px" }}>
-                        <FormControl fullWidth>
-                          <InputLabel>Genre Name</InputLabel>
-                          <Select
-                            label="Select Episode Pricing Type"
-                            value={genreId}
-                            onChange={(e) => setGenreId(e.target.value)}
-                          >
-                            {genres.map((itme, index) => (
-                              <MenuItem key={index} value={itme._id}>
-                                {itme.genreName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                      <Grid
+                        container
+                        spacing={2}
+                        style={{ marginTop: "10px", padding: "10px" }}
+                      >
+                        {/* Name */}
+                        <Grid item xs={12}>
+                          <FormControl fullWidth>
+                            <TextField
+                              value={bannerDetails.name}
+                              onChange={handelChange}
+                              label="Name"
+                              name="name"
+                              variant="outlined"
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Subtitle */}
+                        <Grid item xs={12}>
+                          <FormControl fullWidth>
+                            <TextField
+                              value={bannerDetails.subtitle}
+                              onChange={handelChange}
+                              label="Subtitle"
+                              name="subtitle"
+                              variant="outlined"
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        {/* Content */}
+                        <Grid item xs={12}>
+                          <FormControl fullWidth>
+                            <TextField
+                              value={bannerDetails.content}
+                              onChange={handelChange}
+                              label="Content"
+                              name="content"
+                              variant="outlined"
+                              multiline // ⭐ Makes textarea
+                              rows={5}
+                            />
+                          </FormControl>
+                        </Grid>
                       </Grid>
 
                       <Box
@@ -520,7 +582,11 @@ const Banners = () => {
                           Show
                           <select
                             style={{ width: "10%" }}
-                            onChange={(e) => setItemPerPage(e.target.value)}
+                            onChange={(e) => {
+                              let val = e.target.value;
+                              setItemPerPage(Number(val));
+                              getHomebanners(page, Number(val));
+                            }}
                             className="
                                 select-w
                                 custom-select custom-select-sm
@@ -528,7 +594,7 @@ const Banners = () => {
                               "
                           >
                             <option value="10">10</option>
-                            <option value="25">25</option>
+                            <option value="2">2</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
                           </select>
@@ -548,16 +614,13 @@ const Banners = () => {
                         style={{ background: "rgb(140, 213, 213)" }}
                       >
                         <tr>
-                          <th> Image</th>
-
-                          <th>Genre Name</th>
-
-                          <th>Action</th>
-                          <th>Dimension</th>
+                          {tableHeadering.map((head) => (
+                            <th> {head}</th>
+                          ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {!loading && banner.length === 0 && (
+                        {!loading && fetchBanner?.length === 0 && (
                           <tr className="text-center">
                             <td colSpan="6">
                               <h5>No Data Available</h5>
@@ -571,73 +634,68 @@ const Banners = () => {
                             </td>
                           </tr>
                         ) : (
-                          banner &&
-                          banner
-                            .slice(
-                              (`${page}` - 1) * itemPerPage,
-                              `${page}` * itemPerPage
-                            )
-                            .map((item, i) => (
-                              <tr key={i}>
-                                <td>
-                                  <img
-                                    className="me-2"
-                                    src={item?.bannerImage?.fileUrl}
-                                    width="40"
-                                    alt=""
-                                  />
-                                  <h5>{} </h5>
-                                </td>
-                                <td>
-                                  <h5>{item?.generId?.genreName} </h5>
-                                </td>
-                                <td className="text-start">
-                                  <button
-                                    style={{
-                                      color: "white",
-                                      marginRight: "1rem",
-                                    }}
-                                    type="button"
-                                    className="
-                                      btn btn-primary btn-sm
+                          fetchBanner &&
+                          fetchBanner.map((item, i) => (
+                            <tr key={i}>
+                              <td>Dec 08 2025</td>
+                              <td>{item?.name}</td>
+
+                              <td>{item?.subtitle}</td>
+                              <td>{item?.content}</td>
+
+                              <td>
+                                <img
+                                  className="me-2"
+                                  src={item?.banner?.url}
+                                  width="100"
+                                  alt=""
+                                />
+                              </td>
+
+                              <td style={{ display: "flex", gap: "10px" }}>
+                                {/* <button 
+                                  style={{
+                                    color: "white",
+                                 
+                                  }}
+                                  type="button"
+                                  className="
+                                      btn btn-primary
                                     waves-effect waves-light
                                     btn-table
-                                    mx-1
-                                    mt-1
+                                
                                   "
-                                    onClick={() =>
-                                      handleEditClick(
-                                        item._id,
-                                        item.bannerName,
-                                        item.bannerImage
-                                        // item?.bannerCategory
-                                      )
-                                    }
-                                  >
-                                    Edit
-                                  </button>
-                                  <button
-                                    style={{
-                                      color: "white",
-                                      marginRight: "1rem",
-                                      background: "red",
-                                    }}
-                                    type="button"
-                                    className="
+                                  onClick={() =>
+                                    handleEditClick(
+                                      item._id,
+                                      item.bannerName,
+                                      item.bannerImage
+                                   
+                                    )
+                                  }
+                                >
+                                  Edit
+                                </button> */}
+                                <button
+                                  style={{
+                                    color: "white",
+
+                                    background: "red",
+                                  }}
+                                  type="button"
+                                  className="
                                       btn  btn-sm
                                     waves-effect waves-light
                                     btn-table
-                                    mx-1
-                                    mt-1
+                                
                                   "
-                                    onClick={() => handleDelete(item._id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </td>
-                                <td>1600 x 900 pixels</td>
-                              </tr>
-                            ))
+                                  onClick={() => handleDelete(item._id)}
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                          ))
                         )}
                       </tbody>
                     </table>
@@ -645,12 +703,13 @@ const Banners = () => {
 
                   <div style={{ display: "flex", justifyContent: "right" }}>
                     <Pagination
-                      style={{ margin: "2rem" }}
-                      variant="outlined"
-                      size="large"
-                      count={getPageCount()}
+                      count={banner?.totalPages}
+                      page={page}
+                      onChange={(e, value) => {
+                        setPage(value);
+                        getHomebanners(value, itemPerPage);
+                      }}
                       color="primary"
-                      onChange={(event, value) => setPage(value)}
                     />
                   </div>
                 </div>

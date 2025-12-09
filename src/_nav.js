@@ -77,6 +77,13 @@ const _nav = [
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
     group: "",
   },
+     {
+        component: CNavItem,
+        name: "Home Page Banner",
+        icon: <CIcon icon={cilImage} customClassName="nav-icon" />,
+        to: "/banner",
+        group: "Settings",
+      },
   // {
   //   component: CNavItem,
   //   name: "Reports",
@@ -338,13 +345,7 @@ const _nav = [
     group: "",
 
     items: [
-      {
-        component: CNavItem,
-        name: "Banner",
-        icon: <CIcon icon={cilImage} customClassName="nav-icon" />,
-        to: "/banner",
-        group: "Settings",
-      },
+   
 
       {
         component: CNavItem,
