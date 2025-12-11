@@ -36,10 +36,10 @@ export const BannerProvider = ({ children }) => {
         }
     };
 
-    const handleDelete = (_id) => {
+    const handleDelete = (id) => {
         try {
             setLoading(true);
-            let resp = axios.delete(`/api/homeBanner/delete/${_id}`, {
+            let resp = axios.delete(`/api/homeBanner/delete/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -57,7 +57,7 @@ export const BannerProvider = ({ children }) => {
       console.log("fetchBanner",banner)
 
 
-    return <BannerContext.Provider value={{banner,getHomebanners,setPage,setItemPerPage,setBannerType,bannertype,itemPerPage,loading,page}}>{children}</BannerContext.Provider>;
+    return <BannerContext.Provider value={{banner,getHomebanners,setPage,setItemPerPage,setBannerType,bannertype,itemPerPage,loading,page,handleDelete}}>{children}</BannerContext.Provider>;
 };
 
 export const useBanner = () => useContext(BannerContext);

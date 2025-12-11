@@ -14,7 +14,7 @@ import { useBanner } from "./bannerContext";
 const CampaigningBanner = () => {
 
   const navigate = useNavigate();
-  const { banner, getHomebanners, setPage, setItemPerPage, setBannerType, bannertype, itemPerPage,loading,page } = useBanner()
+  const { banner, getHomebanners, setPage, setItemPerPage,handleDelete, setBannerType, bannertype, itemPerPage,loading,page } = useBanner()
   const tableHeadering = [
     "createdAt",
     "Name",
@@ -199,7 +199,7 @@ const CampaigningBanner = () => {
                                            btn-table
                                        
                                          "
-                          //  onClick={() => handleDelete(item._id)}
+                           onClick={() => handleDelete(item._id)}
                           >
                             Delete
                           </button>

@@ -16,16 +16,19 @@ import {
 import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
+import { isAutheticated } from "src/auth";
 
 const CampaigningBannerAdd = () => {
+  const token=isAutheticated()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
+  const navigate=useNavigate()
   const [bannerDetails, setBannerDetails] = useState({
     name: "",
     subtitle: "",
     content: "",
     banneryType: "",
-    banner: "",
+    banner: null,
     coverImagePreview: "",
   });
   const handleChange = (e) => {
@@ -36,6 +39,7 @@ const CampaigningBannerAdd = () => {
     }));
   };
 
+  console.log("bannerDetails", bannerDetails);
   //   const handleImageChange = (e) => {
   //     const file = e.target.files[0];
   //     if (file) {
@@ -111,12 +115,12 @@ const CampaigningBannerAdd = () => {
       const heightValid =
         Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
 
-      if (!widthValid || !heightValid) {
-        toast.error(
-          `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
-        );
-        return;
-      }
+      // if (!widthValid || !heightValid) {
+      //   toast.error(
+      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
+      //   );
+      //   return;
+      // }
 
       // ----------------------------
       // 3️⃣ VALID IMAGE → SET PREVIEW
@@ -142,24 +146,27 @@ const CampaigningBannerAdd = () => {
 
     try {
       setLoading(true);
-      const form = new FormData();
+      let formData = new FormData();
       formData.append("name", bannerDetails.name);
       formData.append("subtitle", bannerDetails.subtitle);
       formData.append("content", bannerDetails.content);
       formData.append("banner", bannerDetails.banner);
-      formData.append("banneryType", bannerDetails.banneryType);
+      formData.append("bannerType", bannerDetails.banneryType);
+      console.log("formData", formData);
 
-      const res = await axios.post("/api/series", form, {
+      const res = await axios.post("/api/homeBanner/create/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
+
       const result = res.data;
 
-      //   await getseries();
+     
       navigate("/Campaigning/banner");
     } catch (error) {
+      console.log("error add banner",error)
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
