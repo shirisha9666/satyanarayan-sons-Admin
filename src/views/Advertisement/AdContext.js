@@ -45,7 +45,7 @@ export const AdsProvider = ({ children }) => {
       setAllPlans(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+
     } finally {
       setAllAdsLoading(false);
     }
@@ -61,7 +61,7 @@ export const AdsProvider = ({ children }) => {
       setGetAdd(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+    
     } finally {
       setAddIdLoading(null);
     }
@@ -79,7 +79,7 @@ export const AdsProvider = ({ children }) => {
       toast.success(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+    
     } finally {
       setPlanDeletLoading(null);
     }

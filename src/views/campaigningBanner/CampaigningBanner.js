@@ -12,9 +12,20 @@ import { useNavigate } from "react-router-dom";
 import { useBanner } from "./bannerContext";
 
 const CampaigningBanner = () => {
-
   const navigate = useNavigate();
-  const { banner, getHomebanners, setPage, setItemPerPage,handleDelete, setBannerType, bannertype, itemPerPage,loading,page } = useBanner()
+  const {
+    banner,
+    getHomebanners,
+    setPage,
+    setItemPerPage,
+    handleDelete,
+    setBannerType,
+    bannertype,
+    bannerId,
+    itemPerPage,
+    loading,
+    page,
+  } = useBanner();
   const tableHeadering = [
     "createdAt",
     "Name",
@@ -25,7 +36,7 @@ const CampaigningBanner = () => {
     "Actions",
   ];
   let fetchBanner = banner?.result;
-  console.log("fetchBanner", banner)
+  console.log("fetchBanner", banner);
 
   return (
     <div className="row">
@@ -78,7 +89,7 @@ const CampaigningBanner = () => {
               <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
                 <Button
                   onClick={() => {
-                    setBannerType("Home Banner")
+                    setBannerType("Home Banner");
 
                     getHomebanners(page, itemPerPage, "Home Banner");
                   }}
@@ -98,7 +109,7 @@ const CampaigningBanner = () => {
 
                 <Button
                   onClick={() => {
-                    setBannerType("Campaign banner")
+                    setBannerType("Campaign banner");
                     getHomebanners(page, itemPerPage, "Campaign banner");
                   }}
                   variant="contained"
@@ -152,7 +163,7 @@ const CampaigningBanner = () => {
                       <tr key={i}>
                         <td>{item?.createdAt}</td>
                         <td>{item?.name}</td>
-                          <td>{item?.bannerType || null}</td>
+                        <td>{item?.bannerType || null}</td>
 
                         <td>{item?.subtitle}</td>
                         <td>{item?.content}</td>
@@ -199,9 +210,9 @@ const CampaigningBanner = () => {
                                            btn-table
                                        
                                          "
-                           onClick={() => handleDelete(item._id)}
+                            onClick={() => handleDelete(item._id)}
                           >
-                            Delete
+                            {bannerId === item._id ? "Deleting..." : "Delete"}
                           </button>
                         </td>
                       </tr>

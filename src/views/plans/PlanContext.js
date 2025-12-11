@@ -57,7 +57,7 @@ export const PlanProvider = ({ children }) => {
       setAllPlans(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+  
     } finally {
       setAllPlansLoading(false);
     }
@@ -73,7 +73,7 @@ export const PlanProvider = ({ children }) => {
       setGetPlan(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+
     } finally {
       setPlanIdLoading(null);
     }
@@ -91,7 +91,7 @@ export const PlanProvider = ({ children }) => {
       toast.success(result);
     } catch (error) {
       const msg = error.response.data.message;
-      toast.error(msg || "Internal server error");
+   
     } finally {
       setPlanDeletLoading(null);
     }

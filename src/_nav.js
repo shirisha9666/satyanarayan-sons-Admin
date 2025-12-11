@@ -88,7 +88,7 @@ const _nav = [
   
        {
         component: CNavItem,
-        name: "Banner",
+        name: "Banners",
         icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
         to: "/Campaigning/banner",
         group: "Settings",

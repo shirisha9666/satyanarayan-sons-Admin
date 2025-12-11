@@ -17,12 +17,14 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
+import { useBanner } from "./bannerContext";
 
 const CampaigningBannerAdd = () => {
   const token=isAutheticated()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate=useNavigate()
+  const {getHomebanners,page, itemPerPage, bannertype}=useBanner()
   const [bannerDetails, setBannerDetails] = useState({
     name: "",
     subtitle: "",
@@ -163,7 +165,7 @@ const CampaigningBannerAdd = () => {
 
       const result = res.data;
 
-     
+   await getHomebanners(page, itemPerPage, bannertype);
       navigate("/Campaigning/banner");
     } catch (error) {
       console.log("error add banner",error)
