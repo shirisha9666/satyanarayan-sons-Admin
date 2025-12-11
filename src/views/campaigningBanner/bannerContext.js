@@ -61,7 +61,7 @@ export const BannerProvider = ({ children }) => {
   useEffect(() => {
     getHomebanners(page, itemPerPage, bannertype);
   }, []);
-  console.log("fetchBanner", banner);
+
 
   return (
     <BannerContext.Provider

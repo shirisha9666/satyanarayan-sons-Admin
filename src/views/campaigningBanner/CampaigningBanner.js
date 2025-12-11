@@ -96,7 +96,7 @@ const CampaigningBanner = () => {
                   }}
                   variant="contained"
                   style={{
-                    background: "#D4AF37",
+                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
                     color: "#fff",
                     fontWeight: "bold",
                     padding: "8px 20px",
@@ -115,7 +115,7 @@ const CampaigningBanner = () => {
                   }}
                   variant="contained"
                   style={{
-                    background: "#1B1A1A",
+                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
                     color: "#fff",
                     fontWeight: "bold",
                     padding: "8px 20px",
