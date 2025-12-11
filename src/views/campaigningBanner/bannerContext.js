@@ -13,7 +13,7 @@ export const BannerProvider = ({ children }) => {
   const [itemPerPage, setItemPerPage] = useState(5);
   const [banner, setBanner] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
-  const [bannerId,setBannerId]=useState(null)
+  const [bannerId, setBannerId] = useState(null);
 
   const getHomebanners = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -38,17 +38,19 @@ export const BannerProvider = ({ children }) => {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
       setBannerId(id);
-      let resp = axios.delete(`/api/homeBanner/delete/${id}`, {
+      let resp = await axios.delete(`/api/homeBanner/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       let message = resp?.data?.message;
-      toast.success(message || "Banner Deleted Successfully");
-      getHomebanners(page, itemPerPage, bannertype);
+      console.log("message", resp?.data);
+
+      await getHomebanners(page, itemPerPage, bannertype);
+      toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);

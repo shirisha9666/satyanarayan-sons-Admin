@@ -26,6 +26,7 @@ const CampaigningBanner = () => {
     loading,
     page,
   } = useBanner();
+
   const tableHeadering = [
     "createdAt",
     "Name",
