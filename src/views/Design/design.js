@@ -66,13 +66,7 @@ const Design = () => {
         setCategoies(response?.data?.categories);
       }
     } catch (error) {
-      swal({
-        title: error,
-        text: " please login to access the resource ",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+    console.log("error",error)
     }
   };
   useEffect(() => {
@@ -118,13 +112,7 @@ const Design = () => {
         setLoading(false);
       }
     } catch (error) {
-      swal({
-        title: error,
-        text: " please login to access the resource ",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+     console.log("error",error)
     }
   };
 

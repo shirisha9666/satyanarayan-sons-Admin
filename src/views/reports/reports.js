@@ -397,13 +397,8 @@ const StatsDashboard = () => {
         setCurrency(response?.data?.currency);
       }
     } catch (error) {
-      swal({
-        title: "",
-        text: " please login to access the resource ",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+   
+      console.log("error",error)
     }
   };
   useEffect(() => {

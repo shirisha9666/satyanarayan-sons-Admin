@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBanner } from "./bannerContext";
 
-const CampaigningBanner = () => {
+const Banners = () => {
   const navigate = useNavigate();
   const {
     banner,
@@ -28,7 +28,7 @@ const CampaigningBanner = () => {
   } = useBanner();
 
   const tableHeadering = [
-    "createdAt",
+    "CreatedAt",
     "Name",
     "Type",
     "SubTitle",
@@ -80,7 +80,7 @@ const CampaigningBanner = () => {
                       textTransform: "capitalize",
                     }}
                     onClick={() => {
-                      navigate("/Campaigning/banner/add");
+                      navigate("/banner/add");
                     }}
                   >
                     Add New Banner
@@ -192,7 +192,7 @@ const CampaigningBanner = () => {
                                          "
                             onClick={() => {
                               navigate(
-                                `/Campaigning/banner/update/${item._id}`
+                                `/banner/update/${item._id}`
                               );
                             }}
                           >
@@ -240,4 +240,4 @@ const CampaigningBanner = () => {
     </div>
   );
 };
-export default CampaigningBanner;
+export default Banners;

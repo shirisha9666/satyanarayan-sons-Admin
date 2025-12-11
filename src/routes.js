@@ -105,7 +105,7 @@ import EditAboutUs from "./views/Content/editAboutUs";
 // import AddUserAddress from "./views/customerDetails/addUserAddress";
 import viewDetails from "./views/customerDetails/viewDetails";
 import Design from "./views/Design/design";
-import Banners from "./views/Banner/banner";
+
 import RegisterImage from "./views/Images/RegisterImage";
 import LoginImage from "./views/Images/LoginImage";
 import ShopImage from "./views/Images/ShopImage";
@@ -202,9 +202,10 @@ import ViewBiling from "./views/billing/BilingView";
 import BilingInvoice from "./views/billing/BilingInvoice";
 import UserInvoiceTable from "./views/billing/UserInvoiceTable";
 import Invoice from "./views/billing/Invoice";
-import CampaigningBanner from "./views/campaigningBanner/CampaigningBanner";
-import CampaigningBannerUpdate from "./views/campaigningBanner/CampaigningBannerUpdate";
-import CampaigningBannerAdd from "./views/campaigningBanner/CampaigningBannerAdd";
+
+import BannerAdd from "./views/Banners/BannerAdd";
+import BannerUpdate from "./views/Banners/BannerUpdate";
+import Banners from "./views/Banners/Banner";
 
 
 
@@ -702,29 +703,24 @@ const routes = [
   //Complaints
 
   //-------------------------------website related routes----------------------------------
-  {
+
+  // CampaigningBanner
+    {
     path: "/banner",
     name: "Banners",
     element: Banners,
     navName: "Settings",
   },
-  // CampaigningBanner
-    {
-    path: "/Campaigning/banner",
+  {
+    path: "/banner/add",
     name: "Banners",
-    element: CampaigningBanner,
+    element: BannerAdd,
     navName: "Settings",
   },
   {
-    path: "/Campaigning/banner/add",
+    path: "/banner/update/:id",
     name: "Banners",
-    element: CampaigningBannerAdd,
-    navName: "Settings",
-  },
-  {
-    path: "/Campaigning/banner/update/:id",
-    name: "Banners",
-    element: CampaigningBannerUpdate,
+    element: BannerUpdate,
     navName: "Settings",
   },
   {

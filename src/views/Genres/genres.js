@@ -134,41 +134,7 @@ const Genres = () => {
     // setSubjectId("");
   };
 
-  // const getGenres = async () => {
-  //   const token = isAutheticated();
-  //   if (!token) {
-  //     swal({
-  //       title: "Error",
-  //       text: "Please login to access the resource",
-  //       icon: "error",
-  //       button: "Retry",
-  //       dangerMode: true,
-  //     });
-  //     return;
-  //   }
-  //   try {
-  //     const response = await axios.get("/api/genre/getAllGenres", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // Include token in headers
-  //       },
-  //     });
-  //     if (response.status === 200) {
-  //       setGenres(response?.data?.genres);
-  //       setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error.response?.data?.message || error.message);
-  //     swal({
-  //       title: "Error",
-  //       text:
-  //         error.response?.data?.message ||
-  //         "Please login to access the resource",
-  //       icon: "error",
-  //       button: "Retry",
-  //       dangerMode: true,
-  //     });
-  //   }
-  // };
+  
 
   useEffect(() => {
     getGenres();

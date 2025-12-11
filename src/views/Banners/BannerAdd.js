@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
 
-const CampaigningBannerAdd = () => {
+const BannerAdd = () => {
   const token=isAutheticated()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
@@ -166,7 +166,7 @@ const CampaigningBannerAdd = () => {
       const result = res.data;
 
    await getHomebanners(page, itemPerPage, bannertype);
-      navigate("/Campaigning/banner");
+      navigate("/banner");
     } catch (error) {
       console.log("error add banner",error)
       const message = error?.response?.data?.message;
@@ -312,4 +312,4 @@ const CampaigningBannerAdd = () => {
     </div>
   );
 };
-export default CampaigningBannerAdd;
+export default BannerAdd;

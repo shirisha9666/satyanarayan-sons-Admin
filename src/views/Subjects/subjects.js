@@ -80,13 +80,7 @@ const Subjects = () => {
         setLoading(false);
       }
     } catch (error) {
-      swal({
-        title: error,
-        text: "please login to access the resource",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+     console.log("error",error)
     }
   };
   console.log("subject", subjects);

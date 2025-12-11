@@ -22,7 +22,7 @@ import { CustomerProvider } from "./views/CustomerSupport/CustomerContext";
 import { PlanProvider } from "./views/plans/PlanContext";
 import { AdsProvider } from "./views/Advertisement/AdContext";
 import { BillingProvider } from "./views/billing/billingContext";
-import { BannerProvider } from "./views/campaigningBanner/bannerContext";
+import { BannerProvider } from "./views/Banners/bannerContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 

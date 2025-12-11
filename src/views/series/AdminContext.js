@@ -93,15 +93,7 @@ export const AdminProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error:", error.response?.data?.message || error.message);
-      swal({
-        title: "Error",
-        text:
-          error.response?.data?.message ||
-          "Please login to access the resource",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+    
     }
   };
  const getSubjects = async () => {
@@ -138,15 +130,7 @@ export const AdminProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error:", error.response?.data?.message || error.message);
-      swal({
-        title: "Error",
-        text:
-          error.response?.data?.message ||
-          "Please login to access the resource",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+      
     }
   };
 

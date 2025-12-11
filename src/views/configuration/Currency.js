@@ -73,13 +73,7 @@ const Currency = () => {
         setLoading(false);
       }
     } catch (error) {
-      swal({
-        title: "",
-        text: " please login to access the resource ",
-        icon: "error",
-        button: "Retry",
-        dangerMode: true,
-      });
+     console.log("error",error)
     }
   };
 

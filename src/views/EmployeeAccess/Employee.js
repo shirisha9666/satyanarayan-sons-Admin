@@ -60,13 +60,7 @@ const Employee = () => {
         setLoading(false);
       })
       .catch((error) => {
-        swal({
-          title: error,
-          text: "please login to access the resource or refresh the page  ",
-          icon: "error",
-          button: "Retry",
-          dangerMode: true,
-        });
+        
         setLoading(false);
       });
   };
