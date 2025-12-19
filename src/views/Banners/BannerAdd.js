@@ -82,57 +82,120 @@ const BannerAdd = () => {
   //     }
   //   };
 
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   // ----------------------------
+  //   // 1️⃣ FILE SIZE VALIDATION (2MB)
+  //   // ----------------------------
+  //   const MAX_IMAGE_SIZE_MB = 2;
+  //   const fileSizeInMB = file.size / (1024 * 1024);
+
+  //   // if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
+  //   //   toast.error("Please upload an image smaller than 2MB.");
+  //   //   return;
+  //   // }
+
+  //   // ----------------------------
+  //   // 2️⃣ DIMENSION VALIDATION
+  //   // ----------------------------
+  //   const img = new Image();
+  //   img.onload = () => {
+  //     const width = img.naturalWidth;
+  //     const height = img.naturalHeight;
+
+  //     // Required Banner Size
+  //     const REQUIRED_WIDTH = 1920;
+  //     const REQUIRED_HEIGHT = 600;
+
+  //     // Allow small tolerance (±5px)
+  //     const WIDTH_TOLERANCE = 5;
+  //     const HEIGHT_TOLERANCE = 5;
+
+  //     const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
+  //     const heightValid =
+  //       Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
+
+  //     // if (!widthValid || !heightValid) {
+  //     //   toast.error(
+  //     //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
+  //     //   );
+  //     //   return;
+  //     // }
+
+  //     // ----------------------------
+  //     // 3️⃣ VALID IMAGE → SET PREVIEW
+  //     // ----------------------------
+  //     const previewURL = URL.createObjectURL(file);
+
+  //     setBannerDetails((prev) => ({
+  //       ...prev,
+  //       banner: file,
+  //       coverImagePreview: previewURL,
+  //     }));
+  //   };
+
+  //   img.onerror = () => {
+  //     toast.error("Invalid image file.");
+  //   };
+
+  //   img.src = URL.createObjectURL(file); // Must come after setting onload
+  // };
+
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    // ----------------------------
-    // 1️⃣ FILE SIZE VALIDATION (2MB)
-    // ----------------------------
-    const MAX_IMAGE_SIZE_MB = 2;
-    const fileSizeInMB = file.size / (1024 * 1024);
+  const previewURL = URL.createObjectURL(file);
 
-    if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-      toast.error("Please upload an image smaller than 2MB.");
-      return;
-    }
+  // 🔹 Detect type
+  const isVideo = file.type.startsWith("video/");
+  const isImage = file.type.startsWith("image/");
 
-    // ----------------------------
-    // 2️⃣ DIMENSION VALIDATION
-    // ----------------------------
+  // ----------------------------
+  // 🎥 VIDEO → NO IMAGE VALIDATION
+  // ----------------------------
+  if (isVideo) {
+    setBannerDetails((prev) => ({
+      ...prev,
+      banner: file,
+      coverImagePreview: previewURL,
+      coverImageType: "video",
+    }));
+    return;
+  }
+
+  // ----------------------------
+  // 🖼️ IMAGE VALIDATION
+  // ----------------------------
+  if (isImage) {
     const img = new Image();
+
     img.onload = () => {
       const width = img.naturalWidth;
       const height = img.naturalHeight;
 
-      // Required Banner Size
       const REQUIRED_WIDTH = 1920;
       const REQUIRED_HEIGHT = 600;
+      const TOLERANCE = 5;
 
-      // Allow small tolerance (±5px)
-      const WIDTH_TOLERANCE = 5;
-      const HEIGHT_TOLERANCE = 5;
+      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
+      const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
 
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
-      const heightValid =
-        Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
-
+      // Optional validation (enable if needed)
       // if (!widthValid || !heightValid) {
       //   toast.error(
-      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
+      //     "Invalid banner size! Please upload an image close to 1920x600px."
       //   );
       //   return;
       // }
-
-      // ----------------------------
-      // 3️⃣ VALID IMAGE → SET PREVIEW
-      // ----------------------------
-      const previewURL = URL.createObjectURL(file);
 
       setBannerDetails((prev) => ({
         ...prev,
         banner: file,
         coverImagePreview: previewURL,
+        coverImageType: "image",
       }));
     };
 
@@ -140,8 +203,15 @@ const BannerAdd = () => {
       toast.error("Invalid image file.");
     };
 
-    img.src = URL.createObjectURL(file); // Must come after setting onload
-  };
+    img.src = previewURL;
+    return;
+  }
+
+  // ----------------------------
+  // ❌ Unsupported file
+  // ----------------------------
+  toast.error("Unsupported file type. Upload image or video only.");
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -265,7 +335,7 @@ const BannerAdd = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
                 Cover Image
               </Typography>
@@ -292,7 +362,52 @@ const BannerAdd = () => {
                   />
                 </Box>
               )}
-            </Grid>
+            </Grid> */}
+            <Grid item xs={12}>
+  <Typography variant="subtitle1" mb={1}>
+    Cover Media (Image / Video)
+  </Typography>
+
+  <Button variant="contained" component="label">
+    Upload Media
+    <input
+      type="file"
+      accept="image/*,video/*"
+      hidden
+      onChange={handleImageChange}
+    />
+  </Button>
+
+  {bannerDetails.coverImagePreview && (
+    <Box mt={2}>
+      {bannerDetails.coverImageType === "video" ? (
+        <video
+          src={bannerDetails.coverImagePreview}
+          controls
+          muted
+          style={{
+            width: "100%",
+            maxHeight: 300,
+            objectFit: "cover",
+            borderRadius: 8,
+          }}
+        />
+      ) : (
+        <img
+          src={bannerDetails.coverImagePreview}
+          alt="Cover Preview"
+          style={{
+            width: "100%",
+            maxHeight: 300,
+            objectFit: "cover",
+            borderRadius: 8,
+          }}
+        />
+      )}
+    </Box>
+  )}
+</Grid>
+
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>
