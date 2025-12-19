@@ -169,14 +169,33 @@ const Banners = () => {
                         <td>{item?.subtitle}</td>
                         <td>{item?.content}</td>
 
-                        <td>
-                          <img
-                            className="me-2"
-                            src={item?.banner?.url}
-                            width="100"
-                            alt=""
-                          />
-                        </td>
+                     <td>
+  {item?.banner?.url ? (
+    item.banner.url.match(/\.(mp4|webm|ogg)$/i) ? (
+      <video
+        src={item.banner.url}
+        width="100"
+        height="60"
+        muted
+        loop
+        autoPlay
+        playsInline
+        style={{ objectFit: "cover", borderRadius: "6px" }}
+      />
+    ) : (
+      <img
+        src={item.banner.url}
+        width="100"
+        height="60"
+        alt=""
+        style={{ objectFit: "cover", borderRadius: "6px" }}
+      />
+    )
+  ) : (
+    "—"
+  )}
+</td>
+
 
                         <td style={{ display: "flex", gap: "10px" }}>
                           <button

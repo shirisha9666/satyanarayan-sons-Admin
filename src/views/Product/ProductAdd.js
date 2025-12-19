@@ -17,14 +17,17 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import {useProduct } from "./ProductContenxt";
+import { useProduct } from "./ProductContenxt";
+import { useCategory } from "../category/CategoryContext";
 
 const ProductAdd = () => {
-  const token=isAutheticated()
+  const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
-  const navigate=useNavigate()
-  const {handlegetAllProducts,page, itemPerPage, bannertype}=useProduct()
+  const navigate = useNavigate();
+  const { handlegetAllProducts, page, itemPerPage, bannertype } = useProduct();
+  const { category, handleCategorySubcategoryFilter, subcategorys } =
+    useCategory();
   const [productDetails, setProductDetails] = useState({
     productName: "",
     categoryId: "",
@@ -33,6 +36,8 @@ const ProductAdd = () => {
     productImage: null,
     coverImagePreview: "",
   });
+
+  console.log("category", category?.result);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductDetails((prev) => ({
@@ -40,9 +45,6 @@ const ProductAdd = () => {
       [name]: value,
     }));
   };
-
-
-  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -115,7 +117,6 @@ const ProductAdd = () => {
       formData.append("categoryId", productDetails.categoryId);
       formData.append("subcategoryId", productDetails.subcategoryId);
       formData.append("productImage", productDetails.productImage);
- 
 
       const res = await axios.post("/api/product/create/", formData, {
         headers: {
@@ -126,10 +127,10 @@ const ProductAdd = () => {
 
       const result = res.data;
 
-   await handlegetAllProducts(page, itemPerPage, bannertype);
-      navigate("/product");
+      await handlegetAllProducts(page, itemPerPage, bannertype);
+      navigate("/products");
     } catch (error) {
-      console.log("error add banner",error)
+      console.log("error add banner", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -146,6 +147,7 @@ const ProductAdd = () => {
       setErrorData("");
     }
   };
+  console.log("subcategorys", subcategorys);
   return (
     <div>
       <Box
@@ -184,12 +186,17 @@ const ProductAdd = () => {
                 fullWidth
                 required
               >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="Home Banner">Home Banner</MenuItem>
-                <MenuItem value="Campaign banner">Campaign banner</MenuItem>
+                {category?.result?.map((cat) => (
+                  <MenuItem
+                    value={cat._id}
+                    onClick={() => handleCategorySubcategoryFilter(cat._id)}
+                  >
+                    {cat.category}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
-               <Grid item xs={12}>
+            <Grid item xs={12}>
               <TextField
                 select
                 label="Select Subcategory Type"
@@ -199,13 +206,11 @@ const ProductAdd = () => {
                 fullWidth
                 required
               >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="Home Banner">Home Banner</MenuItem>
-                <MenuItem value="Campaign banner">Campaign banner</MenuItem>
+                {subcategorys.map((subcat) => (
+                  <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>
+                ))}
               </TextField>
             </Grid>
-
-           
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>

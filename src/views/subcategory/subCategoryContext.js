@@ -41,7 +41,7 @@ export const SubCategoryProvider = ({ children }) => {
   const handleDelete = async (id) => {
     try {
       setBannerId(id);
-      let resp = await axios.delete(`/delete/subcategory/${id}`, {
+      let resp = await axios.delete(`/api/product/category/delete/subcategory/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

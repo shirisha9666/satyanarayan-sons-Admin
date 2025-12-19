@@ -15,7 +15,7 @@ import { useCategory } from "./CategoryContext";
 const Categories = () => {
   const navigate = useNavigate();
   const {
-    banner,
+    category,
     handleAllCategorys,
     setPage,
     setItemPerPage,
@@ -30,8 +30,8 @@ const Categories = () => {
 
   const tableHeadering = ["CreatedAt", "Name", "Category", "Image", "Actions"];
 
-  let fetchBanner = banner?.result;
-  console.log("banner",banner)
+  let fetchBanner = category?.result;
+  console.log("banner",category)
 
 
   return (
@@ -152,7 +152,7 @@ const Categories = () => {
   Add Subcategory
 </button>
 
-                          <button
+                          {/* <button
                             style={{
                               color: "white",
                             }}
@@ -168,7 +168,7 @@ const Categories = () => {
                             }}
                           >
                             Edit
-                          </button>
+                          </button> */}
                           <button
                             style={{
                               color: "white",
@@ -196,7 +196,7 @@ const Categories = () => {
 
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
-                count={banner?.totalPages}
+                count={category?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);

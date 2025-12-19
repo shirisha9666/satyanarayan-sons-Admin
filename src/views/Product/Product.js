@@ -178,7 +178,7 @@ const Products = () => {
 
                         <td style={{ verticalAlign: "middle", textAlign: "center" }}>
                           <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
-                            <button
+                            {/* <button
                               style={{
                                 color: "white",
                                 width: "90px",
@@ -192,7 +192,7 @@ const Products = () => {
                               }}
                             >
                               Edit
-                            </button>
+                            </button> */}
                             <button
                               style={{
                                 color: "white",

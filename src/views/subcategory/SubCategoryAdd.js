@@ -17,7 +17,7 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import { useBanner } from "./subCategoryContext";
+import { useBanner, useSubCategory } from "./subCategoryContext";
 import { useCategory } from "../category/CategoryContext";
 
 const SubCategoryAdd = () => {
@@ -27,6 +27,7 @@ const SubCategoryAdd = () => {
   const navigate = useNavigate();
   const { name, id } = useParams();
   const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
+  const {handlegetAllSubcategorys}=useSubCategory()
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: "",
 
@@ -131,8 +132,8 @@ const SubCategoryAdd = () => {
 
       const result = res.data;
 
-      await handleAllCategorys(page, itemPerPage, bannertype);
-      navigate("/category");
+      await handlegetAllSubcategorys(page, itemPerPage, bannertype);
+      navigate("/subcategory");
     } catch (error) {
       console.log("error add banner", error);
       const message = error?.response?.data?.message;
