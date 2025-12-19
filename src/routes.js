@@ -208,6 +208,8 @@ import Banners from "./views/Banners/Banner";
 import Categories from "./views/category/Category";
 import CategoryAdd from "./views/category/CategoryAdd";
 import CategoryUpdate from "./views/category/CategoryUpdate";
+import SubCategory from "./views/subcategory/SubCategory";
+import SubCategoryAdd from "./views/subcategory/SubCategoryAdd";
 
 
 
@@ -521,7 +523,7 @@ const routes = [
     element: Categories,
     navName: "Settings",
   },
-  
+ 
     {
     path: "/category/add",
     name: "Categories",
@@ -532,6 +534,19 @@ const routes = [
     path: "/category/update/:id",
     name: "Categories",
     element: CategoryUpdate,
+    navName: "Settings",
+  },
+  // sub category
+   {
+    path: "/subcategory",
+    name: "SubCategories",
+    element: SubCategory,
+    navName: "Settings",
+  },
+    {
+    path: "/subcategory/add/:name/:id",
+    name: "SubCategories",
+    element: SubCategoryAdd,
     navName: "Settings",
   },
   {

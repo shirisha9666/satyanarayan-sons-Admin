@@ -72,6 +72,7 @@ import {
 } from "@coreui/react"
 
 import { cilList } from '@coreui/icons';
+import { cilLayers } from '@coreui/icons';
 const _nav = [
   {
     component: CNavItem,
@@ -95,6 +96,14 @@ const _nav = [
         name: "Categories",
         icon: <CIcon icon={cilList} customClassName="nav-icon" />,
         to: "/category",
+        group: "Settings",
+      },
+       
+       {
+        component: CNavItem,
+        name: "SubCategories",
+        icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+        to: "/subcategory",
         group: "Settings",
       },
  

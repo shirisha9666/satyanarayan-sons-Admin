@@ -135,6 +135,24 @@ const Categories = () => {
 
                         <td style={{ display: "flex", gap: "10px" }}>
                           <button
+  type="button"
+  className="btn btn-sm btn-table waves-effect waves-light"
+  style={{
+    backgroundColor: "#6f42c1",
+    border: "1px solid #6f42c1",
+    color: "#fff",
+    padding: "6px 14px",
+    borderRadius: "4px",
+    fontWeight: "500",
+  }}
+  onClick={() => {
+    navigate(`/subcategory/add/${item.category}/${item._id}`);
+  }}
+>
+  Add Subcategory
+</button>
+
+                          <button
                             style={{
                               color: "white",
                             }}

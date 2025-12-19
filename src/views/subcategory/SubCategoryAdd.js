@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -17,70 +17,31 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import { useBanner } from "./bannerContext";
+import { useBanner } from "./subCategoryContext";
+import { useCategory } from "../category/CategoryContext";
 
-const BannerAdd = () => {
-  const token=isAutheticated()
+const SubCategoryAdd = () => {
+  const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
-  const navigate=useNavigate()
-  const {getHomebanners,page, itemPerPage, bannertype}=useBanner()
-  const [bannerDetails, setBannerDetails] = useState({
+  const navigate = useNavigate();
+  const { name, id } = useParams();
+  const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
+  const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: "",
-    subtitle: "",
-    content: "",
-    banneryType: "",
-    banner: null,
+
+    subcategory: "",
+
+    subcategorythumbnail: null,
     coverImagePreview: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setBannerDetails((prev) => ({
+    setSubCategoryDeatills((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
-  console.log("bannerDetails", bannerDetails);
-  //   const handleImageChange = (e) => {
-  //     const file = e.target.files[0];
-  //     if (file) {
-  //       const fileSizeInMB = file.size / (1024 * 1024);
-  //       const MAX_IMAGE_SIZE_MB = 2;
-
-  //       if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-  //         toast.error("Please select an image smaller than 2MB.");
-  //         return;
-  //       }
-
-  //       // 2️⃣ DIMENSION VALIDATION
-  //       const img = new Image();
-  //       img.src = URL.createObjectURL(file);
-
-  //       img.onload = () => {
-  //         const width = img.width;
-  //         const height = img.height;
-  //         const REQUIRED_WIDTH = 1920; // Adjust as needed
-  //         const REQUIRED_HEIGHT = 600;
-  //         if (width !== REQUIRED_WIDTH || height !== REQUIRED_HEIGHT) {
-  //           toast.error(
-  //             `Invalid banner size! Please upload an image of ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`
-  //           );
-  //           return;
-  //         }
-  //       };
-  //       const previewURL = URL.createObjectURL(file);
-  //       setBannerDetails((prev) => ({
-  //         ...prev,
-  //         banner: file,
-  //         coverImagePreview: previewURL,
-  //       }));
-  //       img.onerror = () => {
-  //         toast.error("Invalid image file.");
-  //       };
-  //       img.src = URL.createObjectURL(file);
-  //     }
-  //   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -129,9 +90,9 @@ const BannerAdd = () => {
       // ----------------------------
       const previewURL = URL.createObjectURL(file);
 
-      setBannerDetails((prev) => ({
+      setSubCategoryDeatills((prev) => ({
         ...prev,
-        banner: file,
+        subcategorythumbnail: file,
         coverImagePreview: previewURL,
       }));
     };
@@ -149,26 +110,31 @@ const BannerAdd = () => {
     try {
       setLoading(true);
       let formData = new FormData();
-      formData.append("name", bannerDetails.name);
-      formData.append("subtitle", bannerDetails.subtitle);
-      formData.append("content", bannerDetails.content);
-      formData.append("banner", bannerDetails.banner);
-      formData.append("bannerType", bannerDetails.banneryType);
-      console.log("formData", formData);
+      formData.append("name", subCategoryDetails.name);
+      formData.append("subcategory", subCategoryDetails.subcategory);
 
-      const res = await axios.post("/api/homeBanner/create/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      formData.append(
+        "subcategorythumbnail",
+        subCategoryDetails.subcategorythumbnail
+      );
+
+      const res = await axios.post(
+        `/api/product/category/create/subcategory/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const result = res.data;
 
-   await getHomebanners(page, itemPerPage, bannertype);
-      navigate("/banner");
+      await handleAllCategorys(page, itemPerPage, bannertype);
+      navigate("/category");
     } catch (error) {
-      console.log("error add banner",error)
+      console.log("error add banner", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -198,76 +164,37 @@ const BannerAdd = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Campaigning Banner
+          Add {name} Subcategory
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Banner Name"
+                label=" Name"
                 name="name"
-                value={bannerDetails.name}
+                value={subCategoryDetails.name}
                 onChange={handleChange}
                 fullWidth
                 required
               />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Select Banner Type"
-                name="banneryType"
-                value={bannerDetails.banneryType}
-                onChange={handleChange}
-                fullWidth
-                required
-              >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="Home Banner">Home Banner</MenuItem>
-                <MenuItem value="Campaign banner">Campaign banner</MenuItem>
-              </TextField>
             </Grid>
 
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Subtitle"
-                name="subtitle"
-                value={bannerDetails.subtitle}
+                label="SubCategory Name"
+                name="subcategory"
+                value={subCategoryDetails.subcategory}
                 onChange={handleChange}
                 fullWidth
                 required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Content"
-                name="content"
-                value={bannerDetails.content}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                rows={3}
-                inputProps={{ minLength: 10, maxLength: 150 }}
-                helperText={
-                  bannerDetails.content.length < 10
-                    ? `Minimum 10 characters required (${bannerDetails.content.length}/150)`
-                    : `${
-                        150 - bannerDetails.content.length
-                      } characters remaining`
-                }
-                error={
-                  bannerDetails.content.length > 0 &&
-                  bannerDetails.content.length < 10
-                }
               />
             </Grid>
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
-                Cover Image
+                Sub Category Thumbnail
               </Typography>
               <Button variant="contained" component="label">
                 Upload Image
@@ -278,10 +205,10 @@ const BannerAdd = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-              {bannerDetails.coverImagePreview && (
+              {subCategoryDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img
-                    src={bannerDetails.coverImagePreview}
+                    src={subCategoryDetails.coverImagePreview}
                     alt="Cover Preview"
                     style={{
                       width: "100%",
@@ -312,4 +239,4 @@ const BannerAdd = () => {
     </div>
   );
 };
-export default BannerAdd;
+export default SubCategoryAdd;

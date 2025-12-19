@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBanner } from "./bannerContext";
+import { useBanner, useSubCategory } from "./subCategoryContext";
 
-const Banners = () => {
+const SubCategory = () => {
   const navigate = useNavigate();
   const {
     banner,
-    getHomebanners,
+    handlegetAllSubcategorys,
     setPage,
     setItemPerPage,
     handleDelete,
@@ -25,19 +25,17 @@ const Banners = () => {
     itemPerPage,
     loading,
     page,
-  } = useBanner();
+  } = useSubCategory();
 
   const tableHeadering = [
     "CreatedAt",
     "Name",
-    "Type",
-    "SubTitle",
-    "Content",
+    "Category",
+    "Subcategory",
     "Image",
     "Actions",
   ];
-  let fetchBanner = banner?.result;
-  console.log("fetchBanner", banner);
+  let fetchBanner = banner?.category;
 
   return (
     <div className="row">
@@ -54,7 +52,7 @@ const Banners = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        getHomebanners(page, Number(val), bannertype);
+                        handlegetAllSubcategorys(page, Number(val), bannertype);
                       }}
                       className="
                                        select-w
@@ -70,62 +68,6 @@ const Banners = () => {
                     entries
                   </label>
                 </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{
-                      fontWeight: "bold",
-                      marginBottom: "1rem",
-                      textTransform: "capitalize",
-                    }}
-                    onClick={() => {
-                      navigate("/banner/add");
-                    }}
-                  >
-                    Add New Banner
-                  </Button>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                <Button
-                  onClick={() => {
-                    setBannerType("Home Banner");
-
-                    getHomebanners(page, itemPerPage, "Home Banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Home Banner
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setBannerType("Campaign banner");
-                    getHomebanners(page, itemPerPage, "Campaign banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Campaign Banner
-                </Button>
               </div>
             </div>
 
@@ -164,19 +106,21 @@ const Banners = () => {
                       <tr key={i}>
                         <td>{item?.createdAt}</td>
                         <td>{item?.name}</td>
-                        <td>{item?.bannerType || null}</td>
+                        <td>{item?.categoryId?.category || null}</td>
+                        <td>{item?.subcategory || null}</td>
 
-                        <td>{item?.subtitle}</td>
-                        <td>{item?.content}</td>
-
-                        <td>
-                          <img
-                            className="me-2"
-                            src={item?.banner?.url}
-                            width="100"
-                            alt=""
-                          />
-                        </td>
+                   <td>
+  <img
+    src={item?.subcategorythumbnail?.url}
+    alt=""
+    style={{
+      width: "80px",
+      // height: "80px",
+      objectFit: "cover",
+      borderRadius: "6px",
+    }}
+  />
+</td>
 
                         <td style={{ display: "flex", gap: "10px" }}>
                           <button
@@ -191,9 +135,7 @@ const Banners = () => {
                                        
                                          "
                             onClick={() => {
-                              navigate(
-                                `/banner/update/${item._id}`
-                              );
+                              navigate(`/banner/update/${item._id}`);
                             }}
                           >
                             Edit
@@ -229,7 +171,7 @@ const Banners = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  getHomebanners(value, itemPerPage, bannertype);
+                  handlegetAllSubcategorys(value, itemPerPage, bannertype);
                 }}
                 color="primary"
               />
@@ -240,4 +182,4 @@ const Banners = () => {
     </div>
   );
 };
-export default Banners;
+export default SubCategory;
