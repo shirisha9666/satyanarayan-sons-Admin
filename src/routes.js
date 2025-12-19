@@ -211,6 +211,7 @@ import CategoryUpdate from "./views/category/CategoryUpdate";
 import SubCategory from "./views/subcategory/SubCategory";
 import SubCategoryAdd from "./views/subcategory/SubCategoryAdd";
 import Products from "./views/Product/Product";
+import ProductAdd from "./views/Product/ProductAdd";
 
 
 
@@ -558,6 +559,13 @@ const routes = [
     path: "/products",
     name: "Products",
     element: Products,
+    navName: "Settings",
+  },
+
+     {
+    path: "/product/add",
+    name: "Products",
+    element: ProductAdd,
     navName: "Settings",
   },
   {

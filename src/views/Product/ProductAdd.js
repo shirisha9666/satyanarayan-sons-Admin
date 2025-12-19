@@ -17,70 +17,32 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import { useBanner } from "./ProductContenxt";
+import {useProduct } from "./ProductContenxt";
 
-const BannerAdd = () => {
+const ProductAdd = () => {
   const token=isAutheticated()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate=useNavigate()
-  const {handlegetAllProducts,page, itemPerPage, bannertype}=useBanner()
-  const [bannerDetails, setBannerDetails] = useState({
-    name: "",
-    subtitle: "",
-    content: "",
-    banneryType: "",
-    banner: null,
+  const {handlegetAllProducts,page, itemPerPage, bannertype}=useProduct()
+  const [productDetails, setProductDetails] = useState({
+    productName: "",
+    categoryId: "",
+    subcategoryId: "",
+
+    productImage: null,
     coverImagePreview: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setBannerDetails((prev) => ({
+    setProductDetails((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  console.log("bannerDetails", bannerDetails);
-  //   const handleImageChange = (e) => {
-  //     const file = e.target.files[0];
-  //     if (file) {
-  //       const fileSizeInMB = file.size / (1024 * 1024);
-  //       const MAX_IMAGE_SIZE_MB = 2;
 
-  //       if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-  //         toast.error("Please select an image smaller than 2MB.");
-  //         return;
-  //       }
-
-  //       // 2️⃣ DIMENSION VALIDATION
-  //       const img = new Image();
-  //       img.src = URL.createObjectURL(file);
-
-  //       img.onload = () => {
-  //         const width = img.width;
-  //         const height = img.height;
-  //         const REQUIRED_WIDTH = 1920; // Adjust as needed
-  //         const REQUIRED_HEIGHT = 600;
-  //         if (width !== REQUIRED_WIDTH || height !== REQUIRED_HEIGHT) {
-  //           toast.error(
-  //             `Invalid banner size! Please upload an image of ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`
-  //           );
-  //           return;
-  //         }
-  //       };
-  //       const previewURL = URL.createObjectURL(file);
-  //       setBannerDetails((prev) => ({
-  //         ...prev,
-  //         banner: file,
-  //         coverImagePreview: previewURL,
-  //       }));
-  //       img.onerror = () => {
-  //         toast.error("Invalid image file.");
-  //       };
-  //       img.src = URL.createObjectURL(file);
-  //     }
-  //   };
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -129,9 +91,9 @@ const BannerAdd = () => {
       // ----------------------------
       const previewURL = URL.createObjectURL(file);
 
-      setBannerDetails((prev) => ({
+      setProductDetails((prev) => ({
         ...prev,
-        banner: file,
+        productImage: file,
         coverImagePreview: previewURL,
       }));
     };
@@ -149,14 +111,13 @@ const BannerAdd = () => {
     try {
       setLoading(true);
       let formData = new FormData();
-      formData.append("name", bannerDetails.name);
-      formData.append("subtitle", bannerDetails.subtitle);
-      formData.append("content", bannerDetails.content);
-      formData.append("banner", bannerDetails.banner);
-      formData.append("bannerType", bannerDetails.banneryType);
-      console.log("formData", formData);
+      formData.append("productName", productDetails.productName);
+      formData.append("categoryId", productDetails.categoryId);
+      formData.append("subcategoryId", productDetails.subcategoryId);
+      formData.append("productImage", productDetails.productImage);
+ 
 
-      const res = await axios.post("/api/homeBanner/create/", formData, {
+      const res = await axios.post("/api/product/create/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -166,7 +127,7 @@ const BannerAdd = () => {
       const result = res.data;
 
    await handlegetAllProducts(page, itemPerPage, bannertype);
-      navigate("/banner");
+      navigate("/product");
     } catch (error) {
       console.log("error add banner",error)
       const message = error?.response?.data?.message;
@@ -198,16 +159,16 @@ const BannerAdd = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Campaigning Banner
+          Add Product
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Banner Name"
-                name="name"
-                value={bannerDetails.name}
+                label="Product Name"
+                name="productName"
+                value={productDetails.productName}
                 onChange={handleChange}
                 fullWidth
                 required
@@ -216,9 +177,24 @@ const BannerAdd = () => {
             <Grid item xs={12}>
               <TextField
                 select
-                label="Select Banner Type"
-                name="banneryType"
-                value={bannerDetails.banneryType}
+                label="Select Category Type"
+                name="categoryId"
+                value={productDetails.categoryId}
+                onChange={handleChange}
+                fullWidth
+                required
+              >
+                <MenuItem value="">Select Type</MenuItem>
+                <MenuItem value="Home Banner">Home Banner</MenuItem>
+                <MenuItem value="Campaign banner">Campaign banner</MenuItem>
+              </TextField>
+            </Grid>
+               <Grid item xs={12}>
+              <TextField
+                select
+                label="Select Subcategory Type"
+                name="subcategoryId"
+                value={productDetails.subcategoryId}
                 onChange={handleChange}
                 fullWidth
                 required
@@ -229,41 +205,7 @@ const BannerAdd = () => {
               </TextField>
             </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Subtitle"
-                name="subtitle"
-                value={bannerDetails.subtitle}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Content"
-                name="content"
-                value={bannerDetails.content}
-                onChange={handleChange}
-                fullWidth
-                multiline
-                rows={3}
-                inputProps={{ minLength: 10, maxLength: 150 }}
-                helperText={
-                  bannerDetails.content.length < 10
-                    ? `Minimum 10 characters required (${bannerDetails.content.length}/150)`
-                    : `${
-                        150 - bannerDetails.content.length
-                      } characters remaining`
-                }
-                error={
-                  bannerDetails.content.length > 0 &&
-                  bannerDetails.content.length < 10
-                }
-              />
-            </Grid>
+           
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
@@ -278,10 +220,10 @@ const BannerAdd = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-              {bannerDetails.coverImagePreview && (
+              {productDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img
-                    src={bannerDetails.coverImagePreview}
+                    src={productDetails.coverImagePreview}
                     alt="Cover Preview"
                     style={{
                       width: "100%",
@@ -312,4 +254,4 @@ const BannerAdd = () => {
     </div>
   );
 };
-export default BannerAdd;
+export default ProductAdd;

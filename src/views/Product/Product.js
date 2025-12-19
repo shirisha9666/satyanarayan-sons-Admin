@@ -80,7 +80,7 @@ const Products = () => {
                       textTransform: "capitalize",
                     }}
                     onClick={() => {
-                      navigate("/banner/add");
+                      navigate("/product/add");
                     }}
                   >
                     Add New Product
