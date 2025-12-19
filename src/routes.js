@@ -210,6 +210,7 @@ import CategoryAdd from "./views/category/CategoryAdd";
 import CategoryUpdate from "./views/category/CategoryUpdate";
 import SubCategory from "./views/subcategory/SubCategory";
 import SubCategoryAdd from "./views/subcategory/SubCategoryAdd";
+import Products from "./views/Product/Product";
 
 
 
@@ -547,6 +548,16 @@ const routes = [
     path: "/subcategory/add/:name/:id",
     name: "SubCategories",
     element: SubCategoryAdd,
+    navName: "Settings",
+  },
+
+  // products
+
+
+   {
+    path: "/products",
+    name: "Products",
+    element: Products,
     navName: "Settings",
   },
   {

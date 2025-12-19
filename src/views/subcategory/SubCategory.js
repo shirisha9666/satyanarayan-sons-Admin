@@ -122,41 +122,38 @@ const SubCategory = () => {
   />
 </td>
 
-                        <td style={{ display: "flex", gap: "10px" }}>
-                          <button
-                            style={{
-                              color: "white",
-                            }}
-                            type="button"
-                            className="
-                                             btn btn-primary
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => {
-                              navigate(`/banner/update/${item._id}`);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            style={{
-                              color: "white",
-
-                              background: "red",
-                            }}
-                            type="button"
-                            className="
-                                             btn  btn-sm
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => handleDelete(item._id)}
-                          >
-                            {bannerId === item._id ? "Deleting..." : "Delete"}
-                          </button>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
+                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                            <button
+                              style={{
+                                color: "white",
+                                width: "90px",
+                                fontWeight: "bold",
+                                borderRadius: "6px"
+                              }}
+                              type="button"
+                              className="btn btn-primary waves-effect waves-light btn-table"
+                              onClick={() => {
+                                navigate(`/banner/update/${item._id}`);
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              style={{
+                                color: "white",
+                                background: "red",
+                                width: "90px",
+                                fontWeight: "bold",
+                                borderRadius: "6px"
+                              }}
+                              type="button"
+                              className="btn btn-sm waves-effect waves-light btn-table"
+                              onClick={() => handleDelete(item._id)}
+                            >
+                              {bannerId === item._id ? "Deleting..." : "Delete"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

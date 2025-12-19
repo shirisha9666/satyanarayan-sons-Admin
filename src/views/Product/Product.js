@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBanner } from "./bannerContext";
+import { useProduct } from "./ProductContenxt";
 
-const Banners = () => {
+const Products = () => {
   const navigate = useNavigate();
   const {
     banner,
-    getHomebanners,
+    handlegetAllProducts,
     setPage,
     setItemPerPage,
     handleDelete,
@@ -25,19 +25,19 @@ const Banners = () => {
     itemPerPage,
     loading,
     page,
-  } = useBanner();
+  } = useProduct();
 
   const tableHeadering = [
     "CreatedAt",
     "Name",
-    "Type",
-    "SubTitle",
-    "Content",
+    "Category",
+    "SubCategory",
+
     "Image",
     "Actions",
   ];
-  let fetchBanner = banner?.result;
-  console.log("fetchBanner", banner);
+  let fetchProducts = banner?.result;
+  console.log("fetchProducts", fetchProducts);
 
   return (
     <div className="row">
@@ -54,7 +54,7 @@ const Banners = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        getHomebanners(page, Number(val), bannertype);
+                        handlegetAllProducts(page, Number(val), bannertype);
                       }}
                       className="
                                        select-w
@@ -83,16 +83,16 @@ const Banners = () => {
                       navigate("/banner/add");
                     }}
                   >
-                    Add New Banner
+                    Add New Product
                   </Button>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
+              {/* <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
                 <Button
                   onClick={() => {
                     setBannerType("Home Banner");
 
-                    getHomebanners(page, itemPerPage, "Home Banner");
+                    handlegetAllProducts(page, itemPerPage, "Home Banner");
                   }}
                   variant="contained"
                   style={{
@@ -111,7 +111,7 @@ const Banners = () => {
                 <Button
                   onClick={() => {
                     setBannerType("Campaign banner");
-                    getHomebanners(page, itemPerPage, "Campaign banner");
+                    handlegetAllProducts(page, itemPerPage, "Campaign banner");
                   }}
                   variant="contained"
                   style={{
@@ -126,13 +126,13 @@ const Banners = () => {
                 >
                   Campaign Banner
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             <div className="table-responsive table-shoot mt-3">
               <table
                 className="table table-centered table-nowrap"
-                style={{ border: "1px solid" }}
+                style={{ border: "1px solid", verticalAlign: "middle" }}
               >
                 <thead
                   className="thead-info"
@@ -140,12 +140,12 @@ const Banners = () => {
                 >
                   <tr>
                     {tableHeadering.map((head) => (
-                      <th> {head}</th>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}> {head}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {!loading && fetchBanner?.length === 0 && (
+                  {!loading && fetchProducts?.length === 0 && (
                     <tr className="text-center">
                       <td colSpan="6">
                         <h5>No Data Available</h5>
@@ -159,62 +159,55 @@ const Banners = () => {
                       </td>
                     </tr>
                   ) : (
-                    fetchBanner &&
-                    fetchBanner.map((item, i) => (
-                      <tr key={i}>
-                        <td>{item?.createdAt}</td>
-                        <td>{item?.name}</td>
-                        <td>{item?.bannerType || null}</td>
+                    fetchProducts &&
+                    fetchProducts.map((item, i) => (
+                      <tr key={i} style={{ verticalAlign: "middle" }}>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.createdAt}</td>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.productName}</td>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.categoryId?.category || null}</td>
 
-                        <td>{item?.subtitle}</td>
-                        <td>{item?.content}</td>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.subcategoryId?.subcategory || null}</td>
 
-                        <td>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
                           <img
-                            className="me-2"
-                            src={item?.banner?.url}
-                            width="100"
-                            alt=""
+                            src={item?.productImage?.url}
+                            style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8, display: "block", margin: "0 auto" }}
+                            alt="Product"
                           />
                         </td>
 
-                        <td style={{ display: "flex", gap: "10px" }}>
-                          <button
-                            style={{
-                              color: "white",
-                            }}
-                            type="button"
-                            className="
-                                             btn btn-primary
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => {
-                              navigate(
-                                `/banner/update/${item._id}`
-                              );
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            style={{
-                              color: "white",
-
-                              background: "red",
-                            }}
-                            type="button"
-                            className="
-                                             btn  btn-sm
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => handleDelete(item._id)}
-                          >
-                            {bannerId === item._id ? "Deleting..." : "Delete"}
-                          </button>
+                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
+                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                            <button
+                              style={{
+                                color: "white",
+                                width: "90px",
+                                fontWeight: "bold",
+                                borderRadius: "6px"
+                              }}
+                              type="button"
+                              className="btn btn-primary waves-effect waves-light btn-table"
+                              onClick={() => {
+                                navigate(`/banner/update/${item._id}`);
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              style={{
+                                color: "white",
+                                background: "red",
+                                width: "90px",
+                                fontWeight: "bold",
+                                borderRadius: "6px"
+                              }}
+                              type="button"
+                              className="btn btn-sm waves-effect waves-light btn-table"
+                              onClick={() => handleDelete(item._id)}
+                            >
+                              {bannerId === item._id ? "Deleting..." : "Delete"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -229,7 +222,7 @@ const Banners = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  getHomebanners(value, itemPerPage, bannertype);
+                  handlegetAllProducts(value, itemPerPage, bannertype);
                 }}
                 color="primary"
               />
@@ -240,4 +233,4 @@ const Banners = () => {
     </div>
   );
 };
-export default Banners;
+export default Products;
