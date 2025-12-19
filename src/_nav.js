@@ -69,7 +69,9 @@ import {
   CNavItem,
   CNavTitle,
   CTabContent,
-} from "@coreui/react";
+} from "@coreui/react"
+
+import { cilList } from '@coreui/icons';
 const _nav = [
   {
     component: CNavItem,
@@ -87,13 +89,15 @@ const _nav = [
         to: "/banner",
         group: "Settings",
       },
-  // {
-  //   component: CNavItem,
-  //   name: "Reports",
-  //   to: "/reports",
-  //   icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
-  //   group: "",
-  // },
+      
+       {
+        component: CNavItem,
+        name: "Categories",
+        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+        to: "/category",
+        group: "Settings",
+      },
+ 
   {
     component: CNavItem,
     name: "Customers",
@@ -102,21 +106,7 @@ const _nav = [
     group: "Customers",
   },
 
-  {
-    component: CNavItem,
-    name: "Genres",
-    icon: <CIcon icon={cilPlaylistAdd} customClassName="nav-icon" />,
-    to: "/genres",
-    group: "Product Management",
-  },
-  {
-    component: CNavItem,
-    name: "Sub Genre",
 
-    icon: <CIcon icon={cibLibreoffice} customClassName="nav-icon" />,
-    to: "/subgenre",
-    group: "Product Management",
-  },
   //   {
   //   component: CNavItem,
   //   name: "googleLogin",
@@ -124,21 +114,8 @@ const _nav = [
   //   icon: <CIcon icon={cibLibreoffice} customClassName="nav-icon" />,
   //   to: "/google/login",
   //   group: "Product Management",
-  // },
-  {
-    component: CNavItem,
-    name: "Title",
-    icon: <CIcon icon={cilTv} customClassName="nav-icon" />,
-    to: "/title",
-    group: "Product Management",
-  },
-  {
-    component: CNavItem,
-    name: "Episode",
-    icon: <CIcon icon={cilHeadphones} customClassName="nav-icon" />,
-    to: "/episode/",
-    group: "Product Management",
-  },
+
+
   {
     component: CNavItem,
     name: "Plans",

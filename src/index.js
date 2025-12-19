@@ -23,6 +23,7 @@ import { PlanProvider } from "./views/plans/PlanContext";
 import { AdsProvider } from "./views/Advertisement/AdContext";
 import { BillingProvider } from "./views/billing/billingContext";
 import { BannerProvider } from "./views/Banners/bannerContext";
+import { CategoryProvider } from "./views/category/CategoryContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -51,6 +52,7 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
+    <CategoryProvider>
     <BannerProvider>
       <BillingProvider>
         <PlanProvider>
@@ -70,6 +72,7 @@ root.render(
         </PlanProvider>
       </BillingProvider>
     </BannerProvider>
+    </CategoryProvider>
   </Provider>
 );
 

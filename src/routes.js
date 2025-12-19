@@ -34,9 +34,8 @@ import Appointments from "./views/Appointments/Appointments";
 // import Topics from "./views/Chapters/topics.js";
 
 //product
-import AddPrdAndImg from "./views/Products/AddPrdAndImg";
-import EditPrdAndImg from "./views/Products/EditPrdAndImg";
-import ViewProduct from "./views/Products/ViewProduct";
+
+
 
 //Order Management
 import NewOrders from "./views/orders/NewOrders.js";
@@ -206,6 +205,9 @@ import Invoice from "./views/billing/Invoice";
 import BannerAdd from "./views/Banners/BannerAdd";
 import BannerUpdate from "./views/Banners/BannerUpdate";
 import Banners from "./views/Banners/Banner";
+import Categories from "./views/category/Category";
+import CategoryAdd from "./views/category/CategoryAdd";
+import CategoryUpdate from "./views/category/CategoryUpdate";
 
 
 
@@ -306,227 +308,13 @@ const routes = [
     navName: "Product Management",
   },
 
-  {
-    path: "/product/edit/:id",
-    name: "Edit products",
-    element: EditPrdAndImg,
-    navName: "Product Management",
-  },
-  {
-    path: "/product/view/:id",
-    name: "view products",
-    element: ViewProduct,
-    navName: "Product Management",
-  },
-  {
-    path: "/genres",
-    name: "Genres",
-    element: Genres,
-    navName: "Product Management",
-  },
-  {
-    path: "/genre/allsubject/:name/:id",
-    name: "Genres",
-    element: GenresSubject,
-    navName: "Product Management",
-  },
-  {
-    path: "/subgenre",
-    name: "Sugenre",
-    element: Subjects,
-    navName: "Product Management",
-  },
-  {
-    path: "/create/subgenre/:name/:id",
-    name: "Sugenre",
-    element: SubjectCreate,
-    navName: "Product Management",
-  },
-  {
-    path: "/title",
-    name: "Title",
-    element: Series,
-    navName: "Product Management",
-  },
+
+
+  
  
-   {
-    path: "/add/series",
-    name: "Series",
-    element: AddSeries,
-    navName: "Product Management",
-  },
-  {
-    path: "/episode/",
-    name: "Episode",
-    element: episode,
-    navName: "Product Management",
-  },
- 
-
-     {
-    path: "/add/episode/:id",
-    name: "Episode",
-    element: Addepisode,
-    navName: "Product Management",
-  },
- 
-    {
-    path: "/all/episode/details/:id",
-    name: "Episode",
-    element: EpisodeAllDetails,
-    navName: "Product Management",
-  },
-   
-    {
-    path: "/update/episode/:id",
-    name: "EpisodeUpdate",
-    element: EpisodeUpdate,
-    navName: "Product Management",
-  },
-   {
-    path: "/update/series/:id",
-    name: "SeriesUpdate",
-    element: SeriesUpdate,
-    navName: "Product Management",
-  },
-      
-   {
-    path: "/title/details/:id",
-    name: "SeriesAllDetails",
-    element: SeriesAllDetails,
-    navName: "Product Management",
-  },
-     
- {
-    path: "/plans",
-    name: "Plans",
-    element: Plans,
-    navName: "Product Management",
-  },
- 
-   {
-    path: "/plans/Add",
-    name: "Plans",
-    element: AddPlan,
-    navName: "Product Management",
-  },
-     {
-    path: "/plans/update/:id",
-    name: "Plans",
-    element: UpdatePlan,
-    navName: "Product Management",
-  },
-  {
-    path: "/plans/view/:id",
-    name: "Plans",
-    element: ViewPlan,
-    navName: "Product Management",
-  },
-    {
-    path: "/Trending",
-    name: "Trending",
-    element: Trending,
-    navName: "Product Management",
-  },
-      {
-    path: "/Trending/create/:id",
-    name: "Trending",
-    element: TrendingCreate,
-    navName: "Product Management",
-  },
-    {
-    path: "/Trending/update/:id",
-    name: "Trending",
-    element: TrendingUpdate,
-    navName: "Product Management",
-  },
-   {
-    path: "/Trending/view/:id",
-    name: "Trending",
-    element:TrendingView,
-    navName: "Product Management",
-  },
-    {
-    path: "/season",
-    name: "Season",
-    element: SeasonCreate,
-    navName: "Product Management",
-  },
+  
 
 
-   {
-    path: "/AdminSeriesDashboard",
-    name: "AdminSeriesDashboard",
-    element: AdminSeriesDashboard,
-    navName: "Product Management",
-  },
-
-  {
-    path: "/AdminSubjectView/:name/:id",
-    name: "AdminSubjectView",
-    element: AdminSubjectView,
-    navName: "Product Management",
-  },
-  // {AdminSeriesDashboard
-  //   path: "/collections",
-  //   name: "Collection",
-  //   element: Collections,
-  //   navName: "Product Management",
-  // },
-  // {
-  //   path: "/color",
-  //   name: "Color",
-  //   element: Colors,
-  //   navName: "Product Management",
-  // },
-
-  // {
-  //   path: "/patient/view/:id",
-  //   name: "View Patient",
-  //   element: ViewPatient,
-  //   navName: "Patients",
-  // },
-  // {
-  //   path: "/patients",
-  //   name: "Patients",
-  //   element: Patient,
-  //   navName: "Patients",
-  // },
-  // {
-  //   path: "/test/patient/:id",
-  //   name: "Patients",
-  //   element: ViewPatientTest,
-  //   navName: "Patients",
-  // },
-
-  //collections
-
-  //Gst tax
-  {
-    path: "/gst",
-    name: "Tax Rates",
-    element: Tax,
-    navName: "Product Management",
-  },
-  {
-    path: "/tax/add",
-    name: "Add Tax",
-    element: Addtax,
-    navName: "Product Management",
-  },
-  {
-    path: "/tax/edit/:id",
-    name: "Edit Tax",
-    element: Edittax,
-    navName: "Product Management",
-  },
-  //----------------------- End Product Management Routes------------------------------------------------
-
-  //Departure
-  // { path: "/departures", name: "Departures", element: Departures },
-  // { path: "/departure/add", name: "Add Departure", element: AddDeparture },
-  // { path: "/product/edit/:id", name: "Edit products", element: EditProduct },
-  // { path: "/product/view/:id", name: "view products", element: ViewProduct },
 
   // Appointments
   // { path: "/appointments", name: "Appointments", element: Appointments },
@@ -721,6 +509,29 @@ const routes = [
     path: "/banner/update/:id",
     name: "Banners",
     element: BannerUpdate,
+    navName: "Settings",
+  },
+
+  // product category
+
+
+    {
+    path: "/category",
+    name: "Categories",
+    element: Categories,
+    navName: "Settings",
+  },
+  
+    {
+    path: "/category/add",
+    name: "Categories",
+    element: CategoryAdd,
+    navName: "Settings",
+  },
+   {
+    path: "/category/update/:id",
+    name: "Categories",
+    element: CategoryUpdate,
     navName: "Settings",
   },
   {

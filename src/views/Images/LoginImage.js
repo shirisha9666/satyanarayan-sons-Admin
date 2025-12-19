@@ -80,11 +80,11 @@ const Banners = () => {
   useEffect(() => {
     getBanner();
   }, []);
-  // }, [token, banner]);
+ 
 
   const handleEditClick = (_id, bannerImage) => {
     setOpen(true);
-    console.log("bannerImage", bannerImage);
+
     setOlderImage(bannerImage);
 
     setBannerId(_id);
