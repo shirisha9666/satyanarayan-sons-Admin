@@ -28,8 +28,8 @@ const Products = () => {
   } = useProduct();
 
   const tableHeadering = [
-    "CreatedAt",
-    "Name",
+   
+    "Product Name",
     "Category",
     "SubCategory",
 
@@ -162,7 +162,7 @@ const Products = () => {
                     fetchProducts &&
                     fetchProducts.map((item, i) => (
                       <tr key={i} style={{ verticalAlign: "middle" }}>
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.createdAt}</td>
+
                         <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.productName}</td>
                         <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.categoryId?.category || null}</td>
 
@@ -178,7 +178,7 @@ const Products = () => {
 
                         <td style={{ verticalAlign: "middle", textAlign: "center" }}>
                           <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
-                            {/* <button
+                            <button
                               style={{
                                 color: "white",
                                 width: "90px",
@@ -192,7 +192,7 @@ const Products = () => {
                               }}
                             >
                               Edit
-                            </button> */}
+                            </button>
                             <button
                               style={{
                                 color: "white",

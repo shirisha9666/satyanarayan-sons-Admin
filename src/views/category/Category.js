@@ -28,7 +28,7 @@ const Categories = () => {
     page,
   } = useCategory();
 
-  const tableHeadering = ["CreatedAt", "Name", "Category", "Image", "Actions"];
+  const tableHeadering = [ "Name", "Category", "Image", "Actions"];
 
   let fetchBanner = category?.result;
   console.log("banner",category)
@@ -118,7 +118,7 @@ const Categories = () => {
                     fetchBanner &&
                     fetchBanner.map((item, i) => (
                       <tr key={i}>
-                        <td>{item?.createdAt}</td>
+                    
                         <td>{item?.name}</td>
                         <td>{item?.category || null}</td>
 
@@ -152,7 +152,7 @@ const Categories = () => {
   Add Subcategory
 </button>
 
-                          {/* <button
+                          <button
                             style={{
                               color: "white",
                             }}
@@ -168,7 +168,7 @@ const Categories = () => {
                             }}
                           >
                             Edit
-                          </button> */}
+                          </button>
                           <button
                             style={{
                               color: "white",
