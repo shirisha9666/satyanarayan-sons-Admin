@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -26,13 +26,14 @@ const GoldRateUpdate = () => {
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
   const {id}=useParams()
-  const { handlegetAllProducts, page, itemPerPage, bannertype } = useGoldRate();
-  const { category, handleCategorySubcategoryFilter, subcategorys } =
-    useCategory();
+  console.log("id",id)
+  const { handlegetAllProducts, page, itemPerPage, handlegeOnegoldRate,goldData } = useGoldRate();
+  let gold=goldData?.findgoldRate
+
   const [productDetails, setProductDetails] = useState({
-    lable: "",
-    rate: "",
-    unit: "",
+    lable: gold?.lable ||  "",
+    rate: gold?.rate || "",
+    unit: gold?.unit || "",
   });
 
   const handleChange = (e) => {
@@ -81,6 +82,10 @@ const GoldRateUpdate = () => {
       setErrorData("");
     }
   };
+  useEffect(()=>{
+    handlegeOnegoldRate(id)
+  },[id])
+
 
   return (
     <div>

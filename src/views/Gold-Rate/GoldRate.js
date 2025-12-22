@@ -11,14 +11,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoldRate } from "./GoldRateContext";
 
+
 const GoldRate = () => {
   const navigate = useNavigate();
   const {
+    handlegeOnegoldRate,
     goldRate,
     handlegetAllProducts,
     setPage,
     setItemPerPage,
     handleDelete,
+    goldRateeditId,
     setBannerType,
     bannertype,
     goldRateId,
@@ -189,11 +192,13 @@ const GoldRate = () => {
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={() => {
+                              onClick={async () => {
+                              await  handlegeOnegoldRate(item._id)
                                 navigate(`/gold-rates/update/${item._id}`);
                               }}
                             >
-                              Edit
+                              {goldRateeditId?"loading...":"Edit"}
+                              
                             </button>
                             <button
                               style={{

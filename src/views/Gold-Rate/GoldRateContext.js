@@ -14,6 +14,8 @@ export const GoldRateProvider = ({ children }) => {
   const [goldRate, setGoldRate] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [goldRateId, setGoldRateId] = useState(null);
+    const [goldRateeditId, setGoldRateEditId] = useState(null);
+  const [goldData, setGoldData] = useState([]);
 
   const handlegetAllProducts = async (page = 1, itemPerPage) => {
     try {
@@ -22,7 +24,6 @@ export const GoldRateProvider = ({ children }) => {
         params: {
           page,
           limit: itemPerPage,
-          
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,30 +60,26 @@ export const GoldRateProvider = ({ children }) => {
     }
   };
 
-    const handlegeOnegoldRate = async (id) => {
+  const handlegeOnegoldRate = async (id) => {
     try {
-      setGoldRateId(id);
-      let resp = await axios.get(`/api/gold/rate/delete/${id}`, {
+      setGoldRateEditId(id);
+      let resp = await axios.get(`/api/gold/rate/getOne/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      let message = resp?.data?.message;
-      console.log("message", resp?.data);
 
-      await handlegetAllProducts(page, itemPerPage);
-      toast.success(message);
+      setGoldData(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
     } finally {
-      setGoldRateId(null);
+      setGoldRateEditId(null);
     }
   };
   useEffect(() => {
     handlegetAllProducts(page, itemPerPage);
   }, []);
-
 
   return (
     <GoldRateContext.Provider
@@ -97,7 +94,10 @@ export const GoldRateProvider = ({ children }) => {
         loading,
         page,
         handleDelete,
+        goldRateeditId,
         goldRateId,
+        goldData,
+        handlegeOnegoldRate,
       }}
     >
       {children}
