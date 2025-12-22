@@ -212,6 +212,10 @@ import Products from "./views/Product/Product";
 import ProductAdd from "./views/Product/ProductAdd";
 import GoldSchema from "./views/Gold-Schema/GoldSchema";
 import GoldSchemaAdd from "./views/Gold-Schema/GoldSchemaAdd";
+import GoldSchemaUpdate from "./views/Gold-Schema/GoldSchemaUpdate";
+import GoldRate from "./views/Gold-Rate/GoldRate";
+import GoldRateAdd from "./views/Gold-Rate/GoldRateAdd";
+import GoldRateUpdate from "./views/Gold-Rate/GoldRateUpdate";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -568,6 +572,30 @@ const routes = [
     path: "/gold-schemes/add",
     name: "Gold Schemes",
     element: GoldSchemaAdd,
+    navName: "Settings",
+  },
+  {
+    path: "/gold-schemes/update/:id",
+    name: "Gold Schemes",
+    element: GoldSchemaUpdate,
+    navName: "Settings",
+  },
+   {
+    path: "/gold-rates",
+    name: "Gold Rates",
+    element: GoldRate,
+    navName: "Settings",
+  },
+     {
+    path: "/gold-rates/add",
+    name: "Gold Rates",
+    element: GoldRateAdd,
+    navName: "Settings",
+  },
+   {
+    path: "/gold-rates/update/:id",
+    name: "Gold Rates",
+    element: GoldRateUpdate,
     navName: "Settings",
   },
   {

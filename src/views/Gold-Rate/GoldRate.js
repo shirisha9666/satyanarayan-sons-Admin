@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGoldSchema } from "./GoldSchemaContext";
+import { useGoldRate } from "./GoldRateContext";
 
-const GoldSchema = () => {
+const GoldRate = () => {
   const navigate = useNavigate();
   const {
     banner,
@@ -25,7 +25,7 @@ const GoldSchema = () => {
     itemPerPage,
     loading,
     page,
-  } = useGoldSchema();
+  } = useGoldRate();
 
   const tableHeadering = [
     "Scheme ID",
@@ -117,10 +117,10 @@ const GoldSchema = () => {
                       textTransform: "capitalize",
                     }}
                     onClick={() => {
-                      navigate("/gold-schemes/add");
+                      navigate("/gold-rates/add");
                     }}
                   >
-                    Add New Scheme
+                    Add New Gold Rate
                   </Button>
                 </div>
               </div>
@@ -271,7 +271,7 @@ const GoldSchema = () => {
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={() => {
-                                navigate(`/gold-schemes/update/${item._id}`);
+                                navigate(`/gold-rates/update/${item._id}`);
                               }}
                             >
                               Edit
@@ -316,4 +316,4 @@ const GoldSchema = () => {
     </div>
   );
 };
-export default GoldSchema;
+export default GoldRate;

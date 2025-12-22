@@ -2,9 +2,10 @@ import React from "react";
 import CIcon from "@coreui/icons-react";
 import { TbDeviceIpadMinus } from "react-icons/tb";
 import { cilCreditCard, cilReceipt } from "@coreui/icons";
-    import { cilBullhorn } from '@coreui/icons';
-    import { cilBasket } from '@coreui/icons';
-    import { cilStar } from '@coreui/icons'  
+import { cilBullhorn } from "@coreui/icons";
+import { cilBasket } from "@coreui/icons";
+import { cilStar } from "@coreui/icons";
+
 
 import {
   cibMaterialDesign,
@@ -71,10 +72,10 @@ import {
   CNavItem,
   CNavTitle,
   CTabContent,
-} from "@coreui/react"
+} from "@coreui/react";
 
-import { cilList } from '@coreui/icons';
-import { cilLayers } from '@coreui/icons';
+import { cilList } from "@coreui/icons";
+import { cilLayers } from "@coreui/icons";
 const _nav = [
   {
     component: CNavItem,
@@ -83,50 +84,56 @@ const _nav = [
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
     group: "",
   },
-  
-  
-       {
-        component: CNavItem,
-        name: "Banners",
-        icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
-        to: "/banner",
-        group: "Settings",
-      },
-      
-       {
-        component: CNavItem,
-        name: "Categories",
-        icon: <CIcon icon={cilList} customClassName="nav-icon" />,
-        to: "/category",
-        group: "Settings",
-      },
-       
-       {
-        component: CNavItem,
-        name: "SubCategories",
-        icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
-        to: "/subcategory",
-        group: "Settings",
-      },
 
-      // Products  
+  {
+    component: CNavItem,
+    name: "Banners",
+    icon: <CIcon icon={cilBullhorn} customClassName="nav-icon" />,
+    to: "/banner",
+    group: "Settings",
+  },
 
-       {
-        component: CNavItem,
-        name: "Products",
-        icon: <CIcon icon={cilBasket} customClassName="nav-icon" />,
-        to: "/products",
-        group: "Settings",
-      },
+  {
+    component: CNavItem,
+    name: "Categories",
+    icon: <CIcon icon={cilList} customClassName="nav-icon" />,
+    to: "/category",
+    group: "Settings",
+  },
 
-       {
-        component: CNavItem,
-        name: "Gold Schemes",
-        icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-        to: "/gold-schemes",
-        group: "Settings",
-      },
- 
+  {
+    component: CNavItem,
+    name: "SubCategories",
+    icon: <CIcon icon={cilLayers} customClassName="nav-icon" />,
+    to: "/subcategory",
+    group: "Settings",
+  },
+
+  // Products
+
+  {
+    component: CNavItem,
+    name: "Products",
+    icon: <CIcon icon={cilBasket} customClassName="nav-icon" />,
+    to: "/products",
+    group: "Settings",
+  },
+
+  {
+    component: CNavItem,
+    name: "Gold Schemes",
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    to: "/gold-schemes",
+    group: "Settings",
+  },
+  {
+    component: CNavItem,
+    name: "Gold Rates",
+    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
+    to: "/gold-rates",
+    group: "Settings",
+  },
+
   {
     component: CNavItem,
     name: "Customers",
@@ -135,7 +142,6 @@ const _nav = [
     group: "Customers",
   },
 
-
   //   {
   //   component: CNavItem,
   //   name: "googleLogin",
@@ -143,7 +149,6 @@ const _nav = [
   //   icon: <CIcon icon={cibLibreoffice} customClassName="nav-icon" />,
   //   to: "/google/login",
   //   group: "Product Management",
-
 
   {
     component: CNavItem,
@@ -159,18 +164,14 @@ const _nav = [
     to: "/Trending",
     group: "Product Management",
   },
- {
-  component: CNavItem,
-  name: "Billing",
-  to: "/Billing",
-  icon: <CIcon icon={cilCreditCard} customClassName="nav-icon" />,
-  highlightPaths: [
-    "/user/invoice",
-    "/invoice/view",
-    "/invoice",
-  ],
-  group: "Product Management",
-},
+  {
+    component: CNavItem,
+    name: "Billing",
+    to: "/Billing",
+    icon: <CIcon icon={cilCreditCard} customClassName="nav-icon" />,
+    highlightPaths: ["/user/invoice", "/invoice/view", "/invoice"],
+    group: "Product Management",
+  },
   //   {
   //   component: CNavItem,
   //   name: "Packages",
@@ -354,8 +355,6 @@ const _nav = [
     group: "",
 
     items: [
-   
-
       {
         component: CNavItem,
         name: "Advertisement",

@@ -17,15 +17,15 @@ import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import { useGoldSchema } from "./GoldSchemaContext";
+import { useGoldRate } from "./GoldRateContext";
 import { useCategory } from "../category/CategoryContext";
 
-const GoldSchemaUpdate = () => {
+const GoldRateAdd = () => {
   const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype } = useGoldSchema();
+  const { handlegetAllProducts, page, itemPerPage, bannertype } = useGoldRate();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
   const [productDetails, setProductDetails] = useState({
@@ -177,7 +177,7 @@ const GoldSchemaUpdate = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Update Gold Schema
+          Add Gold Rate
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -246,4 +246,4 @@ const GoldSchemaUpdate = () => {
     </div>
   );
 };
-export default GoldSchemaUpdate;
+export default GoldRateAdd;

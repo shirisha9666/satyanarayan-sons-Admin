@@ -27,6 +27,7 @@ import { CategoryProvider } from "./views/category/CategoryContext";
 import { SubCategoryProvider } from "./views/subcategory/subCategoryContext";
 import { ProductProvider } from "./views/Product/ProductContenxt";
 import { GoldSchemaProvider } from "./views/Gold-Schema/GoldSchemaContext";
+import { GoldRateProvider } from "./views/Gold-Rate/GoldRateContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -55,6 +56,7 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
+    <GoldRateProvider>
     <GoldSchemaProvider>
     <ProductProvider>
     <SubCategoryProvider>
@@ -82,6 +84,7 @@ root.render(
     </SubCategoryProvider>
     </ProductProvider>
     </GoldSchemaProvider>
+    </GoldRateProvider>
   </Provider>
 );
 
