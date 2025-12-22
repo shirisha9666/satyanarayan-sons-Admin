@@ -29,31 +29,11 @@ const GoldRateAdd = () => {
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
   const [productDetails, setProductDetails] = useState({
-    productName: "",
-    categoryId: "",
-    subcategoryId: "",
-
-    productImage: null,
-    coverImagePreview: "",
+    lable: "",
+    rate: "",
+    unit: "",
   });
 
-
-  const monthsList = [
-  { label: "January", value: "January" },
-  { label: "February", value: "February" },
-  { label: "March", value: "March" },
-  { label: "April", value: "April" },
-  { label: "May", value: "May" },
-  { label: "June", value: "June" },
-  { label: "July", value: "July" },
-  { label: "August", value: "August" },
-  { label: "September", value: "September" },
-  { label: "October", value: "October" },
-  { label: "November", value: "November" },
-  { label: "December", value: "December" },
-];
-
-  console.log("category", category?.result);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductDetails((prev) => ({
@@ -62,91 +42,28 @@ const GoldRateAdd = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // ----------------------------
-    // 1️⃣ FILE SIZE VALIDATION (2MB)
-    // ----------------------------
-    const MAX_IMAGE_SIZE_MB = 2;
-    const fileSizeInMB = file.size / (1024 * 1024);
-
-    if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-      toast.error("Please upload an image smaller than 2MB.");
-      return;
-    }
-
-    // ----------------------------
-    // 2️⃣ DIMENSION VALIDATION
-    // ----------------------------
-    const img = new Image();
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-
-      // Required Banner Size
-      const REQUIRED_WIDTH = 1920;
-      const REQUIRED_HEIGHT = 600;
-
-      // Allow small tolerance (±5px)
-      const WIDTH_TOLERANCE = 5;
-      const HEIGHT_TOLERANCE = 5;
-
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
-      const heightValid =
-        Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
-
-      // if (!widthValid || !heightValid) {
-      //   toast.error(
-      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
-      //   );
-      //   return;
-      // }
-
-      // ----------------------------
-      // 3️⃣ VALID IMAGE → SET PREVIEW
-      // ----------------------------
-      const previewURL = URL.createObjectURL(file);
-
-      setProductDetails((prev) => ({
-        ...prev,
-        productImage: file,
-        coverImagePreview: previewURL,
-      }));
-    };
-
-    img.onerror = () => {
-      toast.error("Invalid image file.");
-    };
-
-    img.src = URL.createObjectURL(file); // Must come after setting onload
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
       let formData = new FormData();
-      formData.append("productName", productDetails.productName);
-      formData.append("categoryId", productDetails.categoryId);
-      formData.append("subcategoryId", productDetails.subcategoryId);
-      formData.append("productImage", productDetails.productImage);
+      formData.append("lable", productDetails.lable);
+      formData.append("rate", productDetails.rate);
+      formData.append("unit", productDetails.unit);
 
-      const res = await axios.post("/api/product/create/", formData, {
+      const res = await axios.post("/api/gold/rate/add", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const result = res.data;
-
       await handlegetAllProducts(page, itemPerPage, bannertype);
-      navigate("/products");
+      toast.success("Gold Rate Added Successfully");
+      navigate("/gold-rates");
     } catch (error) {
-      console.log("error add banner", error);
+      console.log("error add rates", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -163,7 +80,7 @@ const GoldRateAdd = () => {
       setErrorData("");
     }
   };
-  console.log("subcategorys", subcategorys);
+
   return (
     <div>
       <Box
@@ -184,49 +101,38 @@ const GoldRateAdd = () => {
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Scheme Name"
-                name="schemeName"
-                value={productDetails.schemeName}
+                label="Gold 24Kt Rate "
+                name="lable"
+                value={productDetails.lable}
                 onChange={handleChange}
                 fullWidth
                 required
               />
             </Grid>
-
-               <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Monthly Installment"
-                name="monthlyInstallment"
-                value={productDetails.monthlyInstallment}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-
-            
             <Grid item xs={12}>
               <TextField
-                select
-                label="Select Months Type"
-                name="months"
-                value={productDetails.months}
+                type="Number"
+                autoComplete="off"
+                label="Rate"
+                name="rate"
+                value={productDetails.rate}
                 onChange={handleChange}
                 fullWidth
                 required
-              >
-                {monthsList.map((month) => (
-                  <MenuItem
-                    value={month.value}
-                    onClick={() => handleCategorySubcategoryFilter(month.value)}
-                  >
-                    {month.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
             </Grid>
-         
+
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Unit gm"
+                name="unit"
+                value={productDetails.unit}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>

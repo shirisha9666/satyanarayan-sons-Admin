@@ -14,67 +14,31 @@ import { useGoldRate } from "./GoldRateContext";
 const GoldRate = () => {
   const navigate = useNavigate();
   const {
-    banner,
+    goldRate,
     handlegetAllProducts,
     setPage,
     setItemPerPage,
     handleDelete,
     setBannerType,
     bannertype,
-    bannerId,
+    goldRateId,
     itemPerPage,
     loading,
     page,
   } = useGoldRate();
 
   const tableHeadering = [
-    "Scheme ID",
-    "Scheme Name",
-    "Monthly Installment",
+    "Label",
+    "Rate",
+    "Unit",
 
-    "Months",
-    "Members",
+ 
     "Action ",
   ];
-  // let fetchProducts = banner?.result;
+  let fetchProducts = goldRate?.result;
 
-  const fetchProducts = [
-    {
-      schemeId: "GS-001",
-      schemeName: "Golden Savings Plan",
-      monthlyInstallment: 2000,
-      months: 11,
-      members: 120,
-    },
-    {
-      schemeId: "GS-002",
-      schemeName: "Shree Gold Scheme",
-      monthlyInstallment: 3000,
-      months: 12,
-      members: 85,
-    },
-    {
-      schemeId: "GS-003",
-      schemeName: "Lakshmi Gold Scheme",
-      monthlyInstallment: 1500,
-      months: 10,
-      members: 210,
-    },
-    {
-      schemeId: "GS-004",
-      schemeName: "Premium Gold Plus",
-      monthlyInstallment: 5000,
-      months: 12,
-      members: 45,
-    },
-    {
-      schemeId: "GS-005",
-      schemeName: "Family Gold Savings",
-      monthlyInstallment: 2500,
-      months: 11,
-      members: 160,
-    },
-  ];
+
+
 
   return (
     <div className="row">
@@ -91,7 +55,7 @@ const GoldRate = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllProducts(page, Number(val), bannertype);
+                        handlegetAllProducts(page, Number(val));
                       }}
                       className="
                                        select-w
@@ -124,46 +88,7 @@ const GoldRate = () => {
                   </Button>
                 </div>
               </div>
-              {/* <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                <Button
-                  onClick={() => {
-                    setBannerType("Home Banner");
-
-                    handlegetAllProducts(page, itemPerPage, "Home Banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Home Banner
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setBannerType("Campaign banner");
-                    handlegetAllProducts(page, itemPerPage, "Campaign banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Campaign Banner
-                </Button>
-              </div> */}
+            
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -209,7 +134,7 @@ const GoldRate = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.schemeId}
+                          {item?.lable}
                         </td>
                         <td
                           style={{
@@ -217,7 +142,7 @@ const GoldRate = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.schemeName}
+                          {item?.rate}
                         </td>
 
                         <td
@@ -226,25 +151,10 @@ const GoldRate = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.monthlyInstallment}
+                          {item?.unit}
                         </td>
 
-                        <td
-                          style={{
-                            verticalAlign: "middle",
-                            textAlign: "center",
-                          }}
-                        >
-                          {item.months}
-                        </td>
-                        <td
-                          style={{
-                            verticalAlign: "middle",
-                            textAlign: "center",
-                          }}
-                        >
-                          {item.members}
-                        </td>
+                      
 
                         <td
                           style={{
@@ -288,7 +198,7 @@ const GoldRate = () => {
                               className="btn btn-sm waves-effect waves-light btn-table"
                               onClick={() => handleDelete(item._id)}
                             >
-                              {bannerId === item._id ? "Deleting..." : "Delete"}
+                              {goldRateId === item._id ? "Deleting..." : "Delete"}
                             </button>
                           </div>
                         </td>
@@ -301,11 +211,11 @@ const GoldRate = () => {
 
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
-                count={banner?.totalPages}
+                count={goldRate?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllProducts(value, itemPerPage, bannertype);
+                  handlegetAllProducts(value, itemPerPage);
                 }}
                 color="primary"
               />

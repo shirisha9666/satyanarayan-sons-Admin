@@ -11,25 +11,25 @@ export const GoldRateProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(5);
-  const [banner, setBanner] = useState([]);
+  const [goldRate, setGoldRate] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
-  const [bannerId, setBannerId] = useState(null);
+  const [goldRateId, setGoldRateId] = useState(null);
 
-  const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
+  const handlegetAllProducts = async (page = 1, itemPerPage) => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/product/getAll/", {
+      const response = await axios.get("/api/gold/rate/getAll", {
         params: {
           page,
           limit: itemPerPage,
-          bannerType: bannertype,
+          
         },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response?.data", response?.data);
-      setBanner(response?.data);
+      console.log("response?.data.goldrate", response?.data);
+      setGoldRate(response?.data);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
       console.log("errormssage", errormssage);
@@ -40,8 +40,8 @@ export const GoldRateProvider = ({ children }) => {
 
   const handleDelete = async (id) => {
     try {
-      setBannerId(id);
-      let resp = await axios.delete(`/api/product/delete/${id}`, {
+      setGoldRateId(id);
+      let resp = await axios.delete(`/api/gold/rate/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -49,24 +49,24 @@ export const GoldRateProvider = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllProducts(page, itemPerPage, bannertype);
+      await handlegetAllProducts(page, itemPerPage);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
     } finally {
-      setBannerId(null);
+      setGoldRateId(null);
     }
   };
   useEffect(() => {
-    handlegetAllProducts(page, itemPerPage, bannertype);
+    handlegetAllProducts(page, itemPerPage);
   }, []);
 
 
   return (
     <GoldRateContext.Provider
       value={{
-        banner,
+        goldRate,
         handlegetAllProducts,
         setPage,
         setItemPerPage,
@@ -76,7 +76,7 @@ export const GoldRateProvider = ({ children }) => {
         loading,
         page,
         handleDelete,
-        bannerId,
+        goldRateId,
       }}
     >
       {children}
