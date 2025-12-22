@@ -20,14 +20,15 @@ import { useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useBilling } from "src/views/billing/billingContext";
+import { CircularProgress } from "@mui/material";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [validForm, setValidForm] = useState(false);
-    const { address } = useBilling();
-        const logos = address?.[0]?.logo ||[];
-       const appName = address?.[0]?.appName ;
-   
+  const { address } = useBilling();
+  const logos = address?.[0]?.logo || [];
+  const appName = address?.[0]?.appName;
+
   const [auth, setAuth] = useState({
     email: "",
     password: "",
@@ -108,7 +109,7 @@ const Login = () => {
       console.log(res);
       if (res.data.success == true) {
         localStorage.setItem("authToken", res.data.token);
-             localStorage.setItem("userdetails",JSON.stringify(res.data));
+        localStorage.setItem("userdetails", JSON.stringify(res.data));
 
         let response = await axios.get(`/api/v1/user/details`, {
           headers: {
@@ -148,13 +149,15 @@ const Login = () => {
                   <CForm>
                     <h1>{appName || "P. Satyanarayan Sons Jewellers"}</h1>
                     <p className="text-medium-emphasis">
-                      Sign In to Your {appName || "P. Satyanarayan Sons Jewellers"} Dashboard Account.
+                      Sign In to Your{" "}
+                      {appName || "P. Satyanarayan Sons Jewellers"} Dashboard
+                      Account.
                     </p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput 
+                      <CFormInput
                         type="email"
                         placeholder="Email"
                         onChange={handleChange}
@@ -193,8 +196,7 @@ const Login = () => {
                       disabled={!validForm}
                       onClick={Login}
                     >
-                      <ClipLoader loading={loading} size={18} />
-                      {!loading && "Login"}
+                      {loading ? <CircularProgress size={25} /> : "Login"}
                     </CButton>
 
                     <Link to="/">
