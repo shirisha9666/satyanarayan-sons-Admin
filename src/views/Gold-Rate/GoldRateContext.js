@@ -58,6 +58,27 @@ export const GoldRateProvider = ({ children }) => {
       setGoldRateId(null);
     }
   };
+
+    const handlegeOnegoldRate = async (id) => {
+    try {
+      setGoldRateId(id);
+      let resp = await axios.get(`/api/gold/rate/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let message = resp?.data?.message;
+      console.log("message", resp?.data);
+
+      await handlegetAllProducts(page, itemPerPage);
+      toast.success(message);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setGoldRateId(null);
+    }
+  };
   useEffect(() => {
     handlegetAllProducts(page, itemPerPage);
   }, []);

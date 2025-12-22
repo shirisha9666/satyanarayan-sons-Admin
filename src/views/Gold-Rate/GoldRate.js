@@ -31,6 +31,7 @@ const GoldRate = () => {
     "Label",
     "Rate",
     "Unit",
+    "Created",
 
  
     "Action ",
@@ -142,7 +143,7 @@ const GoldRate = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.rate}
+                          ₹{item?.rate}
                         </td>
 
                         <td
@@ -152,6 +153,14 @@ const GoldRate = () => {
                           }}
                         >
                           {item?.unit}
+                        </td>
+                         <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.createdAt}
                         </td>
 
                       
