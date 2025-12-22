@@ -6,11 +6,11 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoldRate } from "./GoldRateContext";
-
 
 const GoldRate = () => {
   const navigate = useNavigate();
@@ -30,19 +30,8 @@ const GoldRate = () => {
     page,
   } = useGoldRate();
 
-  const tableHeadering = [
-    "Label",
-    "Rate",
-    "Unit",
-    "Created",
-
- 
-    "Action ",
-  ];
+  const tableHeadering = ["Label", "Rate", "Unit", "Created", "Action "];
   let fetchProducts = goldRate?.result;
-
-
-
 
   return (
     <div className="row">
@@ -92,7 +81,6 @@ const GoldRate = () => {
                   </Button>
                 </div>
               </div>
-            
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -157,7 +145,7 @@ const GoldRate = () => {
                         >
                           {item?.unit}
                         </td>
-                         <td
+                        <td
                           style={{
                             verticalAlign: "middle",
                             textAlign: "center",
@@ -165,8 +153,6 @@ const GoldRate = () => {
                         >
                           {item?.createdAt}
                         </td>
-
-                      
 
                         <td
                           style={{
@@ -193,12 +179,11 @@ const GoldRate = () => {
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={async () => {
-                              await  handlegeOnegoldRate(item._id)
+                                await handlegeOnegoldRate(item._id);
                                 navigate(`/gold-rates/update/${item._id}`);
                               }}
                             >
-                              {goldRateeditId?"loading...":"Edit"}
-                              
+                              {goldRateeditId===item._id ? <CircularProgress size={25}/> : "Edit"}
                             </button>
                             <button
                               style={{
@@ -212,7 +197,9 @@ const GoldRate = () => {
                               className="btn btn-sm waves-effect waves-light btn-table"
                               onClick={() => handleDelete(item._id)}
                             >
-                              {goldRateId === item._id ? "Deleting..." : "Delete"}
+                              {goldRateId === item._id
+                                ? <CircularProgress size={25}/>
+                                : "Delete"}
                             </button>
                           </div>
                         </td>
