@@ -35,8 +35,6 @@ import Appointments from "./views/Appointments/Appointments";
 
 //product
 
-
-
 //Order Management
 import NewOrders from "./views/orders/NewOrders.js";
 // import ProcessingOrders from "./views/orders/ProcessingOrders.js";
@@ -175,7 +173,7 @@ import AdminSeriesDashboard from "./views/series/AdminSeriesDashboard";
 import AdminSubjectView from "./views/series/AdminSubjectView";
 import deleteChapterData from "./views/Chapters/deleteChapterData";
 import GenresSubject from "./views/Genres/genresSubject";
-import {  GoogleOAuthProvider } from '@react-oauth/google'
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleAuth from "./views/Users/googleAuth";
 import SubjectCreate from "./views/Subjects/subjectCreate";
 import Trending from "./views/Trending/Trending";
@@ -212,17 +210,16 @@ import SubCategory from "./views/subcategory/SubCategory";
 import SubCategoryAdd from "./views/subcategory/SubCategoryAdd";
 import Products from "./views/Product/Product";
 import ProductAdd from "./views/Product/ProductAdd";
+import GoldSchema from "./views/Gold-Schema/GoldSchema";
+import GoldSchemaAdd from "./views/Gold-Schema/GoldSchemaAdd";
 
-
-
-
-const GoogleAuthWrapper=()=>{
-  return(
+const GoogleAuthWrapper = () => {
+  return (
     <GoogleOAuthProvider clientId="706958433155-ohqku868vmbpchhk54gcm4vi9b3433mf.apps.googleusercontent.com">
       <GoogleAuth></GoogleAuth>
     </GoogleOAuthProvider>
-  )
-}
+  );
+};
 // import Patient from "./views/Patients/Patient";
 // import ViewPatient from "./views/Patients/ViewPatient";
 // import ViewPatientTest from "./views/Patients/Test/ViewPatientTest";
@@ -230,10 +227,13 @@ const routes = [
   // { path: "/", exact: true, name: "Home", navName: "" },
   //dashboard
 
-
-
   { path: "/dashboard", name: "Dashboard", element: Dashboard, navName: "" },
-    { path: "/google/login", name: "googlelogin", element: GoogleAuthWrapper, navName: "" },
+  {
+    path: "/google/login",
+    name: "googlelogin",
+    element: GoogleAuthWrapper,
+    navName: "",
+  },
   { path: "/reports", name: "Reports", element: Reports, navName: "" },
   {
     path: "/change_password",
@@ -312,14 +312,6 @@ const routes = [
     navName: "Product Management",
   },
 
-
-
-  
- 
-  
-
-
-
   // Appointments
   // { path: "/appointments", name: "Appointments", element: Appointments },
   // {
@@ -350,7 +342,7 @@ const routes = [
     element: SingleUserAllDetails,
     navName: "Customers",
   },
-    {
+  {
     path: "/chat/:name/:ticketId",
     name: "Customers",
     element: Chat,
@@ -497,7 +489,7 @@ const routes = [
   //-------------------------------website related routes----------------------------------
 
   // CampaigningBanner
-    {
+  {
     path: "/banner",
     name: "Banners",
     element: Banners,
@@ -518,34 +510,33 @@ const routes = [
 
   // product category
 
-
-    {
+  {
     path: "/category",
     name: "Categories",
     element: Categories,
     navName: "Settings",
   },
- 
-    {
+
+  {
     path: "/category/add",
     name: "Categories",
     element: CategoryAdd,
     navName: "Settings",
   },
-   {
+  {
     path: "/category/update/:id",
     name: "Categories",
     element: CategoryUpdate,
     navName: "Settings",
   },
   // sub category
-   {
+  {
     path: "/subcategory",
     name: "SubCategories",
     element: SubCategory,
     navName: "Settings",
   },
-    {
+  {
     path: "/subcategory/add/:name/:id",
     name: "SubCategories",
     element: SubCategoryAdd,
@@ -554,18 +545,29 @@ const routes = [
 
   // products
 
-
-   {
+  {
     path: "/products",
     name: "Products",
     element: Products,
     navName: "Settings",
   },
 
-     {
+  {
     path: "/product/add",
     name: "Products",
     element: ProductAdd,
+    navName: "Settings",
+  },
+  {
+    path: "/gold-schemes",
+    name: "Gold Schemes",
+    element: GoldSchema,
+    navName: "Settings",
+  },
+    {
+    path: "/gold-schemes/add",
+    name: "Gold Schemes",
+    element: GoldSchemaAdd,
     navName: "Settings",
   },
   {
@@ -574,13 +576,13 @@ const routes = [
     element: Advertisement,
     navName: "Settings",
   },
-    {
+  {
     path: "/Advertisement/add",
     name: "Advertisement",
     element: AddAds,
     navName: "Settings",
   },
-    {
+  {
     path: "/Advertisement/update/:id",
     name: "Advertisement",
     element: UpdateAds,
@@ -658,7 +660,7 @@ const routes = [
     navName: "Settings",
   },
   // add
-    {
+  {
     path: "/content/view/terms-and-conditions",
     name: "Website Related",
     element: ViewTermsConditions,
@@ -840,14 +842,14 @@ const routes = [
     element: POSViewOrders,
     navName: "Orders",
   },
-    {
+  {
     path: "/Billing",
     name: "View In Store Cash Orders",
     element: Billing,
     navName: "Orders",
   },
 
-    {
+  {
     path: "/view/:id",
     name: "",
     element: ViewBiling,
@@ -860,22 +862,20 @@ const routes = [
     navName: "Website Related",
   },
 
-
-    {
+  {
     path: "/user/invoice/:name/:id",
     name: "",
     element: UserInvoiceTable,
     navName: "Website Related",
   },
-  
-  
-    {
+
+  {
     path: "/invoice/view/:id",
     name: "",
     element: Invoice,
     navName: "Website Related",
   },
-  
+
   // {
   //   path: "/abandoned-carts",
   //   name: "Abandone Carts",

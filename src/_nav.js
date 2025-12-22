@@ -4,6 +4,7 @@ import { TbDeviceIpadMinus } from "react-icons/tb";
 import { cilCreditCard, cilReceipt } from "@coreui/icons";
     import { cilBullhorn } from '@coreui/icons';
     import { cilBasket } from '@coreui/icons';
+    import { cilStar } from '@coreui/icons'  
 
 import {
   cibMaterialDesign,
@@ -108,13 +109,21 @@ const _nav = [
         group: "Settings",
       },
 
-      // Products
+      // Products  
 
        {
         component: CNavItem,
         name: "Products",
         icon: <CIcon icon={cilBasket} customClassName="nav-icon" />,
         to: "/products",
+        group: "Settings",
+      },
+
+       {
+        component: CNavItem,
+        name: "Gold Schemes",
+        icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+        to: "/gold-schemes",
         group: "Settings",
       },
  

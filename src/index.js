@@ -26,6 +26,7 @@ import { BannerProvider } from "./views/Banners/bannerContext";
 import { CategoryProvider } from "./views/category/CategoryContext";
 import { SubCategoryProvider } from "./views/subcategory/subCategoryContext";
 import { ProductProvider } from "./views/Product/ProductContenxt";
+import { GoldSchemaProvider } from "./views/Gold-Schema/GoldSchemaContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -54,6 +55,7 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
+    <GoldSchemaProvider>
     <ProductProvider>
     <SubCategoryProvider>
     <CategoryProvider>
@@ -79,6 +81,7 @@ root.render(
     </CategoryProvider>
     </SubCategoryProvider>
     </ProductProvider>
+    </GoldSchemaProvider>
   </Provider>
 );
 
