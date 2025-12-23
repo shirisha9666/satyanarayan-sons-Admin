@@ -188,7 +188,7 @@ const Products = () => {
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={() => {
-                                navigate(`/banner/update/${item._id}`);
+                                navigate(`/product/update/${item._id}`);
                               }}
                             >
                               Edit

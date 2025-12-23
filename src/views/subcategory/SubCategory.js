@@ -134,7 +134,7 @@ const SubCategory = () => {
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={() => {
-                                navigate(`/banner/update/${item._id}`);
+                                navigate(`/subcategory/update/${item?.name}/${item._id}`);
                               }}
                             >
                               Edit

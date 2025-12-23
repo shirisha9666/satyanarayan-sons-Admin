@@ -216,6 +216,8 @@ import GoldSchemaUpdate from "./views/Gold-Schema/GoldSchemaUpdate";
 import GoldRate from "./views/Gold-Rate/GoldRate";
 import GoldRateAdd from "./views/Gold-Rate/GoldRateAdd";
 import GoldRateUpdate from "./views/Gold-Rate/GoldRateUpdate";
+import SubCategoryUpdate from "./views/subcategory/SubCategoryUpdate";
+import ProductUpdate from "./views/Product/ProductUpdate";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -546,6 +548,12 @@ const routes = [
     element: SubCategoryAdd,
     navName: "Settings",
   },
+   {
+    path: "/subcategory/update/:name/:id",
+    name: "SubCategories",
+    element: SubCategoryUpdate,
+    navName: "Settings",
+  },
 
   // products
 
@@ -560,6 +568,12 @@ const routes = [
     path: "/product/add",
     name: "Products",
     element: ProductAdd,
+    navName: "Settings",
+  },
+    {
+    path: "/product/update/:id",
+    name: "Products",
+    element: ProductUpdate,
     navName: "Settings",
   },
   {

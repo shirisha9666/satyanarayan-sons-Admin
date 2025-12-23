@@ -42,21 +42,21 @@ const GoldSchema = () => {
     {
       schemeId: "GS-001",
       schemeName: "Golden Savings Plan",
-      monthlyInstallment: 2000,
+      monthlyInstallment:" 2,000",
       months: 11,
       members: 120,
     },
     {
       schemeId: "GS-002",
       schemeName: "Shree Gold Scheme",
-      monthlyInstallment: 3000,
+      monthlyInstallment: "3,000",
       months: 12,
       members: 85,
     },
     {
       schemeId: "GS-003",
       schemeName: "Lakshmi Gold Scheme",
-      monthlyInstallment: 1500,
+      monthlyInstallment: "1,500",
       months: 10,
       members: 210,
     },
@@ -70,7 +70,7 @@ const GoldSchema = () => {
     {
       schemeId: "GS-005",
       schemeName: "Family Gold Savings",
-      monthlyInstallment: 2500,
+      monthlyInstallment: "2,500",
       months: 11,
       members: 160,
     },
@@ -124,46 +124,7 @@ const GoldSchema = () => {
                   </Button>
                 </div>
               </div>
-              {/* <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                <Button
-                  onClick={() => {
-                    setBannerType("Home Banner");
-
-                    handlegetAllProducts(page, itemPerPage, "Home Banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Home Banner
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setBannerType("Campaign banner");
-                    handlegetAllProducts(page, itemPerPage, "Campaign banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Campaign Banner
-                </Button>
-              </div> */}
+             
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -226,7 +187,7 @@ const GoldSchema = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.monthlyInstallment}
+                          ₹{item?.monthlyInstallment}
                         </td>
 
                         <td
