@@ -14,6 +14,8 @@ export const BannerProvider = ({ children }) => {
   const [banner, setBanner] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [bannerId, setBannerId] = useState(null);
+  const [BannerOneDetails, setBannerOneDetails] = useState([])
+  const[viewBannerId,setViewBannerId]=useState(null)
 
   const getHomebanners = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -58,6 +60,27 @@ export const BannerProvider = ({ children }) => {
       setBannerId(null);
     }
   };
+
+  const handleOneBanner = async (id) => {
+    try {
+      setViewBannerId(id);
+      let resp = await axios.get(`/api/homeBanner/getOne/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    
+      setBannerOneDetails(resp?.data)
+
+      await getHomebanners(page, itemPerPage, bannertype);
+  
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setViewBannerId(null);
+    }
+  };
   useEffect(() => {
     getHomebanners(page, itemPerPage, bannertype);
   }, []);
@@ -76,7 +99,9 @@ export const BannerProvider = ({ children }) => {
         loading,
         page,
         handleDelete,
+        handleOneBanner,
         bannerId,
+        BannerOneDetails
       }}
     >
       {children}

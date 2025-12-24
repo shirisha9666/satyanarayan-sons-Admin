@@ -6,6 +6,7 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,8 +24,10 @@ const Banners = () => {
     bannertype,
     bannerId,
     itemPerPage,
+    viewBannerId,
     loading,
     page,
+    handleOneBanner,
   } = useBanner();
 
   const tableHeadering = [
@@ -37,7 +40,6 @@ const Banners = () => {
     "Actions",
   ];
   let fetchBanner = banner?.result;
-  console.log("fetchBanner", banner);
 
   return (
     <div className="row">
@@ -96,7 +98,9 @@ const Banners = () => {
                   }}
                   variant="contained"
                   style={{
-                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
+                    background: `${
+                      bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"
+                    }`,
                     color: "#fff",
                     fontWeight: "bold",
                     padding: "8px 20px",
@@ -115,7 +119,9 @@ const Banners = () => {
                   }}
                   variant="contained"
                   style={{
-                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
+                    background: `${
+                      bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"
+                    }`,
                     color: "#fff",
                     fontWeight: "bold",
                     padding: "8px 20px",
@@ -169,71 +175,69 @@ const Banners = () => {
                         <td>{item?.subtitle}</td>
                         <td>{item?.content}</td>
 
-                     <td>
-  {item?.banner?.url ? (
-    item.banner.url.match(/\.(mp4|webm|ogg)$/i) ? (
-      <video
-        src={item.banner.url}
-        width="100"
-        height="60"
-        muted
-        loop
-        autoPlay
-        playsInline
-        style={{ objectFit: "cover", borderRadius: "6px" }}
-      />
-    ) : (
-      <img
-        src={item.banner.url}
-        width="100"
-        height="60"
-        alt=""
-        style={{ objectFit: "cover", borderRadius: "6px" }}
-      />
-    )
-  ) : (
-    "—"
-  )}
-</td>
+                        <td>
+                          {item?.banner?.url ? (
+                            item.banner.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                              <video
+                                src={item.banner.url}
+                                width="100"
+                                height="60"
+                                muted
+                                loop
+                                autoPlay
+                                playsInline
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={item.banner.url}
+                                width="100"
+                                height="60"
+                                alt=""
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                            )
+                          ) : (
+                            "—"
+                          )}
+                        </td>
 
-
-                        <td style={{ display: "flex", gap: "10px" }}>
-                          <button
-                            style={{
-                              color: "white",
-                            }}
-                            type="button"
-                            className="
-                                             btn btn-primary
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => {
-                              navigate(
-                                `/banner/update/${item._id}`
-                              );
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            style={{
-                              color: "white",
-
-                              background: "red",
-                            }}
-                            type="button"
-                            className="
-                                             btn  btn-sm
-                                           waves-effect waves-light
-                                           btn-table
-                                       
-                                         "
-                            onClick={() => handleDelete(item._id)}
-                          >
-                            {bannerId === item._id ? "Deleting..." : "Delete"}
-                          </button>
+                        <td style={{ textAlign: "center", verticalAlign: "middle" }}>
+                          <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center" }}>
+                            <button
+                              style={{ color: "white" }}
+                              type="button"
+                              className="btn btn-primary waves-effect waves-light btn-table"
+                              onClick={async () => {
+                                await handleOneBanner(item._id);
+                                navigate(`/banner/update/${item._id}`);
+                              }}
+                            >
+                              {viewBannerId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Edit"
+                              )}
+                            </button>
+                            <button
+                              style={{ color: "white", background: "red" }}
+                              type="button"
+                              className="btn btn-sm waves-effect waves-light btn-table"
+                              onClick={() => handleDelete(item._id)}
+                            >
+                              {bannerId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Delete"
+                              )}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

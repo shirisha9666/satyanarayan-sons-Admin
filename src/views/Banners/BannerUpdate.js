@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -18,21 +18,30 @@ import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
+import { getMediaType, isVideo } from "../TypeOfmedia";
 
 const BannerUpdate = () => {
-  const token = isAutheticated()
+  const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
-  const navigate = useNavigate()
-  const { id } = useParams()
-  const { getHomebanners, page, itemPerPage, bannertype } = useBanner()
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const {
+    getHomebanners,
+    page,
+    itemPerPage,
+    bannertype,
+    handleOneBanner,
+    BannerOneDetails,
+  } = useBanner();
+  let bannerdetails = BannerOneDetails?.homeBanner;
   const [bannerDetails, setBannerDetails] = useState({
-    name: "",
-    subtitle: "",
-    content: "",
-    banneryType: "",
-    banner: null,
-    coverImagePreview: "",
+    name: bannerdetails?.name || "",
+    subtitle: bannerdetails?.subtitle || "",
+    content: bannerdetails?.content || "",
+    banneryType: bannerdetails?.bannerType || "",
+    banner: bannerdetails?.banner?.url || null,
+    coverImagePreview: bannerdetails?.banner.url || "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,8 +50,6 @@ const BannerUpdate = () => {
       [name]: value,
     }));
   };
-
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -83,8 +90,6 @@ const BannerUpdate = () => {
 
         const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
         const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
-
-       
 
         setBannerDetails((prev) => ({
           ...prev,
@@ -131,10 +136,10 @@ const BannerUpdate = () => {
       const result = res.data;
 
       await getHomebanners(page, itemPerPage, bannertype);
-      toast.success("Banner Updated Successfully")
+      toast.success("Banner Updated Successfully");
       navigate("/banner");
     } catch (error) {
-      console.log("error add banner", error)
+      console.log("error add banner", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -151,6 +156,11 @@ const BannerUpdate = () => {
       setErrorData("");
     }
   };
+  useEffect(() => {
+    handleOneBanner(id);
+  }, [id]);
+
+  console.log("BannerOneDetails", BannerOneDetails.homeBanner);
   return (
     <div>
       <Box
@@ -176,7 +186,6 @@ const BannerUpdate = () => {
                 value={bannerDetails.name}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
             <Grid item xs={12}>
@@ -187,7 +196,6 @@ const BannerUpdate = () => {
                 value={bannerDetails.banneryType}
                 onChange={handleChange}
                 fullWidth
-                
               >
                 <MenuItem value="">Select Type</MenuItem>
                 <MenuItem value="Home Banner">Home Banner</MenuItem>
@@ -203,7 +211,6 @@ const BannerUpdate = () => {
                 value={bannerDetails.subtitle}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
             <Grid item xs={12}>
@@ -220,8 +227,9 @@ const BannerUpdate = () => {
                 helperText={
                   bannerDetails.content.length < 10
                     ? `Minimum 10 characters required (${bannerDetails.content.length}/150)`
-                    : `${150 - bannerDetails.content.length
-                    } characters remaining`
+                    : `${
+                        150 - bannerDetails.content.length
+                      } characters remaining`
                 }
                 error={
                   bannerDetails.content.length > 0 &&
@@ -230,7 +238,6 @@ const BannerUpdate = () => {
               />
             </Grid>
 
-           
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
                 Cover Media (Image / Video)
@@ -248,11 +255,15 @@ const BannerUpdate = () => {
 
               {bannerDetails.coverImagePreview && (
                 <Box mt={2}>
-                  {bannerDetails.coverImageType === "video" ? (
+                  {isVideo(
+                    bannerDetails.coverImagePreview,
+                    bannerDetails.banner
+                  ) ? (
                     <video
                       src={bannerDetails.coverImagePreview}
                       controls
                       muted
+                      playsInline
                       style={{
                         width: "100%",
                         maxHeight: 300,
@@ -275,7 +286,6 @@ const BannerUpdate = () => {
                 </Box>
               )}
             </Grid>
-
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>
