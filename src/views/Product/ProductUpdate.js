@@ -36,7 +36,7 @@ const ProductUpdate = () => {
   } = useProduct();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
- 
+
   const [productDetails, setProductDetails] = useState({
     productName: productViewDetails?.productName || "",
     categoryId: productViewDetails?.categoryId?._id || "",
@@ -206,7 +206,7 @@ const ProductUpdate = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 select
                 label="Select Subcategory Type"
@@ -219,7 +219,25 @@ const ProductUpdate = () => {
                   <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>
                 ))}
               </TextField>
-            </Grid>
+            </Grid> */}
+            {productDetails.categoryId && (
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  label="Select Subcategory Type"
+                  name="subcategoryId"
+                  value={productDetails.subcategoryId}
+                  onChange={handleChange}
+                  fullWidth
+                >
+                  {subcategorys.map((subcat) => (
+                    <MenuItem key={subcat._id} value={subcat._id}>
+                      {subcat.subcategory}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>

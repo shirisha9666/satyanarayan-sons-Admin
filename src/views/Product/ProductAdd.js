@@ -196,21 +196,23 @@ const ProductAdd = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Select Subcategory Type"
-                name="subcategoryId"
-                value={productDetails.subcategoryId}
-                onChange={handleChange}
-                fullWidth
-                required
-              >
-                {subcategorys.map((subcat) => (
-                  <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>
-                ))}
-              </TextField>
-            </Grid>
+            {productDetails.categoryId && (
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  label="Select Subcategory Type"
+                  name="subcategoryId"
+                  value={productDetails.subcategoryId}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                >
+                  {subcategorys.map((subcat) => (
+                    <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
