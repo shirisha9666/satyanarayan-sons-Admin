@@ -6,11 +6,11 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCategory } from "./CategoryContext";
-
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -26,12 +26,14 @@ const Categories = () => {
     itemPerPage,
     loading,
     page,
+    handlegetOneCategory,
+   
+    viewCategoryId,
   } = useCategory();
 
-  const tableHeadering = [ "Name", "Category", "Image", "Actions"];
+  const tableHeadering = ["Name", "Category", "Image", "Actions"];
 
   let fetchBanner = category?.result;
-  console.log("banner",category)
 
 
   return (
@@ -82,7 +84,6 @@ const Categories = () => {
                   </Button>
                 </div>
               </div>
-            
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -118,11 +119,8 @@ const Categories = () => {
                     fetchBanner &&
                     fetchBanner.map((item, i) => (
                       <tr key={i}>
-                    
                         <td>{item?.name}</td>
                         <td>{item?.category || null}</td>
-
-                  
 
                         <td>
                           <img
@@ -135,22 +133,24 @@ const Categories = () => {
 
                         <td style={{ display: "flex", gap: "10px" }}>
                           <button
-  type="button"
-  className="btn btn-sm btn-table waves-effect waves-light"
-  style={{
-    backgroundColor: "#6f42c1",
-    border: "1px solid #6f42c1",
-    color: "#fff",
-    padding: "6px 14px",
-    borderRadius: "4px",
-    fontWeight: "500",
-  }}
-  onClick={() => {
-    navigate(`/subcategory/add/${item.category}/${item._id}`);
-  }}
->
-  Add Subcategory
-</button>
+                            type="button"
+                            className="btn btn-sm btn-table waves-effect waves-light"
+                            style={{
+                              backgroundColor: "#6f42c1",
+                              border: "1px solid #6f42c1",
+                              color: "#fff",
+                              padding: "6px 14px",
+                              borderRadius: "4px",
+                              fontWeight: "500",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                `/subcategory/add/${item.category}/${item._id}`
+                              );
+                            }}
+                          >
+                            Add Subcategory
+                          </button>
 
                           <button
                             style={{
@@ -163,11 +163,16 @@ const Categories = () => {
                                            btn-table
                                        
                                          "
-                            onClick={() => {
+                            onClick={async () => {
+                              await handlegetOneCategory(item._id);
                               navigate(`/category/update/${item._id}`);
                             }}
                           >
-                            Edit
+                            {viewCategoryId === item._id ? (
+                              <CircularProgress size={25} />
+                            ) : (
+                              "Edit"
+                            )}
                           </button>
                           <button
                             style={{
@@ -200,7 +205,7 @@ const Categories = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                 s
+                  s;
                 }}
                 color="primary"
               />

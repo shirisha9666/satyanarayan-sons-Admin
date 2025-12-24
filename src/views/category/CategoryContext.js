@@ -15,6 +15,8 @@ export const CategoryProvider = ({ children }) => {
   const [bannertype, setBannerType] = useState("Home Banner");
   const [subcategorys, setSubcategorys] = useState([]);
   const [bannerId, setBannerId] = useState(null);
+  const [categoryViewDetails, setCategoryViewDetails] = useState([]);
+  const [viewCategoryId, setViewCategoryId] = useState(null);
 
   const handleAllCategorys = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -76,6 +78,24 @@ export const CategoryProvider = ({ children }) => {
       console.log("errormessage", errormessage);
     }
   };
+
+  const handlegetOneCategory = async (id) => {
+    try {
+      setViewCategoryId(id);
+      let resp = await axios.get(`/api/product/category/getOne/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setCategoryViewDetails(resp?.data);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setViewCategoryId(null);
+    }
+  };
   useEffect(() => {
     handleAllCategorys(page, itemPerPage, bannertype);
   }, []);
@@ -95,6 +115,10 @@ export const CategoryProvider = ({ children }) => {
         page,
         handleDelete,
         subcategorys,
+        handlegetOneCategory,
+        categoryViewDetails,
+        viewCategoryId,
+
         bannerId,
       }}
     >

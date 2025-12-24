@@ -158,7 +158,7 @@ const ProductUpdate = () => {
   };
   useEffect(() => {
     handlegetOneProduct(id);
-  }, [id]);
+  }, []);
 
   return (
     <div>
@@ -220,8 +220,7 @@ const ProductUpdate = () => {
                 ))}
               </TextField>
             </Grid> */}
-            {productDetails.categoryId && (
-              <Grid item xs={12}>
+           <Grid item xs={12}>
                 <TextField
                   select
                   label="Select Subcategory Type"
@@ -237,7 +236,6 @@ const ProductUpdate = () => {
                   ))}
                 </TextField>
               </Grid>
-            )}
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>

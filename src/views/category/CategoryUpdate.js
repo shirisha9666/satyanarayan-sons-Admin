@@ -1,7 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -24,13 +24,22 @@ const CategoryUpdate = () => {
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
-  const [categoryDetails, setCategoryDetails] = useState({
-    name: "",
-    category: "",
 
-    categorybanner: null,
-    coverImagePreview: "",
+  const { id } = useParams();
+  const {
+    handleAllCategorys,
+    page,
+    itemPerPage,
+    bannertype,
+    handlegetOneCategory,
+    categoryViewDetails,
+  } = useCategory();
+  const [categoryDetails, setCategoryDetails] = useState({
+    name: categoryViewDetails?.category?.name || "",
+    category: categoryViewDetails?.category?.category || "",
+
+    categorybanner: categoryViewDetails?.category?.categorybanner?.url || null,
+    coverImagePreview: categoryViewDetails?.category?.categorybanner?.url || "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,14 +121,16 @@ const CategoryUpdate = () => {
 
       formData.append("categorybanner", categoryDetails.categorybanner);
 
-      console.log("formData", formData);
-
-      const res = await axios.post("/api/product/category/create", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.patch(
+        `/api/product/category/update/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const result = res.data;
 
@@ -143,6 +154,10 @@ const CategoryUpdate = () => {
       setErrorData("");
     }
   };
+  useEffect(() => {
+    handlegetOneCategory(id);
+  }, [id]);
+  console.log("categoryViewDetails", categoryViewDetails);
   return (
     <div>
       <Box
@@ -171,7 +186,6 @@ const CategoryUpdate = () => {
                 required
               />
             </Grid>
-         
 
             <Grid item xs={12}>
               <TextField
@@ -184,7 +198,6 @@ const CategoryUpdate = () => {
                 required
               />
             </Grid>
-           
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
