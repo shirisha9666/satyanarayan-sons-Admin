@@ -1,7 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -22,19 +22,28 @@ import { useCategory } from "../category/CategoryContext";
 
 const ProductUpdate = () => {
   const token = isAutheticated();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype } = useProduct();
+  const {
+    handlegetAllProducts,
+    page,
+    itemPerPage,
+    bannertype,
+    productViewDetails,
+    handlegetOneProduct,
+  } = useProduct();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
+ 
   const [productDetails, setProductDetails] = useState({
-    productName: "",
-    categoryId: "",
-    subcategoryId: "",
+    productName: productViewDetails?.productName || "",
+    categoryId: productViewDetails?.categoryId?._id || "",
+    subcategoryId: productViewDetails?.subcategoryId?._id || "",
 
-    productImage: null,
-    coverImagePreview: "",
+    productImage: productViewDetails?.productImage?.url || null,
+    coverImagePreview: productViewDetails?.productImage?.url || "",
   });
 
   console.log("category", category?.result);
@@ -118,7 +127,7 @@ const ProductUpdate = () => {
       formData.append("subcategoryId", productDetails.subcategoryId);
       formData.append("productImage", productDetails.productImage);
 
-      const res = await axios.post("/api/product/create/", formData, {
+      const res = await axios.patch(`/api/product/update/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -147,7 +156,10 @@ const ProductUpdate = () => {
       setErrorData("");
     }
   };
-  console.log("subcategorys", subcategorys);
+  useEffect(() => {
+    handlegetOneProduct(id);
+  }, [id]);
+
   return (
     <div>
       <Box
@@ -173,7 +185,6 @@ const ProductUpdate = () => {
                 value={productDetails.productName}
                 onChange={handleChange}
                 fullWidth
-                required
               />
             </Grid>
             <Grid item xs={12}>
@@ -184,7 +195,6 @@ const ProductUpdate = () => {
                 value={productDetails.categoryId}
                 onChange={handleChange}
                 fullWidth
-                required
               >
                 {category?.result?.map((cat) => (
                   <MenuItem
@@ -204,7 +214,6 @@ const ProductUpdate = () => {
                 value={productDetails.subcategoryId}
                 onChange={handleChange}
                 fullWidth
-                required
               >
                 {subcategorys.map((subcat) => (
                   <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>

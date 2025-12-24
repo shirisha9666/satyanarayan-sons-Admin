@@ -14,6 +14,8 @@ export const ProductProvider = ({ children }) => {
   const [banner, setBanner] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [bannerId, setBannerId] = useState(null);
+  const [productId, setProductId] = useState(null);
+  const [productViewDetails, setProductViewDetails] = useState([]);
 
   const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -58,10 +60,27 @@ export const ProductProvider = ({ children }) => {
       setBannerId(null);
     }
   };
+
+  const handlegetOneProduct = async (id) => {
+    try {
+      setProductId(id);
+      let resp = await axios.get(`/api/product/getOne/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setProductViewDetails(resp?.data?.product);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setProductId(null);
+    }
+  };
   useEffect(() => {
     handlegetAllProducts(page, itemPerPage, bannertype);
   }, []);
-
 
   return (
     <ProductContext.Provider
@@ -77,6 +96,9 @@ export const ProductProvider = ({ children }) => {
         page,
         handleDelete,
         bannerId,
+        handlegetOneProduct,
+        productViewDetails,
+        productId
       }}
     >
       {children}

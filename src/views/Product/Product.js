@@ -6,6 +6,7 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -25,10 +26,12 @@ const Products = () => {
     itemPerPage,
     loading,
     page,
+    handlegetOneProduct,
+  
+    productId,
   } = useProduct();
 
   const tableHeadering = [
-   
     "Product Name",
     "Category",
     "SubCategory",
@@ -37,7 +40,6 @@ const Products = () => {
     "Actions",
   ];
   let fetchProducts = banner?.result;
-  console.log("fetchProducts", fetchProducts);
 
   return (
     <div className="row">
@@ -140,7 +142,12 @@ const Products = () => {
                 >
                   <tr>
                     {tableHeadering.map((head) => (
-                      <th style={{ verticalAlign: "middle", textAlign: "center" }}> {head}</th>
+                      <th
+                        style={{ verticalAlign: "middle", textAlign: "center" }}
+                      >
+                        {" "}
+                        {head}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -162,36 +169,87 @@ const Products = () => {
                     fetchProducts &&
                     fetchProducts.map((item, i) => (
                       <tr key={i} style={{ verticalAlign: "middle" }}>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.productName}
+                        </td>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.categoryId?.category || null}
+                        </td>
 
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.productName}</td>
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.categoryId?.category || null}</td>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.subcategoryId?.subcategory || null}
+                        </td>
 
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>{item?.subcategoryId?.subcategory || null}</td>
-
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
                           <img
                             src={item?.productImage?.url}
-                            style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8, display: "block", margin: "0 auto" }}
+                            style={{
+                              width: 80,
+                              height: 80,
+                              objectFit: "cover",
+                              borderRadius: 8,
+                              display: "block",
+                              margin: "0 auto",
+                            }}
                             alt="Product"
                           />
                         </td>
 
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
-                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              gap: "10px",
+                            }}
+                          >
                             <button
                               style={{
                                 color: "white",
                                 width: "90px",
                                 fontWeight: "bold",
-                                borderRadius: "6px"
+                                borderRadius: "6px",
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={() => {
+                              onClick={async() => {
+                                await handlegetOneProduct(item._id)
                                 navigate(`/product/update/${item._id}`);
+                                
                               }}
                             >
-                              Edit
+                              {productId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Edit"
+                              )}
                             </button>
                             <button
                               style={{
@@ -199,7 +257,7 @@ const Products = () => {
                                 background: "red",
                                 width: "90px",
                                 fontWeight: "bold",
-                                borderRadius: "6px"
+                                borderRadius: "6px",
                               }}
                               type="button"
                               className="btn btn-sm waves-effect waves-light btn-table"
