@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -19,6 +20,8 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner, useSubCategory } from "./subCategoryContext";
 import { useCategory } from "../category/CategoryContext";
+import { isVideo } from "../TypeOfmedia";
+import { validateMediaFile } from "../HelperImageResoluation";
 
 const SubCategoryUpdate = () => {
   const token = isAutheticated();
@@ -32,14 +35,13 @@ const SubCategoryUpdate = () => {
     subCategoryViewDetais,
     handleSubcategoryDetailsById,
   } = useSubCategory();
-  let subcategoryDetails = subCategoryViewDetais?.category;
+  let subcategoryDetailsData= subCategoryViewDetais?.category;
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
-    name: subcategoryDetails?.name || "",
+    name: subcategoryDetailsData?.name || "",
 
-    subcategory: subcategoryDetails?.subcategory || "",
-
-    subcategorythumbnail: subcategoryDetails?.subcategorythumbnail?.url || null,
-    coverImagePreview: subcategoryDetails?.subcategorythumbnail?.url || "",
+    subcategory: subcategoryDetailsData?.subcategory || "",
+    subcategorythumbnail: subcategoryDetailsData?.subcategorythumbnail?.url || null,
+    coverImagePreview: subcategoryDetailsData?.subcategorythumbnail?.url || "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,65 +53,29 @@ const SubCategoryUpdate = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
 
-    // ----------------------------
-    // 1️⃣ FILE SIZE VALIDATION (2MB)
-    // ----------------------------
-    const MAX_IMAGE_SIZE_MB = 2;
-    const fileSizeInMB = file.size / (1024 * 1024);
+    validateMediaFile({
+      file,
+      imageConfig: {
+        width: 1920,
+        height: 600,
+        maxSize: 1 * 1024 * 1024,
+      },
+      videoConfig: {
+        maxSize: 2 * 1024 * 1024,
+      },
+      onSuccess: ({ file, previewURL, type }) => {
+        setSubCategoryDeatills((prev) => ({
+          ...prev,
+          subcategorythumbnail: file,
+          coverImagePreview: previewURL,
+          coverImageType: type,
+        }));
+      },
+    });
 
-    if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-      toast.error("Please upload an image smaller than 2MB.");
-      return;
-    }
-
-    // ----------------------------
-    // 2️⃣ DIMENSION VALIDATION
-    // ----------------------------
-    const img = new Image();
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-
-      // Required Banner Size
-      const REQUIRED_WIDTH = 1920;
-      const REQUIRED_HEIGHT = 600;
-
-      // Allow small tolerance (±5px)
-      const WIDTH_TOLERANCE = 5;
-      const HEIGHT_TOLERANCE = 5;
-
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
-      const heightValid =
-        Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
-
-      // if (!widthValid || !heightValid) {
-      //   toast.error(
-      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
-      //   );
-      //   return;
-      // }
-
-      // ----------------------------
-      // 3️⃣ VALID IMAGE → SET PREVIEW
-      // ----------------------------
-      const previewURL = URL.createObjectURL(file);
-
-      setSubCategoryDeatills((prev) => ({
-        ...prev,
-        subcategorythumbnail: file,
-        coverImagePreview: previewURL,
-      }));
-    };
-
-    img.onerror = () => {
-      toast.error("Invalid image file.");
-    };
-
-    img.src = URL.createObjectURL(file); // Must come after setting onload
+    e.target.value = ""; // allow re-upload same file
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -203,29 +169,55 @@ const SubCategoryUpdate = () => {
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
-                Sub Category Thumbnail
+                Cover Media (Image / Video)
               </Typography>
+
               <Button variant="contained" component="label">
-                Upload Image
+                Upload Media
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   hidden
                   onChange={handleImageChange}
                 />
               </Button>
-              {subCategoryDetails.coverImagePreview && (
+
+              {/* Helper Text */}
+              <FormHelperText>
+                Please upload an image or video. Recommended resolution: {1920}{" "}
+                × {600}. Max size: 2 MB.
+              </FormHelperText>
+
+              {subCategoryDetails?.coverImagePreview && (
                 <Box mt={2}>
-                  <img
-                    src={subCategoryDetails.coverImagePreview}
-                    alt="Cover Preview"
-                    style={{
-                      width: "100%",
-                      maxHeight: 300,
-                      objectFit: "cover",
-                      borderRadius: 8,
-                    }}
-                  />
+                  {isVideo(
+                    subCategoryDetails.coverImagePreview,
+                    subCategoryDetails.subcategorythumbnail
+                  ) ? (
+                    <video
+                      src={subCategoryDetails.coverImagePreview}
+                      controls
+                      muted
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={subCategoryDetails.coverImagePreview}
+                      alt="Cover Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
                 </Box>
               )}
             </Grid>

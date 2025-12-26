@@ -113,7 +113,7 @@ const SubCategory = () => {
                         <td>{item?.categoryId?.category || null}</td>
                         <td>{item?.subcategory || null}</td>
 
-                   <td>
+                   {/* <td>
   <img
     src={item?.subcategorythumbnail?.url}
     alt=""
@@ -124,7 +124,41 @@ const SubCategory = () => {
       borderRadius: "6px",
     }}
   />
-</td>
+</td> */}
+
+
+    <td>
+                          {item?.subcategorythumbnail?.url ? (
+                            item.subcategorythumbnail.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                              <video
+                                src={item.subcategorythumbnail.url}
+                                width="100"
+                                height="60"
+                                muted
+                                loop
+                                autoPlay
+                                playsInline
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={item.subcategorythumbnail.url}
+                                width="100"
+                                height="60"
+                                alt=""
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                            )
+                          ) : (
+                            "—"
+                          )}
+                        </td>
 
                         <td style={{ verticalAlign: "middle", textAlign: "center" }}>
                           <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>

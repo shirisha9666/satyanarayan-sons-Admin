@@ -27,14 +27,13 @@ const Categories = () => {
     loading,
     page,
     handlegetOneCategory,
-   
+
     viewCategoryId,
   } = useCategory();
 
   const tableHeadering = ["Name", "Category", "Image", "Actions"];
 
   let fetchBanner = category?.result;
-
 
   return (
     <div className="row">
@@ -122,13 +121,43 @@ const Categories = () => {
                         <td>{item?.name}</td>
                         <td>{item?.category || null}</td>
 
-                        <td>
+                        {/* <td>
                           <img
                             className="me-2"
                             src={item?.categorybanner?.url}
                             width="100"
                             alt=""
                           />
+                        </td> */}
+
+                        <td>
+                          {item?.categorybanner?.url ? (
+                            item.categorybanner.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                              <video
+                                src={item?.categorybanner?.url}
+                                width="100"
+                                height="60"
+                                muted
+                                loop
+                                autoPlay
+                                playsInline
+                                style={{
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                            ) : (
+                              <img
+                                src={item?.categorybanner?.url}
+                                width="100"
+                              
+                                alt={item?.name}
+                             
+                              />
+                            )
+                          ) : (
+                            "—"
+                          )}
                         </td>
 
                         <td style={{ display: "flex", gap: "10px" }}>
