@@ -14,6 +14,8 @@ export const SubCategoryProvider = ({ children }) => {
   const [banner, setBanner] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [bannerId, setBannerId] = useState(null);
+  const [subcategoryViweId, setSubCategoryViewId] = useState(null)
+  const [subCategoryViewDetais, setSubCategoryViewDetails] = useState([])
 
   const handlegetAllSubcategorys = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -58,8 +60,29 @@ export const SubCategoryProvider = ({ children }) => {
       setBannerId(null);
     }
   };
+
+  const handleSubcategoryDetailsById = async (id) => {
+    try {
+      setSubCategoryViewId(id);
+      let resp = await axios.get(`/api/product/category/subcategory/getById/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSubCategoryViewDetails(resp?.data)
+
+    
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setSubCategoryViewId(null);
+    }
+  };
   useEffect(() => {
     handlegetAllSubcategorys(page, itemPerPage, bannertype);
+
   }, []);
 
 
@@ -77,6 +100,9 @@ export const SubCategoryProvider = ({ children }) => {
         page,
         handleDelete,
         bannerId,
+        handleSubcategoryDetailsById,
+        subcategoryViweId,
+        subCategoryViewDetais,
       }}
     >
       {children}

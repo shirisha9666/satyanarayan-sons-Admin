@@ -6,8 +6,9 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBanner, useSubCategory } from "./subCategoryContext";
 
@@ -25,6 +26,9 @@ const SubCategory = () => {
     itemPerPage,
     loading,
     page,
+     handleSubcategoryDetailsById,
+        subcategoryViweId,
+   
   } = useSubCategory();
 
   const tableHeadering = [
@@ -133,11 +137,13 @@ const SubCategory = () => {
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={() => {
+                              onClick={async() => {
+                                await handleSubcategoryDetailsById(item._id)
                                 navigate(`/subcategory/update/${item?.name}/${item._id}`);
                               }}
                             >
-                              Edit
+                              {subcategoryViweId===item._id?<CircularProgress/>:"Edit"}
+                              
                             </button>
                             <button
                               style={{

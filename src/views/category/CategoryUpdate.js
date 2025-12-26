@@ -39,7 +39,7 @@ const CategoryUpdate = () => {
     category: categoryViewDetails?.category?.category || "",
 
     categorybanner: categoryViewDetails?.category?.categorybanner?.url || null,
-    coverImagePreview: categoryViewDetails?.category?.categorybanner?.url || "",
+    coverImagePreview : categoryViewDetails?.category?.categorybanner?.url || "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;

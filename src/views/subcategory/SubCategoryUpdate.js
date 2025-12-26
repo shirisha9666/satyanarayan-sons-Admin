@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -27,14 +27,19 @@ const SubCategoryUpdate = () => {
   const navigate = useNavigate();
   const { name, id } = useParams();
   const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
-  const {handlegetAllSubcategorys}=useSubCategory()
+  const {
+    handlegetAllSubcategorys,
+    subCategoryViewDetais,
+    handleSubcategoryDetailsById,
+  } = useSubCategory();
+  let subcategoryDetails = subCategoryViewDetais?.category;
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
-    name: "",
+    name: subcategoryDetails?.name || "",
 
-    subcategory: "",
+    subcategory: subcategoryDetails?.subcategory || "",
 
-    subcategorythumbnail: null,
-    coverImagePreview: "",
+    subcategorythumbnail: subcategoryDetails?.subcategorythumbnail?.url || null,
+    coverImagePreview: subcategoryDetails?.subcategorythumbnail?.url || "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,8 +124,8 @@ const SubCategoryUpdate = () => {
         subCategoryDetails.subcategorythumbnail
       );
 
-      const res = await axios.post(
-        `/api/product/category/create/subcategory/${id}`,
+      const res = await axios.patch(
+        `/api/product/category/subcategory/update/${id}`,
         formData,
         {
           headers: {
@@ -139,9 +144,7 @@ const SubCategoryUpdate = () => {
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
-        setErrorData(
-          "Series Number already exists. Please use a unique value."
-        );
+        setErrorData(message);
       } else if (message) {
         setErrorData(message);
       } else {
@@ -152,6 +155,11 @@ const SubCategoryUpdate = () => {
       setErrorData("");
     }
   };
+  useEffect(() => {
+    handleSubcategoryDetailsById(id);
+  }, []);
+
+  console.log("subCategoryViewDetais", subCategoryViewDetais.category);
   return (
     <div>
       <Box
