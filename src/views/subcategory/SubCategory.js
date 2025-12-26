@@ -26,13 +26,11 @@ const SubCategory = () => {
     itemPerPage,
     loading,
     page,
-     handleSubcategoryDetailsById,
-        subcategoryViweId,
-   
+    handleSubcategoryDetailsById,
+    subcategoryViweId,
   } = useSubCategory();
 
   const tableHeadering = [
-   
     "Name",
     "Category",
     "Subcategory",
@@ -108,12 +106,11 @@ const SubCategory = () => {
                     fetchBanner &&
                     fetchBanner.map((item, i) => (
                       <tr key={i}>
-                   
                         <td>{item?.name}</td>
                         <td>{item?.categoryId?.category || null}</td>
                         <td>{item?.subcategory || null}</td>
 
-                   {/* <td>
+                        {/* <td>
   <img
     src={item?.subcategorythumbnail?.url}
     alt=""
@@ -126,10 +123,11 @@ const SubCategory = () => {
   />
 </td> */}
 
-
-    <td>
+                        <td>
                           {item?.subcategorythumbnail?.url ? (
-                            item.subcategorythumbnail.url.match(/\.(mp4|webm|ogg)$/i) ? (
+                            item.subcategorythumbnail.url.match(
+                              /\.(mp4|webm|ogg)$/i
+                            ) ? (
                               <video
                                 src={item.subcategorythumbnail.url}
                                 width="100"
@@ -160,24 +158,42 @@ const SubCategory = () => {
                           )}
                         </td>
 
-                        <td style={{ verticalAlign: "middle", textAlign: "center" }}>
-                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              gap: "10px",
+                            }}
+                          >
                             <button
                               style={{
                                 color: "white",
                                 width: "90px",
                                 fontWeight: "bold",
-                                borderRadius: "6px"
+                                borderRadius: "6px",
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={async() => {
-                                await handleSubcategoryDetailsById(item._id)
-                                navigate(`/subcategory/update/${item?.name}/${item._id}`);
+                              onClick={async () => {
+                                await handleSubcategoryDetailsById(item._id);
+                                navigate(
+                                  `/subcategory/update/${item?.name}/${item._id}`
+                                );
                               }}
                             >
-                              {subcategoryViweId===item._id?<CircularProgress/>:"Edit"}
-                              
+                              {subcategoryViweId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Edit"
+                              )}
                             </button>
                             <button
                               style={{
@@ -185,13 +201,17 @@ const SubCategory = () => {
                                 background: "red",
                                 width: "90px",
                                 fontWeight: "bold",
-                                borderRadius: "6px"
+                                borderRadius: "6px",
                               }}
                               type="button"
                               className="btn btn-sm waves-effect waves-light btn-table"
                               onClick={() => handleDelete(item._id)}
                             >
-                              {bannerId === item._id ? "Deleting..." : "Delete"}
+                              {bannerId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Delete"
+                              )}
                             </button>
                           </div>
                         </td>

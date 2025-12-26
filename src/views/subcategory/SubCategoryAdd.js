@@ -6,7 +6,9 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 import {
+  CircularProgress,
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -28,7 +30,7 @@ const SubCategoryAdd = () => {
   const navigate = useNavigate();
   const { name, id } = useParams();
   const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
-  const {handlegetAllSubcategorys}=useSubCategory()
+  const { handlegetAllSubcategorys } = useSubCategory();
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: "",
 
@@ -106,32 +108,31 @@ const SubCategoryAdd = () => {
   //   img.src = URL.createObjectURL(file); // Must come after setting onload
   // };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
 
-    const handleImageChange = (e) => {
-      const file = e.target.files[0];
-    
-      validateMediaFile({
-        file,
-        imageConfig: {
-          width: 1920,
-          height: 600,
-          maxSize: 1 * 1024 * 1024,
-        },
-        videoConfig: {
-          maxSize: 2 * 1024 * 1024,
-        },
-        onSuccess: ({ file, previewURL, type }) => {
-          setSubCategoryDeatills((prev) => ({
-            ...prev,
-            subcategorythumbnail: file,
-            coverImagePreview: previewURL,
-        
-          }));
-        },
-      });
-    
-      e.target.value = ""; // allow re-upload same file
-    };
+    validateMediaFile({
+      file,
+      imageConfig: {
+        width: 1920,
+        height: 600,
+        maxSize: 1 * 1024 * 1024,
+      },
+      videoConfig: {
+        maxSize: 2 * 1024 * 1024,
+      },
+      onSuccess: ({ file, previewURL, type }) => {
+        setSubCategoryDeatills((prev) => ({
+          ...prev,
+          subcategorythumbnail: file,
+          coverImagePreview: previewURL,
+          coverImageType: type,
+        }));
+      },
+    });
+
+    e.target.value = ""; // allow re-upload same file
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -156,8 +157,6 @@ const SubCategoryAdd = () => {
           },
         }
       );
-
-      const result = res.data;
 
       await handlegetAllSubcategorys(page, itemPerPage, bannertype);
       navigate("/subcategory");
@@ -220,7 +219,7 @@ const SubCategoryAdd = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
                 Sub Category Thumbnail
               </Typography>
@@ -247,11 +246,61 @@ const SubCategoryAdd = () => {
                   />
                 </Box>
               )}
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12}>
+              <Typography variant="subtitle1" mb={1}>
+                Cover Media (Image / Video)
+              </Typography>
+
+              <Button variant="contained" component="label">
+                Upload Media
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  hidden
+                  onChange={handleImageChange}
+                />
+              </Button>
+
+              {/* Helper Text */}
+              <FormHelperText>
+                Please upload an image or video. Recommended resolution: {1920}{" "}
+                × {600}. Max size: 2 MB.
+              </FormHelperText>
+
+              {subCategoryDetails.coverImagePreview && (
+                <Box mt={2}>
+                  {subCategoryDetails.coverImageType === "video" ? (
+                    <video
+                      src={subCategoryDetails.coverImagePreview}
+                      controls
+                      muted
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={subCategoryDetails.coverImagePreview}
+                      alt="Cover Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
+                </Box>
+              )}
+            </Grid>
+            <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>
-                {loading ? "Loading......" : "Submit"}
+                {loading ? <CircularProgress size={25}/>: "Submit"}
               </Button>
             </Grid>
           </Grid>
