@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
 import { getMediaType, isVideo } from "../TypeOfmedia";
+import { validateMediaFile } from "../HelperImageResoluation";
 
 const BannerUpdate = () => {
   const token = isAutheticated();
@@ -51,68 +52,94 @@ const BannerUpdate = () => {
     }));
   };
 
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const previewURL = URL.createObjectURL(file);
+
+  //   // 🔹 Detect type
+  //   const isVideo = file.type.startsWith("video/");
+  //   const isImage = file.type.startsWith("image/");
+
+  //   // ----------------------------
+  //   // 🎥 VIDEO → NO IMAGE VALIDATION
+  //   // ----------------------------
+  //   if (isVideo) {
+  //     setBannerDetails((prev) => ({
+  //       ...prev,
+  //       banner: file,
+  //       coverImagePreview: previewURL,
+  //       coverImageType: "video",
+  //     }));
+  //     return;
+  //   }
+
+  //   // ----------------------------
+  //   // 🖼️ IMAGE VALIDATION
+  //   // ----------------------------
+  //   if (isImage) {
+  //     const img = new Image();
+
+  //     img.onload = () => {
+  //       const width = img.naturalWidth;
+  //       const height = img.naturalHeight;
+
+  //       const REQUIRED_WIDTH = 1920;
+  //       const REQUIRED_HEIGHT = 600;
+  //       const TOLERANCE = 5;
+
+  //       const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
+  //       const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
+
+  //       setBannerDetails((prev) => ({
+  //         ...prev,
+  //         banner: file,
+  //         coverImagePreview: previewURL,
+  //         coverImageType: "image",
+  //       }));
+  //     };
+
+  //     img.onerror = () => {
+  //       toast.error("Invalid image file.");
+  //     };
+
+  //     img.src = previewURL;
+  //     return;
+  //   }
+
+  //   // ----------------------------
+  //   // ❌ Unsupported file
+  //   // ----------------------------
+  //   toast.error("Unsupported file type. Upload image or video only.");
+  // };
+
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    const previewURL = URL.createObjectURL(file);
-
-    // 🔹 Detect type
-    const isVideo = file.type.startsWith("video/");
-    const isImage = file.type.startsWith("image/");
-
-    // ----------------------------
-    // 🎥 VIDEO → NO IMAGE VALIDATION
-    // ----------------------------
-    if (isVideo) {
-      setBannerDetails((prev) => ({
-        ...prev,
-        banner: file,
-        coverImagePreview: previewURL,
-        coverImageType: "video",
-      }));
-      return;
-    }
-
-    // ----------------------------
-    // 🖼️ IMAGE VALIDATION
-    // ----------------------------
-    if (isImage) {
-      const img = new Image();
-
-      img.onload = () => {
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-
-        const REQUIRED_WIDTH = 1920;
-        const REQUIRED_HEIGHT = 600;
-        const TOLERANCE = 5;
-
-        const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
-        const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
-
+  
+    validateMediaFile({
+      file,
+      imageConfig: {
+        width: 1920,
+        height: 600,
+        maxSize: 1 * 1024 * 1024,
+      },
+      videoConfig: {
+        maxSize: 2 * 1024 * 1024,
+      },
+      onSuccess: ({ file, previewURL, type }) => {
         setBannerDetails((prev) => ({
           ...prev,
           banner: file,
           coverImagePreview: previewURL,
-          coverImageType: "image",
+          coverImageType: type,
         }));
-      };
-
-      img.onerror = () => {
-        toast.error("Invalid image file.");
-      };
-
-      img.src = previewURL;
-      return;
-    }
-
-    // ----------------------------
-    // ❌ Unsupported file
-    // ----------------------------
-    toast.error("Unsupported file type. Upload image or video only.");
+      },
+    });
+  
+    e.target.value = ""; // allow re-upload same file
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 

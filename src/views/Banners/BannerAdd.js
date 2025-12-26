@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -18,13 +19,14 @@ import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
+import { validateMediaFile } from "../HelperImageResoluation";
 
 const BannerAdd = () => {
-  const token=isAutheticated()
+  const token = isAutheticated()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
-  const navigate=useNavigate()
-  const {getHomebanners,page, itemPerPage, bannertype}=useBanner()
+  const navigate = useNavigate()
+  const { getHomebanners, page, itemPerPage, bannertype } = useBanner()
   const [bannerDetails, setBannerDetails] = useState({
     name: "",
     subtitle: "",
@@ -41,78 +43,104 @@ const BannerAdd = () => {
     }));
   };
 
-  
 
-  const handleImageChange = (e) => {
+
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   const previewURL = URL.createObjectURL(file);
+
+  //   // 🔹 Detect type
+  //   const isVideo = file.type.startsWith("video/");
+  //   const isImage = file.type.startsWith("image/");
+
+  //   // ----------------------------
+  //   // 🎥 VIDEO → NO IMAGE VALIDATION
+  //   // ----------------------------
+  //   if (isVideo) {
+  //     setBannerDetails((prev) => ({
+  //       ...prev,
+  //       banner: file,
+  //       coverImagePreview: previewURL,
+  //       coverImageType: "video",
+  //     }));
+  //     return;
+  //   }
+
+  //   // ----------------------------
+  //   // 🖼️ IMAGE VALIDATION
+  //   // ----------------------------
+  //   if (isImage) {
+  //     const img = new Image();
+
+  //     img.onload = () => {
+  //       const width = img.naturalWidth;
+  //       const height = img.naturalHeight;
+
+  //       const REQUIRED_WIDTH = 1920;
+  //       const REQUIRED_HEIGHT = 600;
+  //       const TOLERANCE = 5;
+
+  //       const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
+  //       const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
+
+  //       // Optional validation (enable if needed)
+  //       if (!widthValid || !heightValid) {
+  //         toast.error(
+  //           "Invalid banner size! Please upload an image close to 1920x600px."
+  //         );
+  //         return;
+  //       }
+
+  //       setBannerDetails((prev) => ({
+  //         ...prev,
+  //         banner: file,
+  //         coverImagePreview: previewURL,
+  //         coverImageType: "image",
+  //       }));
+  //     };
+
+  //     img.onerror = () => {
+  //       toast.error("Invalid image file.");
+  //     };
+
+  //     img.src = previewURL;
+  //     return;
+  //   }
+
+  //   // ----------------------------
+  //   // ❌ Unsupported file
+  //   // ----------------------------
+  //   toast.error("Unsupported file type. Upload image or video only.");
+  // };
+
+
+const handleImageChange = (e) => {
   const file = e.target.files[0];
-  if (!file) return;
 
-  const previewURL = URL.createObjectURL(file);
-
-  // 🔹 Detect type
-  const isVideo = file.type.startsWith("video/");
-  const isImage = file.type.startsWith("image/");
-
-  // ----------------------------
-  // 🎥 VIDEO → NO IMAGE VALIDATION
-  // ----------------------------
-  if (isVideo) {
-    setBannerDetails((prev) => ({
-      ...prev,
-      banner: file,
-      coverImagePreview: previewURL,
-      coverImageType: "video",
-    }));
-    return;
-  }
-
-  // ----------------------------
-  // 🖼️ IMAGE VALIDATION
-  // ----------------------------
-  if (isImage) {
-    const img = new Image();
-
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-
-      const REQUIRED_WIDTH = 1920;
-      const REQUIRED_HEIGHT = 600;
-      const TOLERANCE = 5;
-
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= TOLERANCE;
-      const heightValid = Math.abs(height - REQUIRED_HEIGHT) <= TOLERANCE;
-
-      // Optional validation (enable if needed)
-      // if (!widthValid || !heightValid) {
-      //   toast.error(
-      //     "Invalid banner size! Please upload an image close to 1920x600px."
-      //   );
-      //   return;
-      // }
-
+  validateMediaFile({
+    file,
+    imageConfig: {
+      width: 1920,
+      height: 600,
+      maxSize: 1 * 1024 * 1024,
+    },
+    videoConfig: {
+      maxSize: 2 * 1024 * 1024,
+    },
+    onSuccess: ({ file, previewURL, type }) => {
       setBannerDetails((prev) => ({
         ...prev,
         banner: file,
         coverImagePreview: previewURL,
-        coverImageType: "image",
+        coverImageType: type,
       }));
-    };
+    },
+  });
 
-    img.onerror = () => {
-      toast.error("Invalid image file.");
-    };
-
-    img.src = previewURL;
-    return;
-  }
-
-  // ----------------------------
-  // ❌ Unsupported file
-  // ----------------------------
-  toast.error("Unsupported file type. Upload image or video only.");
+  e.target.value = ""; // allow re-upload same file
 };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -135,10 +163,10 @@ const BannerAdd = () => {
 
       const result = res.data;
 
-   await getHomebanners(page, itemPerPage, bannertype);
+      await getHomebanners(page, itemPerPage, bannertype);
       navigate("/banner");
     } catch (error) {
-      console.log("error add banner",error)
+      console.log("error add banner", error)
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -168,7 +196,7 @@ const BannerAdd = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-           Banner
+          Banner
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -224,9 +252,8 @@ const BannerAdd = () => {
                 helperText={
                   bannerDetails.content.length < 10
                     ? `Minimum 10 characters required (${bannerDetails.content.length}/150)`
-                    : `${
-                        150 - bannerDetails.content.length
-                      } characters remaining`
+                    : `${150 - bannerDetails.content.length
+                    } characters remaining`
                 }
                 error={
                   bannerDetails.content.length > 0 &&
@@ -263,7 +290,7 @@ const BannerAdd = () => {
                 </Box>
               )}
             </Grid> */}
-            <Grid item xs={12}>
+       <Grid item xs={12}>
   <Typography variant="subtitle1" mb={1}>
     Cover Media (Image / Video)
   </Typography>
@@ -277,6 +304,13 @@ const BannerAdd = () => {
       onChange={handleImageChange}
     />
   </Button>
+
+  {/* Helper Text */}
+  <FormHelperText>
+    Please upload an image or video.
+    Recommended resolution: {1920} × {600}.
+    Max size: 2 MB.
+  </FormHelperText>
 
   {bannerDetails.coverImagePreview && (
     <Box mt={2}>
@@ -307,6 +341,7 @@ const BannerAdd = () => {
     </Box>
   )}
 </Grid>
+
 
 
             <Grid item xs={12}>
