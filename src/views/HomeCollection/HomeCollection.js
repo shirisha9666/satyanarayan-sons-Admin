@@ -168,7 +168,7 @@ const HomeCollection = () => {
                 >
                   <tr>
                     {tableHeadering.map((head) => (
-                      <th> {head}</th>
+                      <th className={head==="Actions"?"text-center":""}> {head}</th>
                     ))}
                   </tr>
                 </thead>
