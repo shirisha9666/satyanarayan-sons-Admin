@@ -37,17 +37,31 @@ export const validateMediaFile = ({
             return;
         }
         const img = new Image();
-        img.onload = () => {
-            const widthValid = Math.abs(img.naturalWidth - width) <= tolerance;
-            const heightValid = Math.abs(img.naturalHeight - height) <= tolerance;
-            if (!widthValid || !heightValid) {
-                toast.error(`Invalid image resolution. Required: ${width}×${height}px`);
-                return;
-            }
-            onSuccess({
-                file, previewURL, type: "image"
-            })
-        };
+       const widthValid = img.naturalWidth <= width;
+  const heightValid = img.naturalHeight <= height;
+
+    if (!widthValid || !heightValid) {
+    toast.error(
+      `Invalid image resolution. Max allowed: ${width}×${height}px`
+    );
+    return;
+  }
+    onSuccess({
+    file,
+    previewURL,
+    type: "image",
+  });
+        // img.onload = () => {
+        //     const widthValid = Math.abs(img.naturalWidth - width) <= tolerance;
+        //     const heightValid = Math.abs(img.naturalHeight - height) <= tolerance;
+        //     if (!widthValid || !heightValid) {
+        //         toast.error(`Invalid image resolution. Required: ${width}×${height}px`);
+        //         return;
+        //     }
+        //     onSuccess({
+        //         file, previewURL, type: "image"
+        //     })
+        // };
         img.onerror = () => { toast.error("Invalid Image file.") }
         img.src = previewURL;
         return

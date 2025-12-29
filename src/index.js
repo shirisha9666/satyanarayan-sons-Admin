@@ -28,6 +28,7 @@ import { SubCategoryProvider } from "./views/subcategory/subCategoryContext";
 import { ProductProvider } from "./views/Product/ProductContenxt";
 import { GoldSchemaProvider } from "./views/Gold-Schema/GoldSchemaContext";
 import { GoldRateProvider } from "./views/Gold-Rate/GoldRateContext";
+import { HomeCollectionProvider } from "./views/HomeCollection/HomeCollectionContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -56,35 +57,37 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
-    <GoldRateProvider>
-    <GoldSchemaProvider>
-    <ProductProvider>
-    <SubCategoryProvider>
-    <CategoryProvider>
-    <BannerProvider>
-      <BillingProvider>
-        <PlanProvider>
-          <AdsProvider>
-            <CustomerProvider>
-              <TrendingPrivoder>
-                <AdminProvider>
-                  <SeriesProvider>
-                    {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
-                    <App />
-                    <Toaster />
-                  </SeriesProvider>
-                </AdminProvider>
-              </TrendingPrivoder>
-            </CustomerProvider>
-          </AdsProvider>
-        </PlanProvider>
-      </BillingProvider>
-    </BannerProvider>
-    </CategoryProvider>
-    </SubCategoryProvider>
-    </ProductProvider>
-    </GoldSchemaProvider>
-    </GoldRateProvider>
+    <HomeCollectionProvider>
+      <GoldRateProvider>
+        <GoldSchemaProvider>
+          <ProductProvider>
+            <SubCategoryProvider>
+              <CategoryProvider>
+                <BannerProvider>
+                  <BillingProvider>
+                    <PlanProvider>
+                      <AdsProvider>
+                        <CustomerProvider>
+                          <TrendingPrivoder>
+                            <AdminProvider>
+                              <SeriesProvider>
+                                {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
+                                <App />
+                                <Toaster />
+                              </SeriesProvider>
+                            </AdminProvider>
+                          </TrendingPrivoder>
+                        </CustomerProvider>
+                      </AdsProvider>
+                    </PlanProvider>
+                  </BillingProvider>
+                </BannerProvider>
+              </CategoryProvider>
+            </SubCategoryProvider>
+          </ProductProvider>
+        </GoldSchemaProvider>
+      </GoldRateProvider>
+    </HomeCollectionProvider>
   </Provider>
 );
 

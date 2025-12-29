@@ -10,23 +10,11 @@ import EditProfile from "./views/Profile/EditProfile";
 const Dashboard = React.lazy(() => import("./views/dashboard/Dashboard"));
 const Reports = React.lazy(() => import("./views/reports/reports"));
 ///
-//Cities
-import Cities from "./views/configuration/Purpose/Purpose.js";
-import AddCity from "./views/configuration/Purpose/AddPurpose.js";
-import EditCity from "./views/configuration/Purpose/EditPurpose.js";
-//states
-import EditState from "./views/configuration/states/EditStates.js";
-import AddState from "./views/configuration/states/AddState.js";
-import States from "./views/configuration/states/States.js";
-//social media,address,logo
+
 import Socialmedia from "./views/configuration/Socialmedia.js";
 import Address from "./views/configuration/Address.js";
 import Logo from "./views/configuration/Logo.js";
-import Login from "./views/pages/login/Login";
-import Web_Images from "./views/configuration/Web_Images";
 
-// Appointments
-import Appointments from "./views/Appointments/Appointments";
 
 //Businesses
 
@@ -37,15 +25,12 @@ import Appointments from "./views/Appointments/Appointments";
 
 //Order Management
 import NewOrders from "./views/orders/NewOrders.js";
-// import ProcessingOrders from "./views/orders/ProcessingOrders.js";
-// import DispatchedOrders from "./views/orders/DispatchedOrders.js";
-// import DeliveredOrders from "./views/orders/DeliveredOrders.js";
-// import CancelledOrders from "./views/orders/CancelledOrders.js";
+
 import ReturnedOrders from "./views/orders/ReturnedOrders.js";
-import ViewOdr from "./views/orders/ViewOdr";
+
 import AddOrder from "./views/orders/AddOrder";
 
-import AbandonedCarts from "./views/AbandonedCarts/AbandonedCarts";
+
 //Taxes
 import Tax from "./views/configuration/tax/Tax";
 import Addtax from "./views/configuration/tax/Addtax";
@@ -218,6 +203,9 @@ import GoldRateAdd from "./views/Gold-Rate/GoldRateAdd";
 import GoldRateUpdate from "./views/Gold-Rate/GoldRateUpdate";
 import SubCategoryUpdate from "./views/subcategory/SubCategoryUpdate";
 import ProductUpdate from "./views/Product/ProductUpdate";
+import HomeCollection from "./views/HomeCollection/HomeCollection";
+import HomeCollectionAdd from "./views/HomeCollection/HomeCollectionAdd";
+import HomeCollectionUpdate from "./views/HomeCollection/HomeCollectionUpdate";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -576,6 +564,28 @@ const routes = [
     element: ProductUpdate,
     navName: "Settings",
   },
+  {
+    path: "/home-collections",
+    name: "Products",
+    element: HomeCollection,
+    navName: "Settings",
+  },
+    {
+    path: "/home-collections/add",
+    name: "Products",
+    element: HomeCollectionAdd,
+    navName: "Settings",
+  },
+   
+   
+  
+  {
+    path: "/home-collections/update/:id",
+    name: "Products",
+    element: HomeCollectionUpdate,
+    navName: "Settings",
+  },
+  //HomeCollectionUpdate
   {
     path: "/gold-schemes",
     name: "Gold Schemes",
