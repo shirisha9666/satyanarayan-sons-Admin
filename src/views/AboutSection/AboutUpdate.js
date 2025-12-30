@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import TextareaAutosize from '@mui/material/TextareaAutosize';
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 
 import {
   FormControl,
@@ -37,10 +37,8 @@ const AboutUpdate = () => {
     BannerOneDetails,
   } = useAbout();
 
-
   const [homeCollections, setHomeCollection] = useState({
     content: BannerOneDetails?.content || "",
-
 
     Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
     coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
@@ -67,7 +65,6 @@ const AboutUpdate = () => {
         maxSize: 2 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
-
         setHomeCollection((prev) => ({
           ...prev,
           Thumbnail: file,
@@ -86,7 +83,7 @@ const AboutUpdate = () => {
       setLoading(true);
       let formData = new FormData();
       formData.append("content", homeCollections.content);
-     
+
       formData.append("Thumbnail", homeCollections.Thumbnail);
 
       const res = await axios.patch(`/api/about/update/${id}`, formData, {
@@ -95,8 +92,6 @@ const AboutUpdate = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-   
 
       await handlegetAllData(page, itemPerPage, bannertype);
       toast.success("About Section Updated Successfully");
@@ -123,7 +118,6 @@ const AboutUpdate = () => {
     handleOneBanner(id);
   }, [id]);
 
-
   return (
     <div>
       <Box
@@ -141,9 +135,7 @@ const AboutUpdate = () => {
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-          
-
-{/* <Grid item xs={12}>
+            {/* <Grid item xs={12}>
   <TextField
     label="Content"
     name="content"
@@ -157,23 +149,21 @@ const AboutUpdate = () => {
   />
 </Grid> */}
 
-<Grid item xs={12}>
-  <TextareaAutosize
-    name="content"
-    value={homeCollections.content || ""}
-    onChange={handleChange}
-    minRows={6}
-    style={{
-      width: "100%",
-      padding: "16px",
-      fontSize: "16px",
-      borderRadius: "6px",
-      border: "1px solid #ccc",
-    }}
-  />
-</Grid>
-
-          
+            <Grid item xs={12}>
+              <TextareaAutosize
+                name="content"
+                value={homeCollections.content || ""}
+                onChange={handleChange}
+                minRows={6}
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  fontSize: "16px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
@@ -190,36 +180,35 @@ const AboutUpdate = () => {
                 />
               </Button>
 
-         {homeCollections.coverImagePreview && (
-  <Box mt={2}>
-    {homeCollections.coverImageType === "video" ? (
-      <video
-        src={homeCollections.coverImagePreview}
-        controls
-        muted
-        playsInline
-        style={{
-          width: "100%",
-          maxHeight: 300,
-          objectFit: "cover",
-          borderRadius: 8,
-        }}
-      />
-    ) : (
-      <img
-        src={homeCollections.coverImagePreview}
-        alt="Cover Preview"
-        style={{
-          width: "100%",
-          maxHeight: 300,
-          objectFit: "cover",
-          borderRadius: 8,
-        }}
-      />
-    )}
-  </Box>
-)}
-
+              {homeCollections.coverImagePreview && (
+                <Box mt={2}>
+                  {homeCollections.coverImageType === "video" ? (
+                    <video
+                      src={homeCollections.coverImagePreview}
+                      controls
+                      muted
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={homeCollections.coverImagePreview}
+                      alt="Cover Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
+                </Box>
+              )}
             </Grid>
 
             <Grid item xs={12}>
