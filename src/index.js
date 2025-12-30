@@ -29,6 +29,7 @@ import { ProductProvider } from "./views/Product/ProductContenxt";
 import { GoldSchemaProvider } from "./views/Gold-Schema/GoldSchemaContext";
 import { GoldRateProvider } from "./views/Gold-Rate/GoldRateContext";
 import { HomeCollectionProvider } from "./views/HomeCollection/HomeCollectionContext";
+import { VideoProvider } from "./views/Video/VideoContext";
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -57,6 +58,7 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
+    <VideoProvider>
     <HomeCollectionProvider>
       <GoldRateProvider>
         <GoldSchemaProvider>
@@ -88,6 +90,7 @@ root.render(
         </GoldSchemaProvider>
       </GoldRateProvider>
     </HomeCollectionProvider>
+    </VideoProvider>
   </Provider>
 );
 

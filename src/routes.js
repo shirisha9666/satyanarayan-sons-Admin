@@ -206,6 +206,10 @@ import ProductUpdate from "./views/Product/ProductUpdate";
 import HomeCollection from "./views/HomeCollection/HomeCollection";
 import HomeCollectionAdd from "./views/HomeCollection/HomeCollectionAdd";
 import HomeCollectionUpdate from "./views/HomeCollection/HomeCollectionUpdate";
+import VideoAdd from "./views/Video/VideoAdd";
+import Video from "./views/Campaigns/Video";
+import VideoSection from "./views/Video/Video";
+import VideoUpdate from "./views/Video/VideoUpdate";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -576,13 +580,33 @@ const routes = [
     element: HomeCollectionAdd,
     navName: "Settings",
   },
+
+   {
+    path: "/video-section",
+    name: "Video",
+    element: VideoSection,
+    navName: "Settings",
+  },
+   
+
+     {
+    path: "/video/add",
+    name: "Video",
+    element: VideoAdd,
+    navName: "Settings",
+  },
    
    
-  
+       {
+    path: "/video/add",
+    name: "Video",
+    element: VideoAdd,
+    navName: "Settings",
+  },
   {
-    path: "/home-collections/update/:id",
+    path: "/video/update/:id",
     name: "Products",
-    element: HomeCollectionUpdate,
+    element: VideoUpdate,
     navName: "Settings",
   },
   //HomeCollectionUpdate
