@@ -210,6 +210,8 @@ import VideoAdd from "./views/Video/VideoAdd";
 import Video from "./views/Campaigns/Video";
 import VideoSection from "./views/Video/Video";
 import VideoUpdate from "./views/Video/VideoUpdate";
+import AboutSection from "./views/AboutSection/AboutSection";
+import AboutUpdate from "./views/AboutSection/AboutUpdate";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -609,7 +611,21 @@ const routes = [
     element: VideoUpdate,
     navName: "Settings",
   },
+
   //HomeCollectionUpdate
+
+    {
+    path: "/about-section",
+    name: "Products",
+    element: AboutSection,
+    navName: "Settings",
+  },
+  {
+    path: "/about-section/update/:id",
+    name: "Products",
+    element: AboutUpdate,
+    navName: "Settings",
+  },
   {
     path: "/gold-schemes",
     name: "Gold Schemes",

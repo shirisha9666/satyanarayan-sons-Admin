@@ -7,7 +7,7 @@ import { cilBasket } from "@coreui/icons";
 import { cilStar } from "@coreui/icons";
 import { cilHome } from '@coreui/icons'
 import { cilVideo } from '@coreui/icons'
-
+import { cilInfo } from '@coreui/icons'
 
 
 import {
@@ -134,6 +134,13 @@ const _nav = [
     name: "Video",
     icon: <CIcon icon={cilVideo} customClassName="nav-icon" />,
     to: "/video-section",
+    group: "Settings",
+  },
+     {
+    component: CNavItem,
+    name: "About",
+    icon: <CIcon icon={cilInfo} customClassName="nav-icon" />,
+    to: "/about-section",
     group: "Settings",
   },
   {
