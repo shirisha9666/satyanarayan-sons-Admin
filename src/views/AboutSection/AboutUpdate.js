@@ -38,11 +38,22 @@ const AboutUpdate = () => {
   } = useAbout();
 
   const [homeCollections, setHomeCollection] = useState({
-    content: BannerOneDetails?.content || "",
+    content: "",
 
-    Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
-    coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
+    Thumbnail: null,
+    coverImagePreview: "",
   });
+  useEffect(() => {
+    if (BannerOneDetails) {
+      setHomeCollection({
+        content: BannerOneDetails?.content || "",
+
+        Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
+        coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
+      });
+    }
+  }, [BannerOneDetails]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setHomeCollection((prev) => ({
