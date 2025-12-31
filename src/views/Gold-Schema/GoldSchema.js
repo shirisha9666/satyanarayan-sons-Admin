@@ -6,6 +6,7 @@ import {
   Pagination,
   TextField,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,58 +25,62 @@ const GoldSchema = () => {
     bannerId,
     itemPerPage,
     loading,
+    handlegeOnegoldRate,
+    goldSchemaeditId,
     page,
   } = useGoldSchema();
 
   const tableHeadering = [
-    "Scheme ID",
-    "Scheme Name",
+    "Scheme Code",
+    "Scheme Title",
     "Monthly Installment",
-
     "Months",
     "Members",
+    "Start",
+    "End",
     "Action ",
   ];
-  // let fetchProducts = banner?.result;
+  let fetchProducts = banner?.result;
 
-  const fetchProducts = [
-    {
-      schemeId: "GS-001",
-      schemeName: "Golden Savings Plan",
-      monthlyInstallment:" 2,000",
-      months: 11,
-      members: 120,
-    },
-    {
-      schemeId: "GS-002",
-      schemeName: "Shree Gold Scheme",
-      monthlyInstallment: "3,000",
-      months: 12,
-      members: 85,
-    },
-    {
-      schemeId: "GS-003",
-      schemeName: "Lakshmi Gold Scheme",
-      monthlyInstallment: "1,500",
-      months: 10,
-      members: 210,
-    },
-    {
-      schemeId: "GS-004",
-      schemeName: "Premium Gold Plus",
-      monthlyInstallment: 5000,
-      months: 12,
-      members: 45,
-    },
-    {
-      schemeId: "GS-005",
-      schemeName: "Family Gold Savings",
-      monthlyInstallment: "2,500",
-      months: 11,
-      members: 160,
-    },
-  ];
+  // const fetchProducts = [
+  //   {
+  //     schemeId: "GS-001",
+  //     schemeName: "Golden Savings Plan",
+  //     monthlyInstallment: " 2,000",
+  //     months: 11,
+  //     members: 120,
+  //   },
+  //   {
+  //     schemeId: "GS-002",
+  //     schemeName: "Shree Gold Scheme",
+  //     monthlyInstallment: "3,000",
+  //     months: 12,
+  //     members: 85,
+  //   },
+  //   {
+  //     schemeId: "GS-003",
+  //     schemeName: "Lakshmi Gold Scheme",
+  //     monthlyInstallment: "1,500",
+  //     months: 10,
+  //     members: 210,
+  //   },
+  //   {
+  //     schemeId: "GS-004",
+  //     schemeName: "Premium Gold Plus",
+  //     monthlyInstallment: 5000,
+  //     months: 12,
+  //     members: 45,
+  //   },
+  //   {
+  //     schemeId: "GS-005",
+  //     schemeName: "Family Gold Savings",
+  //     monthlyInstallment: "2,500",
+  //     months: 11,
+  //     members: 160,
+  //   },
+  // ];
 
+  console.log("goldSchema data", banner);
   return (
     <div className="row">
       <div className="col-lg-12">
@@ -124,7 +129,6 @@ const GoldSchema = () => {
                   </Button>
                 </div>
               </div>
-             
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -170,7 +174,7 @@ const GoldSchema = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.schemeId}
+                          {item?.Scheme_ID}
                         </td>
                         <td
                           style={{
@@ -178,16 +182,7 @@ const GoldSchema = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.schemeName}
-                        </td>
-
-                        <td
-                          style={{
-                            verticalAlign: "middle",
-                            textAlign: "center",
-                          }}
-                        >
-                          ₹{item?.monthlyInstallment}
+                          {item?.Scheme_Name}
                         </td>
 
                         <td
@@ -196,7 +191,16 @@ const GoldSchema = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item.months}
+                          ₹{item?.Monthly_Installment}
+                        </td>
+
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item.Months}
                         </td>
                         <td
                           style={{
@@ -204,7 +208,24 @@ const GoldSchema = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item.members}
+                          {item.Members}
+                        </td>
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item.createdAt}
+                        </td>
+
+                        <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item.End_Date}
                         </td>
 
                         <td
@@ -231,11 +252,13 @@ const GoldSchema = () => {
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={() => {
+                              onClick={async() => {
+                                await handlegeOnegoldRate(item._id)
                                 navigate(`/gold-schemes/update/${item._id}`);
                               }}
                             >
-                              Edit
+                              {goldSchemaeditId===item._id?<CircularProgress size={25}/>:"Edit"}
+                              
                             </button>
                             <button
                               style={{
@@ -249,7 +272,11 @@ const GoldSchema = () => {
                               className="btn btn-sm waves-effect waves-light btn-table"
                               onClick={() => handleDelete(item._id)}
                             >
-                              {bannerId === item._id ? "Deleting..." : "Delete"}
+                              {bannerId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "Delete"
+                              )}
                             </button>
                           </div>
                         </td>

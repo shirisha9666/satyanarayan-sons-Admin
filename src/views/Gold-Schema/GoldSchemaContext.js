@@ -14,11 +14,14 @@ export const GoldSchemaProvider = ({ children }) => {
   const [banner, setBanner] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [bannerId, setBannerId] = useState(null);
+  const [goldSchemaeditId, setGoldSchemaEditId] = useState(null);
+  const [goldSchema, setGoldSchema] = useState([]);
+    const [viewDetails,setViewDetails]=useState([])
 
   const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/product/getAll/", {
+      const response = await axios.get("/api/gold/schema/get/all", {
         params: {
           page,
           limit: itemPerPage,
@@ -41,7 +44,7 @@ export const GoldSchemaProvider = ({ children }) => {
   const handleDelete = async (id) => {
     try {
       setBannerId(id);
-      let resp = await axios.delete(`/api/product/delete/${id}`, {
+      let resp = await axios.delete(`/api/gold/schema/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,11 +61,29 @@ export const GoldSchemaProvider = ({ children }) => {
       setBannerId(null);
     }
   };
+
+  const handlegeOnegoldRate = async (id) => {
+    try {
+      setGoldSchemaEditId(id);
+      let resp = await axios.get(`/api/gold/schema/getOne/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setViewDetails(resp?.data?.findgoldRate);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setGoldSchemaEditId(null);
+    }
+  };
   useEffect(() => {
     handlegetAllProducts(page, itemPerPage, bannertype);
   }, []);
 
-
+ 
   return (
     <GoldSchemaContext.Provider
       value={{
@@ -77,6 +98,10 @@ export const GoldSchemaProvider = ({ children }) => {
         page,
         handleDelete,
         bannerId,
+        handlegeOnegoldRate,
+        goldSchemaeditId,
+        goldSchema,
+        viewDetails,
       }}
     >
       {children}

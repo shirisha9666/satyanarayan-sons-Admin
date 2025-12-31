@@ -1,7 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
@@ -22,38 +22,52 @@ import { useCategory } from "../category/CategoryContext";
 
 const GoldSchemaUpdate = () => {
   const token = isAutheticated();
+  const {id}=useParams()
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
+
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype } = useGoldSchema();
-  const { category, handleCategorySubcategoryFilter, subcategorys } =
-    useCategory();
-  const [productDetails, setProductDetails] = useState({
-    productName: "",
-    categoryId: "",
-    subcategoryId: "",
+  const {
+    handlegetAllProducts,
+    page,
+    itemPerPage,
+    bannertype,
+    handlegeOnegoldRate,
+   
+viewDetails
 
-    productImage: null,
-    coverImagePreview: "",
-  });
+  } = useGoldSchema();
 
 
-  const monthsList = [
-  { label: "January", value: "January" },
-  { label: "February", value: "February" },
-  { label: "March", value: "March" },
-  { label: "April", value: "April" },
-  { label: "May", value: "May" },
-  { label: "June", value: "June" },
-  { label: "July", value: "July" },
-  { label: "August", value: "August" },
-  { label: "September", value: "September" },
-  { label: "October", value: "October" },
-  { label: "November", value: "November" },
-  { label: "December", value: "December" },
-];
+const oldValue = viewDetails;
 
-  console.log("category", category?.result);
+const [productDetails, setProductDetails] = useState({
+  Scheme_Name: "",
+  Monthly_Installment: "",
+  Months: "",
+  Total_Amount: "",
+  Members: "",
+  End_Date: "",
+});
+useEffect(()=>{
+  handlegeOnegoldRate(id)
+},[])
+
+useEffect(() => {
+  if (oldValue) {
+    setProductDetails({
+      Scheme_Name: oldValue.Scheme_Name || "",
+      Monthly_Installment: oldValue.Monthly_Installment || "",
+      Months: oldValue.Months || "",
+      Total_Amount: oldValue.Total_Amount || "",
+      Members: oldValue.Members || "",
+      End_Date: oldValue.End_Date
+        ? oldValue.End_Date.split("T")[0]
+        : "",
+    });
+  }
+}, [oldValue]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductDetails((prev) => ({
@@ -62,89 +76,33 @@ const GoldSchemaUpdate = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // ----------------------------
-    // 1️⃣ FILE SIZE VALIDATION (2MB)
-    // ----------------------------
-    const MAX_IMAGE_SIZE_MB = 2;
-    const fileSizeInMB = file.size / (1024 * 1024);
-
-    if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-      toast.error("Please upload an image smaller than 2MB.");
-      return;
-    }
-
-    // ----------------------------
-    // 2️⃣ DIMENSION VALIDATION
-    // ----------------------------
-    const img = new Image();
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-
-      // Required Banner Size
-      const REQUIRED_WIDTH = 1920;
-      const REQUIRED_HEIGHT = 600;
-
-      // Allow small tolerance (±5px)
-      const WIDTH_TOLERANCE = 5;
-      const HEIGHT_TOLERANCE = 5;
-
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
-      const heightValid =
-        Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
-
-      // if (!widthValid || !heightValid) {
-      //   toast.error(
-      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
-      //   );
-      //   return;
-      // }
-
-      // ----------------------------
-      // 3️⃣ VALID IMAGE → SET PREVIEW
-      // ----------------------------
-      const previewURL = URL.createObjectURL(file);
-
-      setProductDetails((prev) => ({
-        ...prev,
-        productImage: file,
-        coverImagePreview: previewURL,
-      }));
-    };
-
-    img.onerror = () => {
-      toast.error("Invalid image file.");
-    };
-
-    img.src = URL.createObjectURL(file); // Must come after setting onload
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
       let formData = new FormData();
-      formData.append("productName", productDetails.productName);
-      formData.append("categoryId", productDetails.categoryId);
-      formData.append("subcategoryId", productDetails.subcategoryId);
-      formData.append("productImage", productDetails.productImage);
+      formData.append("Scheme_Name", productDetails.Scheme_Name);
+      formData.append(
+        "Monthly_Installment",
+        productDetails.Monthly_Installment
+      );
+      formData.append("Months", productDetails.Months);
+      formData.append("Total_Amount", productDetails.Total_Amount);
 
-      const res = await axios.post("/api/product/create/", formData, {
+      formData.append("Members", productDetails.Members);
+      // formData.append("Start_Date", productDetails.Start_Date);
+      formData.append("End_Date", productDetails.End_Date);
+
+      const res = await axios.patch(`/api/gold/schema/update/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const result = res.data;
-
       await handlegetAllProducts(page, itemPerPage, bannertype);
-      navigate("/products");
+      navigate("/gold-schemes");
     } catch (error) {
       console.log("error add banner", error);
       const message = error?.response?.data?.message;
@@ -163,7 +121,12 @@ const GoldSchemaUpdate = () => {
       setErrorData("");
     }
   };
-  console.log("subcategorys", subcategorys);
+//  useEffect(()=>{
+//   handlegeOnegoldRate(id)
+//  },[id])
+
+
+
   return (
     <div>
       <Box
@@ -177,7 +140,7 @@ const GoldSchemaUpdate = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Update Gold Schema
+          Add Gold Update
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -185,48 +148,72 @@ const GoldSchemaUpdate = () => {
               <TextField
                 autoComplete="off"
                 label="Scheme Name"
-                name="schemeName"
-                value={productDetails.schemeName}
+                name="Scheme_Name"
+                value={productDetails.Scheme_Name}
                 onChange={handleChange}
                 fullWidth
-                required
+                
               />
             </Grid>
 
-               <Grid item xs={12}>
+            <Grid item xs={12}>
               <TextField
                 autoComplete="off"
                 label="Monthly Installment"
-                name="monthlyInstallment"
-                value={productDetails.monthlyInstallment}
+                name="Monthly_Installment"
+                value={productDetails.Monthly_Installment}
                 onChange={handleChange}
                 fullWidth
-                required
+                
               />
             </Grid>
-
-            
+         
             <Grid item xs={12}>
               <TextField
-                select
-                label="Select Months Type"
-                name="months"
-                value={productDetails.months}
+                autoComplete="off"
+                label="Months"
+                name="Months"
+                value={productDetails.Months}
                 onChange={handleChange}
                 fullWidth
-                required
-              >
-                {monthsList.map((month) => (
-                  <MenuItem
-                    value={month.value}
-                    onClick={() => handleCategorySubcategoryFilter(month.value)}
-                  >
-                    {month.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+                
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Total Amount"
+                name="Total_Amount"
+                value={productDetails.Total_Amount}
+                onChange={handleChange}
+                fullWidth
+                
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Members"
+                name="Members"
+                value={productDetails.Members}
+                onChange={handleChange}
+                fullWidth
+                
+              />
             </Grid>
          
+            <Grid item xs={12}>
+              <TextField
+                type="date"
+                autoComplete="off"
+                label="End Date"
+                name="End_Date"
+                value={productDetails.End_Date}
+                onChange={handleChange}
+                fullWidth
+                
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>
