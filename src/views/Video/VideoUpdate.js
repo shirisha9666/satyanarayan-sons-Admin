@@ -35,12 +35,19 @@ const VideoUpdate = () => {
     handleOneBanner,
     BannerOneDetails,
   } = useVideo();
-  console.log("BannerOneDetails",BannerOneDetails)
 
   const [homeCollections, setHomeCollection] = useState({
     video: BannerOneDetails?.video?.url || null,
     coverImagePreview: BannerOneDetails?.video?.url || "",
   });
+  useEffect(() => {
+    if (BannerOneDetails) {
+      setHomeCollection({
+        video: BannerOneDetails?.video?.url || null,
+        coverImagePreview: BannerOneDetails?.video?.url || "",
+      });
+    }
+  }, [BannerOneDetails]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -56,7 +63,6 @@ const VideoUpdate = () => {
         maxSize: 2 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
-
         setHomeCollection((prev) => ({
           ...prev,
           video: file,
@@ -109,7 +115,7 @@ const VideoUpdate = () => {
     handleOneBanner(id);
   }, [id]);
 
-  console.log("BannerOneDetails", BannerOneDetails);
+
   return (
     <div>
       <Box
@@ -171,18 +177,18 @@ const VideoUpdate = () => {
                   )}
                 </Box>
               )} */}
-               <video
-                      src={homeCollections.coverImagePreview}
-                      controls
-                      muted
-                      playsInline
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
+              <video
+                src={homeCollections.coverImagePreview}
+                controls
+                muted
+                playsInline
+                style={{
+                  width: "100%",
+                  maxHeight: 300,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                }}
+              />
             </Grid>
 
             <Grid item xs={12}>
