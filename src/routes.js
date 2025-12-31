@@ -582,6 +582,12 @@ const routes = [
     element: HomeCollectionAdd,
     navName: "Settings",
   },
+      {
+    path: "/home-collections/update/:id",
+    name: "Products",
+    element: HomeCollectionUpdate,
+    navName: "Settings",
+  },
 
    {
     path: "/video-section",

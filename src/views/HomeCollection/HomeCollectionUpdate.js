@@ -36,15 +36,26 @@ const HomeCollectionUpdate = () => {
     BannerOneDetails,
   } = useHomeCollection();
 
-
   const [homeCollections, setHomeCollection] = useState({
-    name: BannerOneDetails?.name || "",
-    selectedType: BannerOneDetails?.selectedType || "",
-    mediaType: BannerOneDetails?.mediaType || "",
+    name: "",
+    selectedType: "",
+    mediaType: "",
 
-    Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
-    coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
+    Thumbnail: null,
+    coverImagePreview: "",
   });
+  useEffect(() => {
+    if (BannerOneDetails) {
+      setHomeCollection({
+        name: "",
+        selectedType: "",
+        mediaType: "",
+
+        Thumbnail: null,
+        coverImagePreview: "",
+      });
+    }
+  }, [BannerOneDetails]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setHomeCollection((prev) => ({
@@ -67,7 +78,7 @@ const HomeCollectionUpdate = () => {
         maxSize: 2 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
-        console.log("type",type)
+        console.log("type", type);
         setHomeCollection((prev) => ({
           ...prev,
           Thumbnail: file,
@@ -120,11 +131,25 @@ const HomeCollectionUpdate = () => {
       setErrorData("");
     }
   };
+
+
+  useEffect(() => {
+    if (BannerOneDetails) {
+      setHomeCollection({
+        name: BannerOneDetails?.name || "",
+        selectedType: BannerOneDetails?.selectedType || "",
+        mediaType: BannerOneDetails?.mediaType || "",
+
+        Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
+        coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
+      });
+    }
+  }, [BannerOneDetails]);
   useEffect(() => {
     handleOneBanner(id);
   }, [id]);
 
-  console.log("BannerOneDetails", BannerOneDetails);
+
   return (
     <div>
       <Box
@@ -150,7 +175,7 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.selectedType}
                 onChange={handleChange}
                 fullWidth
-                required
+
               >
                 <MenuItem value="">Select Type</MenuItem>
                 <MenuItem value="New_Arrivals">New_Arrivals</MenuItem>
@@ -167,7 +192,7 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.name}
                 onChange={handleChange}
                 fullWidth
-                required
+
               />
             </Grid>
 
@@ -179,7 +204,7 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.mediaType}
                 onChange={handleChange}
                 fullWidth
-                required
+
               >
                 <MenuItem value="">Select Type</MenuItem>
                 <MenuItem value="image">Image</MenuItem>
@@ -202,36 +227,35 @@ const HomeCollectionUpdate = () => {
                 />
               </Button>
 
-         {homeCollections.coverImagePreview && (
-  <Box mt={2}>
-    {homeCollections.coverImageType === "video" ? (
-      <video
-        src={homeCollections.coverImagePreview}
-        controls
-        muted
-        playsInline
-        style={{
-          width: "100%",
-          maxHeight: 300,
-          objectFit: "cover",
-          borderRadius: 8,
-        }}
-      />
-    ) : (
-      <img
-        src={homeCollections.coverImagePreview}
-        alt="Cover Preview"
-        style={{
-          width: "100%",
-          maxHeight: 300,
-          objectFit: "cover",
-          borderRadius: 8,
-        }}
-      />
-    )}
-  </Box>
-)}
-
+              {homeCollections.coverImagePreview && (
+                <Box mt={2}>
+                  {homeCollections.coverImageType === "video" ? (
+                    <video
+                      src={homeCollections.coverImagePreview}
+                      controls
+                      muted
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={homeCollections.coverImagePreview}
+                      alt="Cover Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
+                </Box>
+              )}
             </Grid>
 
             <Grid item xs={12}>
