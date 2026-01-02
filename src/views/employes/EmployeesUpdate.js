@@ -1,279 +1,252 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-
+import { Box, Button, Typography, Checkbox, CircularProgress } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-
-import {
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@material-ui/core";
-import Button from "@mui/material/Button";
-import { Alert, Stack } from "@mui/material";
+import axios from "axios";
 import toast from "react-hot-toast";
+
+import _nav from "src/_nav";
 import { isAutheticated } from "src/auth";
+import { useBranche } from "../Branches/BranchesContext";
 import { useEmployees } from "./EmployeesContext";
-import { getMediaType, isVideo } from "../TypeOfmedia";
-import { validateMediaFile } from "../HelperImageResoluation";
 
 const EmployeUpdate = () => {
-  const token = isAutheticated();
-  const [loading, setLoading] = useState(false);
-  const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
+  const token = isAutheticated();
+  const [loading,setLoading]=useState(false)
+  const { banner } = useBranche();
   const {
     handlegetAllData,
+    employeType,
     page,
     itemPerPage,
-    bannertype,
-    handleOneBanner,
-    BannerOneDetails,
+    employeDetails,
+    handleOneEmploye,
   } = useEmployees();
 
-  const [homeCollections, setHomeCollection] = useState({
+  const branchess = banner?.result || [];
+
+  // ✅ MAIN STATE
+  const [employeData, setEmployData] = useState({
     name: "",
-    selectedType: "",
-    mediaType: "",
-
-    Thumbnail: null,
-    coverImagePreview: "",
+    email: "",
+    phone: "",
+    branchId: "",
+    Role: "Employee",
+    access: {}, // ✅ OBJECT for checkbox handling
+    password: "",
   });
-  useEffect(() => {
-    if (BannerOneDetails) {
-      setHomeCollection({
-        name: "",
-        selectedType: "",
-        mediaType: "",
 
-        Thumbnail: null,
-        coverImagePreview: "",
-      });
-    }
-  }, [BannerOneDetails]);
+  // ✅ FILTER ACCESS MENU
+  const filteredNav = _nav.filter((item) => item.name !== "Employee");
+
+  // ✅ INPUT HANDLER
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setHomeCollection((prev) => ({
+    setEmployData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-
-    validateMediaFile({
-      file,
-      imageConfig: {
-        width: 1920,
-        height: 600,
-        maxSize: 1 * 1024 * 1024,
+  // ✅ CHECKBOX HANDLER
+  const handleCheckboxChange = (name) => (event) => {
+    setEmployData((prev) => ({
+      ...prev,
+      access: {
+        ...prev.access,
+        [name]: event.target.checked,
       },
-      videoConfig: {
-        maxSize: 2 * 1024 * 1024,
-      },
-      onSuccess: ({ file, previewURL, type }) => {
-        console.log("type", type);
-        setHomeCollection((prev) => ({
-          ...prev,
-          Thumbnail: file,
-          coverImagePreview: previewURL,
-          coverImageType: type,
-        }));
-      },
-    });
-
-    e.target.value = ""; // allow re-upload same file
+    }));
   };
-  const handleSubmit = async (e) => {
+
+  // ✅ PREPARE ACCESS ARRAY FOR BACKEND
+  const prepareAccessForBackend = () => {
+    return Object.keys(employeData.access).filter(
+      (key) => employeData.access[key] === true
+    );
+  };
+
+  // ✅ SUBMIT FORM
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      setLoading(true);
-      let formData = new FormData();
-      formData.append("name", homeCollections.name);
-      formData.append("selectedType", homeCollections.selectedType);
-      formData.append("mediaType", homeCollections.mediaType);
-      formData.append("Thumbnail", homeCollections.Thumbnail);
+    const payload = {
+      ...employeData,
+      access: prepareAccessForBackend(),
+    };
 
-      const res = await axios.patch(`/api/trending/update/${id}`, formData, {
+    try {
+      setLoading(true)
+      await axios.patch(`/api/employe/update/${id}`, payload, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      const result = res.data;
-
-      await handlegetAllData(page, itemPerPage, bannertype);
-      toast.success("Banner Updated Successfully");
-      navigate("/home-collections");
+      toast.success("Employee Updated Successfully");
+      await handlegetAllData(page, itemPerPage, employeType);
+      navigate("/employee");
     } catch (error) {
-      console.log("error add banner", error);
-      const message = error?.response?.data?.message;
-      toast.error(message);
-      if (message && message.includes("E11000 duplicate key error")) {
-        setErrorData(
-          "Series Number already exists. Please use a unique value."
-        );
-      } else if (message) {
-        setErrorData(message);
-      } else {
-        setErrorData("Something went wrong. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-      setErrorData("");
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }finally{
+      setLoading(false)
     }
   };
 
+  // ✅ ROLES
+  const roles = [
+    { role: "Admin", sendValue: "admin" },
+    { role: "Branch Manager", sendValue: "branch_manager" },
+    { role: "Account Manager", sendValue: "account_manager" },
+    { role: "Content Manager", sendValue: "content_manager" },
+    { role: "Employee", sendValue: "Employee" },
+  ];
+
+  const mapAccessArrayToObject = (accessArray = []) => {
+    const accessObj = {};
+    accessArray.forEach((item) => {
+      accessObj[item] = true;
+    });
+    return accessObj;
+  };
 
   useEffect(() => {
-    if (BannerOneDetails) {
-      setHomeCollection({
-        name: BannerOneDetails?.name || "",
-        selectedType: BannerOneDetails?.selectedType || "",
-        mediaType: BannerOneDetails?.mediaType || "",
-
-        Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
-        coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
+    handleOneEmploye(id);
+  }, [id]);
+  useEffect(() => {
+    if (employeDetails) {
+      setEmployData({
+        name: employeDetails?.name,
+        email: employeDetails?.email,
+        phone: employeDetails?.phone,
+        branchId: employeDetails?.branchId,
+        Role: employeDetails?.Role,
+        access: mapAccessArrayToObject(employeDetails?.access),
+        password: employeDetails?.password,
       });
     }
-  }, [BannerOneDetails]);
-  useEffect(() => {
-    handleOneBanner(id);
-  }, [id]);
-
+  }, [employeDetails]);
+  console.log("employeDetails", employeDetails);
 
   return (
-    <div>
-      <Box
-        sx={{
-          maxWidth: 800,
-          mx: "auto",
+    <Box style={{ background: "#fff", padding: "1rem" }}>
+      <Typography variant="h6" style={{ fontWeight: "bold" }}>
+        Add Employee
+      </Typography>
 
-          p: 3,
-          boxShadow: 3,
-          borderRadius: 2,
-        }}
-      >
-        <Typography variant="h5" mb={2}>
-          Banner Update
-        </Typography>
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Select Type"
-                name="selectedType"
-                value={homeCollections.selectedType}
-                onChange={handleChange}
-                fullWidth
+      <div className="row">
+        {/* Name */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Employee Name *</label>
+          <input
+            className="form-control"
+            name="name"
+            value={employeData.name}
+            onChange={handleChange}
+          />
+        </div>
 
-              >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="New_Arrivals">New_Arrivals</MenuItem>
-                <MenuItem value="Trendy">Trendy</MenuItem>
-                <MenuItem value="Instagram">Instagram</MenuItem>
-              </TextField>
-            </Grid>
+        {/* Email */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Employee Email *</label>
+          <input
+            className="form-control"
+            name="email"
+            value={employeData.email}
+            onChange={handleChange}
+          />
+        </div>
 
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Name"
-                name="name"
-                value={homeCollections.name}
-                onChange={handleChange}
-                fullWidth
+        {/* Role */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Role *</label>
+          <select
+            className="form-select"
+            name="Role"
+            value={employeData.Role}
+            onChange={handleChange}
+          >
+            <option value="">Select Role</option>
+            {roles.map((r, i) => (
+              <option key={i} value={r.sendValue}>
+                {r.role}
+              </option>
+            ))}
+          </select>
+        </div>
 
+        {/* Branch */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Branch Name *</label>
+          <select
+            className="form-select"
+            name="branchId"
+            value={employeData.branchId}
+            onChange={handleChange}
+          >
+            <option value="">Select Branch</option>
+            {branchess.map((branch) => (
+              <option key={branch._id} value={branch._id}>
+                {branch.branchName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Phone */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Phone</label>
+          <input
+            className="form-control"
+            name="phone"
+            value={employeData.phone}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Password */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Password *</label>
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            value={employeData.password}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      {/* ACCESS */}
+      <Box className="mb-3">
+        <label className="form-label">Access To *</label>
+        <div className="row">
+          {filteredNav.map((item, index) => (
+            <div key={index} className="col-md-4">
+              <Checkbox
+                checked={employeData.access[item.name] || false}
+                onChange={handleCheckboxChange(item.name)}
               />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="Media Type"
-                name="mediaType"
-                value={homeCollections.mediaType}
-                onChange={handleChange}
-                fullWidth
-
-              >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="image">Image</MenuItem>
-                <MenuItem value="video">Video</MenuItem>
-              </TextField>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Typography variant="subtitle1" mb={1}>
-                Cover Media (Image / Video)
-              </Typography>
-
-              <Button variant="contained" component="label">
-                Upload Media
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  hidden
-                  onChange={handleImageChange}
-                />
-              </Button>
-
-              {homeCollections.coverImagePreview && (
-                <Box mt={2}>
-                  {homeCollections.coverImageType === "video" ? (
-                    <video
-                      src={homeCollections.coverImagePreview}
-                      controls
-                      muted
-                      playsInline
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={homeCollections.coverImagePreview}
-                      alt="Cover Preview"
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  )}
-                </Box>
-              )}
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" fullWidth>
-                {loading ? "Loading......" : "Submit"}
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-        {errordata && (
-          <Stack sx={{ width: "100%", mt: 2, mb: 2 }}>
-            <Alert variant="filled" severity="error">
-              {errordata}
-            </Alert>
-          </Stack>
-        )}
+              {item.name}
+            </div>
+          ))}
+        </div>
       </Box>
-    </div>
+
+      {/* BUTTONS */}
+      <div className="d-flex gap-2">
+        <Button variant="contained" onClick={handleFormSubmit}>
+          {loading?<CircularProgress size={25}/>:"Save"}
+          
+        </Button>
+        <Button variant="outlined" onClick={() => navigate("/employee")}>
+          Cancel
+        </Button>
+      </div>
+    </Box>
   );
 };
+
 export default EmployeUpdate;

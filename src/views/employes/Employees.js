@@ -11,11 +11,12 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmployees } from "./EmployeesContext";
+import { useBranche } from "../Branches/BranchesContext";
 
 const Employees = () => {
   const navigate = useNavigate();
   const {
-    banner,
+    employeesData,
     handlegetAllData,
     setPage,
     setItemPerPage,
@@ -25,21 +26,27 @@ const Employees = () => {
     bannerId,
     itemPerPage,
     viewBannerId,
+    delId,
     loading,
     page,
     handleOneBanner,
   } = useEmployees();
 
   const tableHeadering = [
-    // "CreatedAt",
+    "Employee_ID",
+    "Role",
     "Name",
-    "Type",
-    "MediaType",
-    "status",
-    "Image",
+
+    "Phone",
+    "Access",
+    "Status",
+    "Gold_Count",
+    // "Last Login",
+    "Start",
     "Actions",
   ];
-  let fetchBanner = banner?.result;
+
+  let fetchBanner = employeesData?.result;
   const roles = [
     {
       role: "Admin",
@@ -72,7 +79,6 @@ const Employees = () => {
       textColor: "#1B1A1A",
     },
   ];
-  console.log("banner.employees",banner)
 
   return (
     <div className="row">
@@ -105,7 +111,7 @@ const Employees = () => {
                     entries
                   </label>
                 </div>
-                {/* <div>
+                <div>
                   <Button
                     variant="contained"
                     color="primary"
@@ -115,26 +121,25 @@ const Employees = () => {
                       textTransform: "capitalize",
                     }}
                     onClick={() => {
-                      navigate("/home-collections/add");
+                      navigate("/add-employee");
                     }}
                   >
                     Add
-          
                   </Button>
-                </div> */}
+                </div>
               </div>
               <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
                 {roles.map((val) => (
                   <Button
                     onClick={() => {
-                      setEmployeType(val);
+                      setEmployeType(val.sendValue);
 
                       handlegetAllData(page, itemPerPage, val.sendValue);
                     }}
                     variant="contained"
                     style={{
                       background: `${
-                        employeType === val ? "#D4AF37" : val.bgColor
+                        employeType === val.sendValue ? "#D4AF37" : val.bgColor
                       }`,
                       color: "#fff",
                       fontWeight: "bold",
@@ -227,46 +232,45 @@ const Employees = () => {
                     fetchBanner &&
                     fetchBanner.map((item, i) => (
                       <tr key={i}>
-                        {/* <td>{item?.createdAt}</td> */}
-                        <td>{item?.name}</td>
-                        <td>{item?.selectedType || null}</td>
+                        {/* Employee ID */}
+                        <td>{item?.employeId}</td>
 
-                        <td>{item?.mediaType}</td>
-                        <td>{item?.status}</td>
+                        {/* Role */}
+                        <td>{item?.Role}</td>
 
+                        {/* Name */}
+                        <td>{item?.name || "-"}</td>
+
+                        {/* Phone */}
+                        <td>{item?.phone}</td>
+
+                        {/* Access */}
                         <td>
-                          {item?.Thumbnail?.url ? (
-                            item.Thumbnail?.url?.match(/\.(mp4|webm|ogg)$/i) ? (
-                              <video
-                                src={item.Thumbnail.url}
-                                width="100"
-                                height="60"
-                                muted
-                                loop
-                                autoPlay
-                                playsInline
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "6px",
-                                }}
-                              />
-                            ) : (
-                              <img
-                                src={item.Thumbnail.url}
-                                width="100"
-                                height="60"
-                                alt=""
-                                style={{
-                                  objectFit: "cover",
-                                  borderRadius: "6px",
-                                }}
-                              />
-                            )
-                          ) : (
-                            "—"
-                          )}
+                          {item?.access?.length
+                            ? item.access.map((acc, index) => (
+                                <span
+                                  key={index}
+                                  className="badge bg-primary me-1"
+                                >
+                                  {acc}
+                                </span>
+                              ))
+                            : "-"}
                         </td>
 
+                        {/* Status */}
+                        <td>{item?.isActive}</td>
+
+                        {/* Gold Schemes Added */}
+                        <td>{item?.goldSchemeCount ?? 0}</td>
+
+                        {/* Last Login */}
+                        {/* <td>{item?.lastLogin || "-"}</td> */}
+
+                        {/* Created At */}
+                        <td>{item?.createdAt}</td>
+
+                        {/* Actions */}
                         <td
                           style={{
                             textAlign: "center",
@@ -285,11 +289,8 @@ const Employees = () => {
                               style={{ color: "white" }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={async () => {
-                                await handleOneBanner(item._id);
-                                navigate(
-                                  `/home-collections/update/${item._id}`
-                                );
+                              onClick={() => {
+                                navigate(`/employee/update/${item._id}`);
                               }}
                             >
                               {viewBannerId === item._id ? (
@@ -298,13 +299,14 @@ const Employees = () => {
                                 "Edit"
                               )}
                             </button>
+
                             <button
                               style={{ color: "white", background: "red" }}
                               type="button"
                               className="btn btn-sm waves-effect waves-light btn-table"
                               onClick={() => handleDelete(item._id)}
                             >
-                              {bannerId === item._id ? (
+                              {delId === item._id ? (
                                 <CircularProgress size={25} />
                               ) : (
                                 "Delete"

@@ -1,192 +1,220 @@
-import { Box, Button, Typography } from "@mui/material";
 import React, { useState } from "react";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import {
+  Box,
+  Button,
+  Typography,
+  Checkbox,
+  CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import _nav from "src/_nav";
-import toast from "react-hot-toast";
 import axios from "axios";
+import toast from "react-hot-toast";
+
+import _nav from "src/_nav";
 import { isAutheticated } from "src/auth";
+import { useBranche } from "../Branches/BranchesContext";
+import { useEmployees } from "./EmployeesContext";
 
 const AddEmployee = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const token = isAutheticated();
+  const { banner } = useBranche();
+  const { handlegetAllData, employeType, page, itemPerPage } = useEmployees();
+
+  const branchess = banner?.result || [];
+
+  // ✅ MAIN STATE
   const [employeData, setEmployData] = useState({
     name: "",
     email: "",
     phone: "",
-    // role: "Employee",
-    accessTo: {},
+    branchId: "",
+    Role: "Employee",
+    access: {}, // ✅ OBJECT for checkbox handling
     password: "",
   });
-  const token = isAutheticated();
+
+  // ✅ FILTER ACCESS MENU
+  const filteredNav = _nav.filter((item) => item.name !== "Employee");
+
+  // ✅ INPUT HANDLER
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEmployData((pre) => ({
-      ...pre,
+    setEmployData((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  const navigate = useNavigate();
-
-  const filteredNav = _nav.filter((item) => item.name !== "Employee");
-  const [checkedItems, setCheckedItems] = useState(
-    filteredNav.reduce((acc, item) => {
-      acc[item.name] = false;
-      return acc;
-    }, {})
-  );
-
+  // ✅ CHECKBOX HANDLER
   const handleCheckboxChange = (name) => (event) => {
-    const { checked } = event.target;
     setEmployData((prev) => ({
       ...prev,
-      accessTo: {
-        ...prev.accessTo,
-        [name]: checked,
+      access: {
+        ...prev.access,
+        [name]: event.target.checked,
       },
     }));
   };
 
+  // ✅ PREPARE ACCESS ARRAY FOR BACKEND
+  const prepareAccessForBackend = () => {
+    return Object.keys(employeData.access).filter(
+      (key) => employeData.access[key] === true
+    );
+  };
+
+  // ✅ SUBMIT FORM
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    const payload = {
+      ...employeData,
+      access: prepareAccessForBackend(),
+    };
+
     try {
-      const response = await axios.post("/api/v1/add/employe", employeData, {
+      setLoading(true);
+      await axios.post("/api/employe/create", payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
-      toast.success("Employee Added Successful");
 
+      toast.success("Employee Added Successfully");
+      await handlegetAllData(page, itemPerPage, employeType);
       navigate("/employee");
     } catch (error) {
-      console.log(error?.response);
       toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
+  // ✅ ROLES
+  const roles = [
+    { role: "Admin", sendValue: "admin" },
+    { role: "Branch Manager", sendValue: "branch_manager" },
+    { role: "Account Manager", sendValue: "account_manager" },
+    { role: "Content Manager", sendValue: "content_manager" },
+    { role: "Employee", sendValue: "Employee" },
+  ];
+
   return (
-    <div>
-      <Box style={{ background: "#FFFFFF", color: "black", padding: "1rem" }}>
-        <Typography
-          style={{ margin: "0.5rem 0rem", fontWeight: "bold" }}
-          variant="h6"
-        >
-          {" "}
-          Add Employee:{" "}
-        </Typography>
+    <Box style={{ background: "#fff", padding: "1rem" }}>
+      <Typography variant="h6" style={{ fontWeight: "bold" }}>
+        Add Employee
+      </Typography>
 
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Employe Name*
-          </label>
-
+      <div className="row">
+        {/* Name */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Employee Name *</label>
           <input
-            type="text"
             className="form-control"
-            id="title"
-            placeholder="Eg: pawan kr"
             name="name"
             value={employeData.name}
             onChange={handleChange}
           />
         </div>
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Phone Number
-          </label>
 
+        {/* Email */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Employee Email *</label>
           <input
-            type="text"
             className="form-control"
-            id="title"
-            placeholder="Eg: 8516913819"
+            name="email"
+            value={employeData.email}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Role */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Role *</label>
+          <select
+            className="form-select"
+            name="Role"
+            value={employeData.Role}
+            onChange={handleChange}
+          >
+            <option value="">Select Role</option>
+            {roles.map((r, i) => (
+              <option key={i} value={r.sendValue}>
+                {r.role}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Branch */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Branch Name *</label>
+          <select
+            className="form-select"
+            name="branchId"
+            value={employeData.branchId}
+            onChange={handleChange}
+          >
+            <option value="">Select Branch</option>
+            {branchess.map((branch) => (
+              <option key={branch._id} value={branch._id}>
+                {branch.branchName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Phone */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Phone</label>
+          <input
+            className="form-control"
             name="phone"
             value={employeData.phone}
             onChange={handleChange}
           />
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="welcomeMsgforDes" className="form-label">
-            Email*
-          </label>
-
+        {/* Password */}
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Password *</label>
           <input
-            type="email"
+            type="password"
             className="form-control"
-            id="welcomeMsgforDes"
-            placeholder="Eg: example@gmail.com "
-            name="email"
-            value={employeData.email}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="welcomeMsgforDes" className="form-label">
-            password*
-          </label>
-
-          <input
-            type="text"
-            className="form-control"
-            id="welcomeMsgforDes"
-            placeholder="Enter Password "
             name="password"
             value={employeData.password}
             onChange={handleChange}
           />
         </div>
-        <Box>
-          <label htmlFor="welcomeMsgforDes" className="form-label">
-            Access to*
-          </label>
-          <div>
-            {filteredNav.map((item, index) => (
-              <div key={index}>
-                <Checkbox
-                  checked={employeData.accessTo[item.name] || false}
-                  onChange={handleCheckboxChange(item.name)}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-                {item.name}
-              </div>
-            ))}
-          </div>
-        </Box>
-        <div style={{ display: "flex" }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleFormSubmit}
-            style={{
-              fontWeight: "bold",
-              marginBottom: "1rem",
-              textTransform: "capitalize",
-              marginRight: "5px",
-            }}
-          >
-            Save
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate("/employee")}
-            style={{
-              fontWeight: "bold",
-              marginBottom: "1rem",
-              textTransform: "capitalize",
-              marginRight: "5px",
-            }}
-          >
-            Cancel
-          </Button>
+      </div>
+
+      {/* ACCESS */}
+      <Box className="mb-3">
+        <label className="form-label">Access To *</label>
+        <div className="row">
+          {filteredNav.map((item, index) => (
+            <div key={index} className="col-md-4">
+              <Checkbox
+                checked={employeData.access[item.name] || false}
+                onChange={handleCheckboxChange(item.name)}
+              />
+              {item.name}
+            </div>
+          ))}
         </div>
       </Box>
-    </div>
+
+      {/* BUTTONS */}
+      <div className="d-flex gap-2">
+        <Button variant="contained" onClick={handleFormSubmit}>
+          {loading ? <CircularProgress size={25} /> : "Save"}
+        </Button>
+      </div>
+    </Box>
   );
 };
 

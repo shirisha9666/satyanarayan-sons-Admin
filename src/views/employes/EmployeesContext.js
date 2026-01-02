@@ -11,10 +11,10 @@ export const EmployeesProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(5);
-  const [banner, setBanner] = useState([]);
+  const [employeesData, setEmployees] = useState([]);
   const [employeType, setEmployeType] = useState("");
-  const [bannerId, setBannerId] = useState(null);
-  const [BannerOneDetails, setBannerOneDetails] = useState([]);
+  const [delId, setEmployeesId] = useState(null);
+  const [employeDetails, setEmployeesOneDetails] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
 
   const handlegetAllData = async (page = 1, itemPerPage, employeType) => {
@@ -32,7 +32,7 @@ export const EmployeesProvider = ({ children }) => {
       });
       console.log("response?.data in the employess",response?.data)
 
-      setBanner(response?.data);
+      setEmployees(response?.data);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
       toast.error(errormssage)
@@ -44,7 +44,7 @@ export const EmployeesProvider = ({ children }) => {
 
   const handleDelete = async (id) => {
     try {
-      setBannerId(id);
+      setEmployeesId(id);
       let resp = await axios.delete(`/api/employe/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,11 +59,11 @@ export const EmployeesProvider = ({ children }) => {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
     } finally {
-      setBannerId(null);
+      setEmployeesId(null);
     }
   };
 
-  const handleOneBanner = async (id) => {
+  const handleOneEmploye = async (id) => {
     try {
       setViewBannerId(id);
       let resp = await axios.get(`/api/employe/get/${id}`, {
@@ -72,7 +72,7 @@ export const EmployeesProvider = ({ children }) => {
         },
       });
 
-      setBannerOneDetails(resp?.data);
+      setEmployeesOneDetails(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
@@ -84,13 +84,13 @@ export const EmployeesProvider = ({ children }) => {
     handlegetAllData(page, itemPerPage, employeType);
   }, []);
 
-    console.log("banner.employees.usecontext",banner)
+
 
 
   return (
     <EmployeesContext.Provider
       value={{
-        banner,
+        employeesData,
         handlegetAllData,
         setPage,
         setItemPerPage,
@@ -100,10 +100,10 @@ export const EmployeesProvider = ({ children }) => {
         loading,
         page,
         handleDelete,
-        handleOneBanner,
-        bannerId,
+        handleOneEmploye,
+        delId,
         viewBannerId,
-        BannerOneDetails,
+        employeDetails,
       }}
     >
       {children}
