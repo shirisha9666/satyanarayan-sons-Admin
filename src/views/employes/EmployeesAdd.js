@@ -21,7 +21,7 @@ const AddEmployee = () => {
 
   const token = isAutheticated();
   const { banner } = useBranche();
-  const { handlegetAllData, employeType, page, itemPerPage } = useEmployees();
+  const { handlegetAllData, employeType, page, itemPerPage ,searchByRole} = useEmployees();
 
   const branchess = banner?.result || [];
 
@@ -100,7 +100,7 @@ const AddEmployee = () => {
     { role: "Branch Manager", sendValue: "branch_manager" },
     { role: "Account Manager", sendValue: "account_manager" },
     { role: "Content Manager", sendValue: "content_manager" },
-    { role: "Employee", sendValue: "Employee" },
+    { role: "Employee", sendValue: "employee" },
   ];
 
   return (

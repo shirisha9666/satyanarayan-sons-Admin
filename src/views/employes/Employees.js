@@ -12,6 +12,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmployees } from "./EmployeesContext";
 import { useBranche } from "../Branches/BranchesContext";
+import { InputAdornment } from "@material-ui/core";
+import { GridSearchIcon } from "@material-ui/data-grid";
 
 const Employees = () => {
   const navigate = useNavigate();
@@ -30,10 +32,11 @@ const Employees = () => {
     delId,
     loading,
     page,
- searchByRole,setSearchByRole
+    searchByRole,
+    setSearchByRole,
   } = useEmployees();
 
-  console.log("searchByRole",searchByRole)
+  console.log("searchByRole", searchByRole);
   const tableHeadering = [
     "Employee_ID",
     "Role",
@@ -76,11 +79,17 @@ const Employees = () => {
     },
     {
       role: "Employee",
-      sendValue: "",
+      sendValue: "employee",
       bgColor: "#E9C46A", // soft gold
       textColor: "#1B1A1A",
     },
   ];
+    const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setEmployeType(value);
+
+    handlegetAllData(page, itemPerPage, value,searchByRole);
+  };
 
   return (
     <div className="row">
@@ -97,7 +106,12 @@ const Employees = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllData(page, Number(val), employeType,searchByRole);
+                        handlegetAllData(
+                          page,
+                          Number(val),
+                          employeType,
+                          searchByRole
+                        );
                       }}
                       className="
                                        select-w
@@ -130,71 +144,70 @@ const Employees = () => {
                   </Button>
                 </div>
               </div>
-              <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                {roles.map((val) => (
-                  <Button
-                    onClick={() => {
-                      setSearchByRole(val.sendValue);
+              <div className="d-flex justify-content-between">
+                <div
+                  style={{ display: "flex", gap: "12px", marginTop: "10px" }}
+                >
+                  {roles.map((val) => (
+                    <Button
+                      onClick={() => {
+                        setSearchByRole(val.sendValue);
 
-                      handlegetAllData(page, itemPerPage,employeType, val.sendValue);
-                    }}
-                    variant="contained"
-                    style={{
-                      background: `${
-                        employeType === val.sendValue ? "#D4AF37" : val.bgColor
-                      }`,
-                      color: "#fff",
-                      fontWeight: "bold",
-                      padding: "8px 20px",
-                      borderRadius: "10px",
-                      textTransform: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {val.role}
-                  </Button>
-                ))}
+                        handlegetAllData(
+                          page,
+                          itemPerPage,
+                          employeType,
+                          val.sendValue
+                        );
+                      }}
+                      variant="contained"
+                      style={{
+                        background: `${
+                          employeType === val.sendValue
+                            ? "#D4AF37"
+                            : val.bgColor
+                        }`,
+                        color: "#fff",
+                        fontWeight: "bold",
+                        padding: "8px 20px",
+                        borderRadius: "10px",
+                        textTransform: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {val.role}
+                    </Button>
+                  ))}
 
-                {/* <Button
-                  onClick={() => {
-                    setEmployeType("Trendy");
-                    handlegetAllData(page, itemPerPage, "Trendy");
-                  }}
-                  variant="contained"
+                 
+                </div>
+                <div
                   style={{
-                    background: `${
-                      employeType === "Trendy" ? "#D4AF37" : "#648181"
-                    }`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "10px",
                   }}
                 >
-                  Trendy
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setEmployeType("Instagram");
-                    handlegetAllData(page, itemPerPage, "Instagram");
-                  }}
-                  variant="contained"
-                  style={{
-                    background:
-                      employeType === "Instagram" ? "#D4AF37" : "#E1306C",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Instagram
-                </Button> */}
+                  <TextField
+                    size="small"
+                    placeholder="Search by Branch Name"
+                    autoComplete="off"
+                    value={employeType}
+                    onChange={handleSearchChange}
+                    sx={{
+                      width: "280px",
+                      backgroundColor: "#fff",
+                      borderRadius: "8px",
+                    }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <GridSearchIcon style={{ color: "#888" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
@@ -322,14 +335,19 @@ const Employees = () => {
                 </tbody>
               </table>
             </div>
-            
+
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
                 count={employeesData?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, employeType,searchByRole);
+                  handlegetAllData(
+                    value,
+                    itemPerPage,
+                    employeType,
+                    searchByRole
+                  );
                 }}
                 color="primary"
               />

@@ -17,6 +17,7 @@ const EmployeUpdate = () => {
   const { banner } = useBranche();
   const {
     handlegetAllData,
+   
     employeType,
     page,
     itemPerPage,
@@ -102,7 +103,7 @@ const EmployeUpdate = () => {
     { role: "Branch Manager", sendValue: "branch_manager" },
     { role: "Account Manager", sendValue: "account_manager" },
     { role: "Content Manager", sendValue: "content_manager" },
-    { role: "Employee", sendValue: "Employee" },
+    { role: "Employee", sendValue: "employee" },
   ];
 
   const mapAccessArrayToObject = (accessArray = []) => {
