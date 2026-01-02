@@ -134,9 +134,7 @@ import POSViewOrders from "./views/orders/POSViewOrders";
 import InStoreQRCodeOrders from "./views/orders/InStoreQRCodeOrders";
 import EmailCms from "./views/CustomerSupport/EmailCMS/EmailCms";
 import RegistrationEmail from "./views/CustomerSupport/EmailCMS/RegistrationEmail";
-import Employee from "./views/EmployeeAccess/Employee";
-import AddEmployee from "./views/EmployeeAccess/addEmployee";
-import EditEmployee from "./views/EmployeeAccess/editEmployee";
+
 import ExportToExcel from "./views/exportExcel";
 // import Currency from "./views/configuration/Currency";
 import ReviewsStatus from "./views/reviews/ReviewsStatus";
@@ -216,6 +214,9 @@ import BranchManagerCreate from "./views/Branches/BranchManagerCreate";
 import BranchUpdate from "./views/Branches/BranchesUpdate";
 import BranchCreate from "./views/Branches/BranchesAdd";
 import Branches from "./views/Branches/Branches";
+import AddEmployee from "./views/employes/EmployeesAdd";
+import EmployeUpdate from "./views/employes/EmployeesUpdate";
+import Employees from "./views/employes/Employees";
 
 
 const GoogleAuthWrapper = () => {
@@ -1168,7 +1169,7 @@ const routes = [
   {
     path: "/employee",
     name: "Employee",
-    element: Employee,
+    element: Employees,
     navName: "Employees & Access",
   },
   {
@@ -1178,9 +1179,9 @@ const routes = [
     navName: "Employees & Access",
   },
   {
-    path: "edit-employee/:id",
+    path: "/employee/update/:id",
     name: "Employee",
-    element: EditEmployee,
+    element: EmployeUpdate,
     navName: "Employees & Access",
   },
   // ------------------------ End Employee Routes-----------------------
