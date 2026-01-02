@@ -42,7 +42,7 @@ const Employees = () => {
     "Role",
     "Name",
 
-    "Phone",
+    "Branch",
     "Access",
     "Status",
     "Gold_Count",
@@ -53,42 +53,43 @@ const Employees = () => {
 
   let fetchBanner = employeesData?.result;
   const roles = [
-    // {
-    //   role: "Admin",
-    //   sendValue: "admin",
-    //   bgColor: "#1B1A1A", // black (super admin)
-    //   textColor: "#FFFFFF",
-    // },
+    {
+      role: "All",
+      sendValue: "",
+      bgColor: "#374151", // slate gray
+      textColor: "#FFFFFF",
+    },
     {
       role: "Branch Manager",
       sendValue: "branch_manager",
-      bgColor: "#2F3E46", // dark slate
+      bgColor: "#1E3A8A", // deep blue
       textColor: "#FFFFFF",
     },
     {
       role: "Account Manager",
       sendValue: "account_manager",
-      bgColor: "#005F73", // deep teal
+      bgColor: "#065F46", // emerald green
       textColor: "#FFFFFF",
     },
     {
       role: "Content Manager",
       sendValue: "content_manager",
-      bgColor: "#9B5DE5", // creative purple
+      bgColor: "#7C2D12", // dark orange / rust
       textColor: "#FFFFFF",
     },
     {
       role: "Employee",
       sendValue: "employee",
-      bgColor: "#E9C46A", // soft gold
-      textColor: "#1B1A1A",
+      bgColor: "#4B5563", // cool gray
+      textColor: "#FFFFFF",
     },
   ];
-    const handleSearchChange = (e) => {
+
+  const handleSearchChange = (e) => {
     const value = e.target.value;
     setEmployeType(value);
 
-    handlegetAllData(page, itemPerPage, value,searchByRole);
+    handlegetAllData(page, itemPerPage, value, searchByRole);
   };
 
   return (
@@ -162,24 +163,25 @@ const Employees = () => {
                       }}
                       variant="contained"
                       style={{
-                        background: `${
+                        background:
                           employeType === val.sendValue
                             ? "#D4AF37"
-                            : val.bgColor
-                        }`,
-                        color: "#fff",
+                            : val.bgColor,
+                        color:
+                          employeType === val.sendValue
+                            ? "#1B1A1A"
+                            : val.textColor,
                         fontWeight: "bold",
                         padding: "8px 20px",
                         borderRadius: "10px",
                         textTransform: "none",
                         cursor: "pointer",
+                        transition: "all 0.2s ease",
                       }}
                     >
                       {val.role}
                     </Button>
                   ))}
-
-                 
                 </div>
                 <div
                   style={{
@@ -190,7 +192,7 @@ const Employees = () => {
                 >
                   <TextField
                     size="small"
-                    placeholder="Search by Branch Name"
+                    placeholder="Search by Name or Id"
                     autoComplete="off"
                     value={employeType}
                     onChange={handleSearchChange}
@@ -257,7 +259,7 @@ const Employees = () => {
                         <td>{item?.name || "-"}</td>
 
                         {/* Phone */}
-                        <td>{item?.phone}</td>
+                        <td>{item?.branchId?.branchName}</td>
 
                         {/* Access */}
                         <td>
