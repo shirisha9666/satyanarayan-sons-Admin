@@ -157,6 +157,13 @@ const _nav = [
     to: "/gold-rates",
     group: "Settings",
   },
+   {
+    component: CNavItem,
+    name: "Branches",
+    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
+    to: "/Branches",
+    group: "Settings",
+  },
 
   {
     component: CNavItem,

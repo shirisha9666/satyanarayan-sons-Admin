@@ -31,6 +31,8 @@ import { GoldRateProvider } from "./views/Gold-Rate/GoldRateContext";
 import { HomeCollectionProvider } from "./views/HomeCollection/HomeCollectionContext";
 import { VideoProvider } from "./views/Video/VideoContext";
 import { AboutProvider } from "./views/AboutSection/AboutContext";
+import { BranchePrivoder } from "./views/Branches/BranchesContext";
+
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
 
@@ -59,41 +61,43 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
-    <AboutProvider>
-    <VideoProvider>
-    <HomeCollectionProvider>
-      <GoldRateProvider>
-        <GoldSchemaProvider>
-          <ProductProvider>
-            <SubCategoryProvider>
-              <CategoryProvider>
-                <BannerProvider>
-                  <BillingProvider>
-                    <PlanProvider>
-                      <AdsProvider>
-                        <CustomerProvider>
-                          <TrendingPrivoder>
-                            <AdminProvider>
-                              <SeriesProvider>
-                                {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
-                                <App />
-                                <Toaster />
-                              </SeriesProvider>
-                            </AdminProvider>
-                          </TrendingPrivoder>
-                        </CustomerProvider>
-                      </AdsProvider>
-                    </PlanProvider>
-                  </BillingProvider>
-                </BannerProvider>
-              </CategoryProvider>
-            </SubCategoryProvider>
-          </ProductProvider>
-        </GoldSchemaProvider>
-      </GoldRateProvider>
-    </HomeCollectionProvider>
-    </VideoProvider>
-    </AboutProvider>
+    <BranchePrivoder>
+      <AboutProvider>
+        <VideoProvider>
+          <HomeCollectionProvider>
+            <GoldRateProvider>
+              <GoldSchemaProvider>
+                <ProductProvider>
+                  <SubCategoryProvider>
+                    <CategoryProvider>
+                      <BannerProvider>
+                        <BillingProvider>
+                          <PlanProvider>
+                            <AdsProvider>
+                              <CustomerProvider>
+                                <TrendingPrivoder>
+                                  <AdminProvider>
+                                    <SeriesProvider>
+                                      {/* <StyledEngineProvider injectFirst>   <App /></StyledEngineProvider> */}
+                                      <App />
+                                      <Toaster />
+                                    </SeriesProvider>
+                                  </AdminProvider>
+                                </TrendingPrivoder>
+                              </CustomerProvider>
+                            </AdsProvider>
+                          </PlanProvider>
+                        </BillingProvider>
+                      </BannerProvider>
+                    </CategoryProvider>
+                  </SubCategoryProvider>
+                </ProductProvider>
+              </GoldSchemaProvider>
+            </GoldRateProvider>
+          </HomeCollectionProvider>
+        </VideoProvider>
+      </AboutProvider>
+    </BranchePrivoder>
   </Provider>
 );
 

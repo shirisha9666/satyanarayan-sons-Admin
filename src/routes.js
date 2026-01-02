@@ -212,6 +212,11 @@ import VideoSection from "./views/Video/Video";
 import VideoUpdate from "./views/Video/VideoUpdate";
 import AboutSection from "./views/AboutSection/AboutSection";
 import AboutUpdate from "./views/AboutSection/AboutUpdate";
+import BranchManagerCreate from "./views/Branches/BranchManagerCreate";
+import BranchUpdate from "./views/Branches/BranchesUpdate";
+import BranchCreate from "./views/Branches/BranchesAdd";
+import Branches from "./views/Branches/Branches";
+
 
 const GoogleAuthWrapper = () => {
   return (
@@ -662,10 +667,36 @@ const routes = [
     element: GoldRateAdd,
     navName: "Settings",
   },
+
    {
     path: "/gold-rates/update/:id",
     name: "Gold Rates",
     element: GoldRateUpdate,
+    navName: "Settings",
+  },
+
+     {
+    path: "/Branches",
+    name: "Branches",
+    element: Branches,
+    navName: "Settings",
+  },
+    {
+    path: "/Branches/add",
+    name: "Branches",
+    element: BranchCreate,
+    navName: "Settings",
+  },
+    {
+    path: "/Branches/update/:id",
+    name: "Branches",
+    element: BranchUpdate,
+    navName: "Settings",
+  },
+     {
+    path: "/Branches/manager/create/:id",
+    name: "Branches",
+    element: BranchManagerCreate,
     navName: "Settings",
   },
   {
