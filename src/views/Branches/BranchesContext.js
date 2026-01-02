@@ -12,19 +12,19 @@ export const BranchePrivoder = ({ children }) => {
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(5);
   const [banner, setBanner] = useState([]);
-  const [bannertype, setBannerType] = useState("New_Arrivals");
+  const [searchName, setSearchName] = useState("");
   const [bannerId, setBannerId] = useState(null);
   const [BannerOneDetails, setBannerOneDetails] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
 
-  const handlegetAllData = async (page = 1, itemPerPage, bannertype) => {
+  const handlegetAllData = async (page = 1, itemPerPage, searchName) => {
     try {
       setLoading(true);
       const response = await axios.get("/api/branch/getAll", {
         params: {
           page,
           limit: itemPerPage,
-          selectedType: bannertype,
+          searchName: searchName,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ export const BranchePrivoder = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllData(page, itemPerPage, bannertype);
+      await handlegetAllData(page, itemPerPage, searchName);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
@@ -79,7 +79,7 @@ export const BranchePrivoder = ({ children }) => {
     }
   };
   useEffect(() => {
-    handlegetAllData(page, itemPerPage, bannertype);
+    handlegetAllData(page, itemPerPage, searchName);
   }, []);
 
   return (
@@ -89,8 +89,8 @@ export const BranchePrivoder = ({ children }) => {
         handlegetAllData,
         setPage,
         setItemPerPage,
-        setBannerType,
-        bannertype,
+        setSearchName,
+        searchName,
         itemPerPage,
         loading,
         page,
@@ -99,6 +99,7 @@ export const BranchePrivoder = ({ children }) => {
         bannerId,
         viewBannerId,
         BannerOneDetails,
+        setSearchName,
       }}
     >
       {children}

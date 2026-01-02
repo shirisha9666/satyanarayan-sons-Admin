@@ -8,6 +8,8 @@ import { cilStar } from "@coreui/icons";
 import { cilHome } from '@coreui/icons'
 import { cilVideo } from '@coreui/icons'
 import { cilInfo } from '@coreui/icons'
+import { cilBuilding } from "@coreui/icons";
+
 
 
 import {
@@ -160,7 +162,7 @@ const _nav = [
    {
     component: CNavItem,
     name: "Branches",
-    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilBuilding} customClassName="nav-icon" />,
     to: "/Branches",
     group: "Settings",
   },

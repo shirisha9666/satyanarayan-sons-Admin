@@ -22,18 +22,23 @@ import { useBranche } from "./BranchesContext";
 import { validateMediaFile } from "../HelperImageResoluation";
 
 const BranchCreate = () => {
-  const token = isAutheticated()
+  const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
-  const navigate = useNavigate()
-  const { handlegetAllData, page, itemPerPage, bannertype } = useBranche()
+  const navigate = useNavigate();
+  const { handlegetAllData, page, itemPerPage, searchName } = useBranche();
   const [homeCollections, setHomeCollection] = useState({
-    name: "",
-    selectedType: "",
-    mediaType: "",
+    branchName: "",
+    branchCode: "",
+    address: "",
 
-    Thumbnail: null,
-    coverImagePreview: "",
+    city: "",
+    state: "",
+
+    country: "",
+    pincode: "",
+    contactNumber: "",
+    email: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,46 +49,24 @@ const BranchCreate = () => {
   };
 
 
-
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-
-    validateMediaFile({
-      file,
-      imageConfig: {
-        width: 1920,
-        height: 600,
-        maxSize: 1 * 1024 * 1024,
-      },
-      videoConfig: {
-        maxSize: 2 * 1024 * 1024,
-      },
-      onSuccess: ({ file, previewURL, type }) => {
-        setHomeCollection((prev) => ({
-          ...prev,
-          Thumbnail: file,
-          coverImagePreview: previewURL,
-          coverImageType: type,
-        }));
-      },
-    });
-
-    e.target.value = ""; // allow re-upload same file
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
       let formData = new FormData();
-      formData.append("selectedType", homeCollections.selectedType);
-      formData.append("name", homeCollections.name);
+      formData.append("branchName", homeCollections.branchName);
+      formData.append("branchCode", homeCollections.branchCode);
 
-      formData.append("mediaType", homeCollections.mediaType);
-      formData.append("Thumbnail", homeCollections.Thumbnail);
+      formData.append("address", homeCollections.address);
+      formData.append("city", homeCollections.city);
 
+      formData.append("state", homeCollections.state);
+      formData.append("country", homeCollections.country);
 
+      formData.append("pincode", homeCollections.pincode);
+      formData.append("contactNumber", homeCollections.contactNumber);
+      formData.append("email", homeCollections.email);
 
       const res = await axios.post("/api/branch/create", formData, {
         headers: {
@@ -92,12 +75,12 @@ const BranchCreate = () => {
         },
       });
 
-      const result = res.data;
+      
 
-      await handlegetAllData(page, itemPerPage, bannertype);
-      navigate("/home-collections");
+      await handlegetAllData(page, itemPerPage, searchName);
+      navigate("/Branches");
     } catch (error) {
-      console.log("error add banner", error)
+      console.log("error add banner", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -114,6 +97,37 @@ const BranchCreate = () => {
       setErrorData("");
     }
   };
+  const statesList = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+  ];
+
   return (
     <div>
       <Box
@@ -127,33 +141,50 @@ const BranchCreate = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Add Home Collections
+          Add Branch
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                select
-                label="Select Type"
-                name="selectedType"
-                value={homeCollections.selectedType}
+                autoComplete="off"
+                label="Branch Name"
+                name="branchName"
+                value={homeCollections.branchName}
                 onChange={handleChange}
                 fullWidth
                 required
-              >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="New_Arrivals">New_Arrivals</MenuItem>
-                <MenuItem value="Trendy">Trendy</MenuItem>
-                <MenuItem value="Instagram">Instagram</MenuItem>
-              </TextField>
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Branch Code"
+                name="branchCode"
+                value={homeCollections.branchCode}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Email"
+                name="email"
+                value={homeCollections.email}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
             </Grid>
 
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Name"
-                name="name"
-                value={homeCollections.name}
+                label="Country"
+                name="country"
+                value={homeCollections.country}
                 onChange={handleChange}
                 fullWidth
                 required
@@ -163,75 +194,67 @@ const BranchCreate = () => {
             <Grid item xs={12}>
               <TextField
                 select
-                label="Media Type"
-                name="mediaType"
-                value={homeCollections.mediaType}
+                label="State"
+                name="state"
+                value={homeCollections.state}
                 onChange={handleChange}
                 fullWidth
                 required
+                autoComplete="off"
               >
-                <MenuItem value="">Select Type</MenuItem>
-                <MenuItem value="image">Image</MenuItem>
-                <MenuItem value="video">Video</MenuItem>
-
+                {statesList.map((state) => (
+                  <MenuItem key={state} value={state}>
+                    {state}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
-
-
             <Grid item xs={12}>
-              <Typography variant="subtitle1" mb={1}>
-                Cover Media (Image / Video)
-              </Typography>
-
-              <Button variant="contained" component="label">
-                Upload Media
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  hidden
-                  onChange={handleImageChange}
-                />
-              </Button>
-
-              {/* Helper Text */}
-              <FormHelperText>
-                Please upload an image or video.
-                Recommended resolution: {1920} × {600}.
-                Max size: 2 MB.
-              </FormHelperText>
-
-              {homeCollections.coverImagePreview && (
-                <Box mt={2}>
-                  {homeCollections.coverImageType === "video" ? (
-                    <video
-                      src={homeCollections.coverImagePreview}
-                      controls
-                      muted
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={homeCollections.coverImagePreview}
-                      alt="Cover Preview"
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  )}
-                </Box>
-              )}
+              <TextField
+                autoComplete="off"
+                label="City"
+                name="city"
+                value={homeCollections.city}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Address"
+                name="address"
+                value={homeCollections.address}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
             </Grid>
 
-
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Pincode"
+                name="pincode"
+                value={homeCollections.pincode}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="off"
+                label="Contact Number"
+                name="contactNumber"
+                value={homeCollections.contactNumber}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <Button type="submit" variant="contained" fullWidth>

@@ -11,6 +11,8 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBranche } from "./BranchesContext";
+import { InputAdornment } from "@material-ui/core";
+import { GridSearchIcon } from "@material-ui/data-grid";
 
 const Branches = () => {
   const navigate = useNavigate();
@@ -20,30 +22,37 @@ const Branches = () => {
     setPage,
     setItemPerPage,
     handleDelete,
-    setBannerType,
-    bannertype,
+    setsearchName,
+    searchName,
     bannerId,
     itemPerPage,
     viewBannerId,
     loading,
     page,
+    setSearchName,
     handleOneBanner,
   } = useBranche();
 
-const tableHeadings = [
-  "Branch Code",
-  "Branch Name",
-  "State",
-  "City",
-  "Contact Number",
-  "Branch Manager",
-  "Address",
-  "PIN Code",
-  "Actions",
-];
+  const tableHeadings = [
+    "Branch Code",
+    "Branch Name",
+    "State",
+    "City",
+    "Contact Number",
+    "Branch Manager",
+    "Address",
+    "PIN Code",
+    "Actions",
+  ];
 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchName(value);
+
+    handlegetAllData(page, itemPerPage, value);
+  };
   let fetchBanner = banner?.result;
-  console.log("Branch data heare ", fetchBanner);
+  console.log("Branch data heare ", searchName);
 
   return (
     <div className="row">
@@ -60,7 +69,7 @@ const tableHeadings = [
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllData(page, Number(val), bannertype);
+                        handlegetAllData(page, Number(val), searchName);
                       }}
                       className="
                                        select-w
@@ -76,7 +85,7 @@ const tableHeadings = [
                     entries
                   </label>
                 </div>
-                {/* <div>
+                <div>
                   <Button
                     variant="contained"
                     color="primary"
@@ -86,77 +95,40 @@ const tableHeadings = [
                       textTransform: "capitalize",
                     }}
                     onClick={() => {
-                      navigate("/home-collections/add");
+                      navigate("/Branches/add");
                     }}
                   >
                     Add
           
                   </Button>
-                </div> */}
+                </div>
               </div>
-              <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
-                <Button
-                  onClick={() => {
-                    setBannerType("New_Arrivals");
-
-                    handlegetAllData(page, itemPerPage, "New_Arrivals");
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "10px",
+                }}
+              >
+                <TextField
+                  size="small"
+                  placeholder="Search by Branch Name"
+                  autoComplete="off"
+                  value={searchName}
+                  onChange={handleSearchChange}
+                  sx={{
+                    width: "280px",
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
                   }}
-                  variant="contained"
-                  style={{
-                    background: `${
-                      bannertype === "New_Arrivals" ? "#D4AF37" : "#1B1A1A"
-                    }`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <GridSearchIcon style={{ color: "#888" }} />
+                      </InputAdornment>
+                    ),
                   }}
-                >
-                  New_Arrivals
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setBannerType("Trendy");
-                    handlegetAllData(page, itemPerPage, "Trendy");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${
-                      bannertype === "Trendy" ? "#D4AF37" : "#648181"
-                    }`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Trendy
-                </Button>
-
-                <Button
-                  onClick={() => {
-                    setBannerType("Instagram");
-                    handlegetAllData(page, itemPerPage, "Instagram");
-                  }}
-                  variant="contained"
-                  style={{
-                    background:
-                      bannertype === "Instagram" ? "#D4AF37" : "#E1306C",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Instagram
-                </Button>
+                />
               </div>
             </div>
 
@@ -203,13 +175,10 @@ const tableHeadings = [
                         <td>{item?.state}</td>
                         <td>{item?.city}</td>
                         <td>{item?.contactNumber}</td>
-                                  <td>{item?.managerId?.name}</td>
+                        <td>{item?.managerId?.name}</td>
 
                         <td>{item?.address}</td>
-                          <td>{item?.pincode}</td>
-
-              
-                   
+                        <td>{item?.pincode}</td>
 
                         <td
                           style={{
@@ -226,13 +195,26 @@ const tableHeadings = [
                             }}
                           >
                             <button
+                              style={{
+                                color: "white",
+                                backgroundColor: "#2F3E46",
+                              }}
+                              type="button"
+                              className="btn btn-primary waves-effect waves-light btn-table"
+                              onClick={() =>
+                                navigate(`/Branches/manager/create/${item._id}`)
+                              }
+                            >
+                              Manager
+                            </button>
+                            <button
                               style={{ color: "white" }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={async () => {
                                 await handleOneBanner(item._id);
                                 navigate(
-                                  `/home-collections/update/${item._id}`
+                                  `/Branches/update/${item._id}`
                                 );
                               }}
                             >
@@ -269,7 +251,7 @@ const tableHeadings = [
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, bannertype);
+                  handlegetAllData(value, itemPerPage, searchName);
                 }}
                 color="primary"
               />

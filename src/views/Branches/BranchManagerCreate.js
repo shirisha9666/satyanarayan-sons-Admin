@@ -26,7 +26,7 @@ const BranchManagerCreate = () => {
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate()
-  const { handlegetAllData, page, itemPerPage, bannertype } = useBranche()
+  const { handlegetAllData, page, itemPerPage, searchName } = useBranche()
   const [homeCollections, setHomeCollection] = useState({
     name: "",
     selectedType: "",
@@ -94,7 +94,7 @@ const BranchManagerCreate = () => {
 
       const result = res.data;
 
-      await handlegetAllData(page, itemPerPage, bannertype);
+      await handlegetAllData(page, itemPerPage, searchName);
       navigate("/home-collections");
     } catch (error) {
       console.log("error add banner", error)
@@ -127,7 +127,7 @@ const BranchManagerCreate = () => {
         }}
       >
         <Typography variant="h5" mb={2}>
-          Add Home Collections
+          Add Manager 
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
