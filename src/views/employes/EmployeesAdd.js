@@ -85,7 +85,7 @@ const AddEmployee = () => {
       });
 
       toast.success("Employee Added Successfully");
-      await handlegetAllData(page, itemPerPage, employeType);
+      await handlegetAllData(page, itemPerPage, employeType,searchByRole);
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");

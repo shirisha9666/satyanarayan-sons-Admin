@@ -16,9 +16,10 @@ import { useBranche } from "../Branches/BranchesContext";
 const Employees = () => {
   const navigate = useNavigate();
   const {
+    setPage,
     employeesData,
     handlegetAllData,
-    setPage,
+
     setItemPerPage,
     handleDelete,
     setEmployeType,
@@ -29,9 +30,10 @@ const Employees = () => {
     delId,
     loading,
     page,
-    handleOneBanner,
+ searchByRole,setSearchByRole
   } = useEmployees();
 
+  console.log("searchByRole",searchByRole)
   const tableHeadering = [
     "Employee_ID",
     "Role",
@@ -48,12 +50,12 @@ const Employees = () => {
 
   let fetchBanner = employeesData?.result;
   const roles = [
-    {
-      role: "Admin",
-      sendValue: "admin",
-      bgColor: "#1B1A1A", // black (super admin)
-      textColor: "#FFFFFF",
-    },
+    // {
+    //   role: "Admin",
+    //   sendValue: "admin",
+    //   bgColor: "#1B1A1A", // black (super admin)
+    //   textColor: "#FFFFFF",
+    // },
     {
       role: "Branch Manager",
       sendValue: "branch_manager",
@@ -95,7 +97,7 @@ const Employees = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllData(page, Number(val), employeType);
+                        handlegetAllData(page, Number(val), employeType,searchByRole);
                       }}
                       className="
                                        select-w
@@ -132,9 +134,9 @@ const Employees = () => {
                 {roles.map((val) => (
                   <Button
                     onClick={() => {
-                      setEmployeType(val.sendValue);
+                      setSearchByRole(val.sendValue);
 
-                      handlegetAllData(page, itemPerPage, val.sendValue);
+                      handlegetAllData(page, itemPerPage,employeType, val.sendValue);
                     }}
                     variant="contained"
                     style={{
@@ -320,18 +322,18 @@ const Employees = () => {
                 </tbody>
               </table>
             </div>
-            {/* 
+            
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
-                count={banner?.totalPages}
+                count={employeesData?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, employeType);
+                  handlegetAllData(value, itemPerPage, employeType,searchByRole);
                 }}
                 color="primary"
               />
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

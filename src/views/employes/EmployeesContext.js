@@ -16,8 +16,9 @@ export const EmployeesProvider = ({ children }) => {
   const [delId, setEmployeesId] = useState(null);
   const [employeDetails, setEmployeesOneDetails] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
+  const [searchByRole,setSearchByRole]=useState("branch_manager")
 
-  const handlegetAllData = async (page = 1, itemPerPage, employeType) => {
+  const handlegetAllData = async (page = 1, itemPerPage, employeType,searchByRole) => {
     try {
       setLoading(true);
       const response = await axios.get("/api/employe/getAll", {
@@ -25,6 +26,7 @@ export const EmployeesProvider = ({ children }) => {
           page,
           limit: itemPerPage,
           searchName: employeType,
+          serachRole:searchByRole
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -53,7 +55,7 @@ export const EmployeesProvider = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllData(page, itemPerPage, employeType);
+      await handlegetAllData(page, itemPerPage, employeType,searchByRole);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
@@ -81,7 +83,7 @@ export const EmployeesProvider = ({ children }) => {
     }
   };
   useEffect(() => {
-    handlegetAllData(page, itemPerPage, employeType);
+    handlegetAllData(page, itemPerPage, employeType,searchByRole);
   }, []);
 
 
@@ -104,6 +106,7 @@ export const EmployeesProvider = ({ children }) => {
         delId,
         viewBannerId,
         employeDetails,
+        searchByRole,setSearchByRole
       }}
     >
       {children}

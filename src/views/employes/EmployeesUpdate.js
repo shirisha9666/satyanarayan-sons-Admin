@@ -22,6 +22,7 @@ const EmployeUpdate = () => {
     itemPerPage,
     employeDetails,
     handleOneEmploye,
+    searchByRole,
   } = useEmployees();
 
   const branchess = banner?.result || [];
@@ -86,7 +87,7 @@ const EmployeUpdate = () => {
       });
 
       toast.success("Employee Updated Successfully");
-      await handlegetAllData(page, itemPerPage, employeType);
+      await handlegetAllData(page, itemPerPage, employeType,searchByRole);
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
