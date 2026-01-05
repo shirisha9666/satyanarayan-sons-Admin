@@ -55,20 +55,14 @@ const AppSidebar = () => {
         setIsNavigationLoading(false);
       } else {
         try {
-          let response = await axios.get(`/api/v1/user/details`, {
+          let response = await axios.get(`/api/v1/user/login/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
           const data = response.data;
-          if (
-            (data.success && data.user.role === "admin") ||
-            data.user.role === "Employee"
-          ) {
+         
             setUserData(data.user);
-          } else {
-            setUserData(false);
-          }
         } catch (err) {
           setUserData(false);
           console.log(err);
@@ -82,14 +76,14 @@ const AppSidebar = () => {
 
   useEffect(() => {
     if (!isNavigationLoading) {
-      if (userdata && userdata.role === "Employee") {
+      if (userdata && userdata.role) {
         // For employees, include Dashboard and Product Management with all its sub-items
-        const allowedItems = ["Dashboard", "Product Management","Settings","Customer Service","Customers","Orders","Billing"];
+        const allowedItems = userdata.accessTo;
         const filteredNavigation = navigation.filter((item) =>
           allowedItems.includes(item.name)
         );
         setNavigationItem(filteredNavigation);
-      } else if (userdata && userdata.role === "admin" && userdata.accessTo) {
+      } else if (userdata && userdata.role && userdata.accessTo) {
         // For admins, filter based on accessTo permissions
         const filteredNavigation = navigation
           .filter((item) => {

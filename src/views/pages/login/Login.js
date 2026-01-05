@@ -105,7 +105,7 @@ const Login = () => {
     }
     setLoading({ loading: true });
     try {
-      const res = await axios.post("/api/v1/user/login/", auth);
+      const res = await axios.post("/api/v1/user/login", auth);
       console.log(res);
       if (res.data.success == true) {
         localStorage.setItem("authToken", res.data.token);
@@ -118,14 +118,17 @@ const Login = () => {
         });
         // console.log(response.data)
         const data = response.data;
-        if (data.user.role === "admin" || data.user.role === "Employee") {
-          history("/dashboard");
+        history("/dashboard");
           setLoading(false);
           window.location.reload();
-        } else {
-          swal("Error!", "please try with admin credential!!", "error");
-          setLoading(false);
-        }
+        // if (data.user.role === "admin" || data.user.role === "Employee") {
+        //   history("/dashboard");
+        //   setLoading(false);
+        //   window.location.reload();
+        // } else {
+        //   swal("Error!", "please try with admin credential!!", "error");
+        //   setLoading(false);
+        // }
       } else {
         setLoading(false);
 

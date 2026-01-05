@@ -47,7 +47,7 @@
 // //         <Routes>
 // //           {appRoutes.map((route, idx) => {
 // //             if (
-// //               userper?.role === "admin" || 
+// //               userper?.role === "admin" ||
 // //               route.navName?.trim() === "" ||
 // //               (userper?.accessTo && userper?.accessTo[route?.navName] === true)
 // //             ) {
@@ -188,14 +188,15 @@ const AppContent = () => {
             },
           });
           const data = response?.data;
-          if (
-            data?.success &&
-            (data?.user?.role === "admin" || data?.user?.role === "Employee")
-          ) {
-            setuserper(data?.user);
-          } else {
-            setuserper(null);
-          }
+          setuserper(data?.user);
+          // if (
+          //   data?.success &&
+          //   (data?.user?.role === "admin" || data?.user?.role === "Employee")
+          // ) {
+          //   setuserper(data?.user);
+          // } else {
+          //   setuserper(null);
+          // }
         } catch (err) {
           setuserper(null);
           console.log(err);
@@ -208,17 +209,20 @@ const AppContent = () => {
   const [appRoutes, setAppRoutes] = useState(routes);
 
   // Define allowed routes for Employee users under Product Management
-  const allowedEmployeeRoutes = ["Product Management","Settings","Customer Service","Customers","Orders"];
+  const allowedEmployeeRoutes = [
+    "Product Management",
+    "Settings",
+    "Customer Service",
+    "Customers",
+    "Orders",
+  ];
 
   return (
     <CContainer lg>
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
-          {appRoutes.map((route, idx) => {
-            // Allow access for:
-            // 1. Admin users (unrestricted access to all routes)
-            // 2. Employee users for specific Product Management routes
-            // 3. Routes with empty navName
+          {/* {appRoutes.map((route, idx) => {
+    
             if (
               userper?.role === "admin" || // Admin has access to all routes
               (userper?.role === "Employee" &&
@@ -238,6 +242,18 @@ const AppContent = () => {
               );
             }
             return null;
+          })} */}
+
+          {appRoutes.map((route, idx) => {
+            return (
+              <Route
+                key={idx}
+                path={route.path}
+                exact={route.exact}
+                name={route.name}
+                element={<route.element />}
+              />
+            );
           })}
           <Route path="/" element={<Navigate to="dashboard" replace />} />
         </Routes>
