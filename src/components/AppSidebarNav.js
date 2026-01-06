@@ -2,36 +2,18 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import { CBadge } from "@coreui/react";
+import { CBadge, CSpinner } from "@coreui/react";
 import axios from "axios";
 import { isAutheticated } from "src/auth";
+import { useEmployees } from "src/views/employes/EmployeesContext";
+import { CircularProgress } from "@material-ui/core";
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation();
-  let token=isAutheticated()
-  const [loading,setLoading]=useState(false)
-  const [accessData,setAccessData]=useState([])
+  let token = isAutheticated();
+  const { handlegetEmployeAccessData, accessData, accessLoading } =
+    useEmployees();
 
-
-  
-  const handlegetAllData = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/v1/user/login/", {
-    
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("response?.data", response?.data?.data);
-      setAccessData(response?.data);
-    } catch (error) {
-      const errormssage = error.response && error.response.data.message;
-      console.log("errormssage", errormssage);
-    } finally {
-      setLoading(false);
-    }
-  };
   const navLink = (name, icon, badge) => {
     return (
       <div className="d-flex" style={{ margin: "-7px 0px" }}>
@@ -90,17 +72,100 @@ export const AppSidebarNav = ({ items }) => {
       </Component>
     );
   };
-useEffect(()=>{
-  handlegetAllData()
-},[])
+  useEffect(() => {
+    handlegetEmployeAccessData();
+  }, []);
 
-console.log("accessData",accessData)
+  // const filterNavByAccess = (items, access) => {
+  //   return items
+  //     .map((item) => {
+  //       // 🔹 If item has children (Settings)
+  //       if (item.items && item.items.length > 0) {
+  //         const filteredChildren = filterNavByAccess(item.items, access);
+
+  //         // Show parent ONLY if it has visible children
+  //         if (filteredChildren.length > 0) {
+  //           return {
+  //             ...item,
+  //             items: filteredChildren,
+  //           };
+  //         }
+
+  //         return null;
+  //       }
+
+  //       // 🔹 Normal menu item
+  //       return access.includes(item.name) ? item : null;
+  //     })
+  //     .filter(Boolean);
+  // };
+  
+  const filterNavByAccess = (items = [], access = [], role = "") => {
+  // ✅ ADMIN & BRANCH_MANAGER → full access
+  if (role === "admin" || role === "branch_manager") {
+    return items;
+  }
+
+  return items
+    .map((item) => {
+      // 🔹 If item has children (Settings)
+      if (item.items && item.items.length > 0) {
+        const filteredChildren = filterNavByAccess(
+          item.items,
+          access,
+          role
+        );
+
+        // Show parent ONLY if it has visible children
+        if (filteredChildren.length > 0) {
+          return {
+            ...item,
+            items: filteredChildren,
+          };
+        }
+
+        return null;
+      }
+
+      // 🔹 Normal menu item
+      return access.includes(item.name) ? item : null;
+    })
+    .filter(Boolean);
+};
+
+  
+  
+  let userAccess = accessData?.access || [];
+  const userRole = accessData?.role;
+
+const filteredItems = filterNavByAccess(items, userAccess, userRole);
+  console.log("accessData", accessData);
+
   return (
+    // <React.Fragment>
+    //   {items &&
+    //     items.map((item, index) =>
+    //       item.items ? navGroup(item, index) : navItem(item, index)
+    //     )}
+    // </React.Fragment>
     <React.Fragment>
-      {items &&
-        items.map((item, index) =>
+      {accessLoading ? (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "200px" }}
+        >
+          <CSpinner color="primary" />
+        </div>
+      ) : (
+        filteredItems &&
+        filteredItems.map((item, index) =>
           item.items ? navGroup(item, index) : navItem(item, index)
-        )}
+        )
+      )}
+      {/* {filteredItems &&
+        filteredItems.map((item, index) =>
+          item.items ? navGroup(item, index) : navItem(item, index)
+        )} */}
     </React.Fragment>
   );
 };

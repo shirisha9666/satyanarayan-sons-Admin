@@ -253,7 +253,7 @@ const Employees = () => {
                         <td>{item?.employeId}</td>
 
                         {/* Role */}
-                        <td>{item?.Role}</td>
+                        <td>{item?.role}</td>
 
                         {/* Name */}
                         <td>{item?.name || "-"}</td>

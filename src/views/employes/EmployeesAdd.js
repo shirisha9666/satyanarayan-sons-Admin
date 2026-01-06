@@ -21,7 +21,7 @@ const AddEmployee = () => {
 
   const token = isAutheticated();
   const { banner } = useBranche();
-  const { handlegetAllData, employeType, page, itemPerPage ,searchByRole} = useEmployees();
+  const { handlegetAllData, employeType, page, itemPerPage ,searchByRole,handlegetEmployeAccessData} = useEmployees();
 
   const branchess = banner?.result || [];
 
@@ -31,7 +31,7 @@ const AddEmployee = () => {
     email: "",
     phone: "",
     branchId: "",
-    Role: "Employee",
+    role: "Employee",
     access: {}, // ✅ OBJECT for checkbox handling
     password: "",
   });
@@ -69,12 +69,12 @@ const AddEmployee = () => {
   // ✅ SUBMIT FORM
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+console.log("employeData",employeData)
     const payload = {
       ...employeData,
       access: prepareAccessForBackend(),
     };
-
+console.log("payload",payload)
     try {
       setLoading(true);
       await axios.post("/api/employe/create", payload, {
@@ -86,6 +86,7 @@ const AddEmployee = () => {
 
       toast.success("Employee Added Successfully");
       await handlegetAllData(page, itemPerPage, employeType,searchByRole);
+     await handlegetEmployeAccessData()
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -102,6 +103,7 @@ const AddEmployee = () => {
     { role: "Content Manager", sendValue: "content_manager" },
     { role: "Employee", sendValue: "employee" },
   ];
+  console.log("filteredNav",filteredNav)
 
   return (
     <Box style={{ background: "#fff", padding: "1rem" }}>
@@ -137,8 +139,8 @@ const AddEmployee = () => {
           <label className="form-label">Role *</label>
           <select
             className="form-select"
-            name="Role"
-            value={employeData.Role}
+            name="role"
+            value={employeData.role}
             onChange={handleChange}
           >
             <option value="">Select Role</option>

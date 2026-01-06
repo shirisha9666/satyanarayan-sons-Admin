@@ -24,6 +24,7 @@ const EmployeUpdate = () => {
     employeDetails,
     handleOneEmploye,
     searchByRole,
+    handlegetEmployeAccessData
   } = useEmployees();
 
   const branchess = banner?.result || [];
@@ -34,7 +35,7 @@ const EmployeUpdate = () => {
     email: "",
     phone: "",
     branchId: "",
-    Role: "Employee",
+    role: "Employee",
     access: {}, // ✅ OBJECT for checkbox handling
     password: "",
   });
@@ -89,6 +90,7 @@ const EmployeUpdate = () => {
 
       toast.success("Employee Updated Successfully");
       await handlegetAllData(page, itemPerPage, employeType,searchByRole);
+          handlegetEmployeAccessData();
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -167,7 +169,7 @@ const EmployeUpdate = () => {
           <select
             className="form-select"
             name="Role"
-            value={employeData.Role}
+            value={employeData.role}
             onChange={handleChange}
           >
             <option value="">Select Role</option>

@@ -17,6 +17,8 @@ export const EmployeesProvider = ({ children }) => {
   const [employeDetails, setEmployeesOneDetails] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
   const [searchByRole,setSearchByRole]=useState("branch_manager")
+    const [accessData, setAccessData] = useState([]);
+    const [accessLoading,setAccessLoading]=useState(false)
 
   const handlegetAllData = async (page = 1, itemPerPage, employeType,searchByRole) => {
     try {
@@ -82,8 +84,28 @@ export const EmployeesProvider = ({ children }) => {
       setViewBannerId(null);
     }
   };
+
+
+    const handlegetEmployeAccessData = async () => {
+      try {
+        setAccessLoading(true);
+        const response = await axios.get("/api/v1/user/login/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        setAccessData(response?.data?.data);
+      } catch (error) {
+        const errormssage = error.response && error.response.data.message;
+        console.log("errormssage", errormssage);
+      } finally {
+        setAccessLoading(false);
+      }
+    };
   useEffect(() => {
     handlegetAllData(page, itemPerPage, employeType,searchByRole);
+    handlegetEmployeAccessData()
   }, []);
 
 
@@ -106,7 +128,10 @@ export const EmployeesProvider = ({ children }) => {
         delId,
         viewBannerId,
         employeDetails,
-        searchByRole,setSearchByRole
+        searchByRole,setSearchByRole,
+        handlegetEmployeAccessData,
+        accessData,
+        accessLoading,
       }}
     >
       {children}
