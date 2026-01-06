@@ -16,7 +16,7 @@ export const EmployeesProvider = ({ children }) => {
   const [delId, setEmployeesId] = useState(null);
   const [employeDetails, setEmployeesOneDetails] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
-  const [searchByRole,setSearchByRole]=useState("branch_manager")
+  const [searchByRole,setSearchByRole]=useState("")
     const [accessData, setAccessData] = useState([]);
     const [accessLoading,setAccessLoading]=useState(false)
 

@@ -90,10 +90,11 @@ const EmployeUpdate = () => {
 
       toast.success("Employee Updated Successfully");
       await handlegetAllData(page, itemPerPage, employeType,searchByRole);
-          handlegetEmployeAccessData();
+         await handlegetEmployeAccessData();
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log("error?.response?.data?.message",error?.response?.data?.message)
     }finally{
       setLoading(false)
     }

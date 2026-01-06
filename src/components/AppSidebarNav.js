@@ -76,47 +76,63 @@ export const AppSidebarNav = ({ items }) => {
     handlegetEmployeAccessData();
   }, []);
 
-  // const filterNavByAccess = (items, access) => {
-  //   return items
-  //     .map((item) => {
-  //       // 🔹 If item has children (Settings)
-  //       if (item.items && item.items.length > 0) {
-  //         const filteredChildren = filterNavByAccess(item.items, access);
-
-  //         // Show parent ONLY if it has visible children
-  //         if (filteredChildren.length > 0) {
-  //           return {
-  //             ...item,
-  //             items: filteredChildren,
-  //           };
-  //         }
-
-  //         return null;
-  //       }
-
-  //       // 🔹 Normal menu item
-  //       return access.includes(item.name) ? item : null;
-  //     })
-  //     .filter(Boolean);
-  // };
   
-  const filterNavByAccess = (items = [], access = [], role = "") => {
-  // ✅ ADMIN & BRANCH_MANAGER → full access
+//   const filterNavByAccess = (items = [], access = [], role = "") => {
+//   // ✅ ADMIN & BRANCH_MANAGER → full access
+//   if (role === "admin" || role === "branch_manager") {
+//     return items;
+//   }
+
+//   return items
+//     .map((item) => {
+//       // 🔹 If item has children (Settings)
+//       if (item.items && item.items.length > 0) {
+//         const filteredChildren = filterNavByAccess(
+//           item.items,
+//           access,
+//           role
+//         );
+
+//         // Show parent ONLY if it has visible children
+//         if (filteredChildren.length > 0) {
+//           return {
+//             ...item,
+//             items: filteredChildren,
+//           };
+//         }
+
+//         return null;
+//       }
+
+//       // 🔹 Normal menu item
+//       return access.includes(item.name) ? item : null;
+//     })
+//     .filter(Boolean);
+// };
+
+  
+const filterNavByAccess = (items = [], access = [], role = "") => {
+  // 🔓 Admin & Branch Manager → full access
   if (role === "admin" || role === "branch_manager") {
     return items;
   }
 
   return items
     .map((item) => {
-      // 🔹 If item has children (Settings)
+      // 🔹 Parent menu (like Settings)
       if (item.items && item.items.length > 0) {
+        // ✅ If parent itself is allowed → show ALL children
+        if (access.includes(item.name)) {
+          return item;
+        }
+
+        // ❌ Otherwise filter children normally
         const filteredChildren = filterNavByAccess(
           item.items,
           access,
           role
         );
 
-        // Show parent ONLY if it has visible children
         if (filteredChildren.length > 0) {
           return {
             ...item,
@@ -133,13 +149,13 @@ export const AppSidebarNav = ({ items }) => {
     .filter(Boolean);
 };
 
-  
+
   
   let userAccess = accessData?.access || [];
   const userRole = accessData?.role;
 
 const filteredItems = filterNavByAccess(items, userAccess, userRole);
-  console.log("accessData", accessData);
+  console.log("accessData", items);
 
   return (
     // <React.Fragment>
