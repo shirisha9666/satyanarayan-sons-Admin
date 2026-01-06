@@ -10,7 +10,7 @@ function Edittax() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
-    Gst: "",
+    tax: "",
     hsn_code: "",
   });
   const [limiter, setLimiter] = useState({
@@ -36,15 +36,15 @@ function Edittax() {
           setData((prev) => ({
             ...prev,
             name: res.data?.name,
-            Gst: res.data?.Gst?.toString(),
+            tax: res.data?.tax?.toString(),
             hsn_code: res.data?.hsn_code?.toString(),
           }));
-          setLimiter((prev) => ({
-            ...prev,
-            namehas: prev.name - res.data?.name.length,
-            taxhas: prev.Gst - res.data?.Gst?.toString().length,
-            hsn_codehas: prev.hsn_code - res.data?.hsn_code.toString()?.length,
-          }));
+          // setLimiter((prev) => ({
+          //   ...prev,
+          //   namehas: prev.name - res.data?.name.length,
+          //   taxhas: prev.Gst - res.data?.Gst?.toString().length,
+          //   hsn_codehas: prev.hsn_code - res.data?.hsn_code.toString()?.length,
+          // }));
         })
         .catch((res) => {
           setLoading(false);
@@ -68,12 +68,12 @@ function Edittax() {
   };
 
   function handleSubmit() {
-    if (
-      (data.name.trim() === "" || data.Gst.trim() === "",
-      data.hsn_code.trim() === "")
-    ) {
-      return swal("Error", "All fields are required!", "error");
-    }
+    // if (
+    //   (data.name.trim() === "" || data.Gst.trim() === "",
+    //   data.hsn_code.trim() === "")
+    // ) {
+    //   return swal("Error", "All fields are required!", "error");
+    // }
     setLoading(true);
     axios
       .patch(`/api/tax/update_tax/${id}`, data, {
@@ -199,10 +199,10 @@ function Edittax() {
                                 GST Rate (in %)*
                               </label>
                               <input
-                                value={data.Gst}
+                                value={data.tax}
                                 onChange={(e) => handleChange(e)}
                                 type="text"
-                                name="Gst"
+                                name="tax"
                                 maxLength={limiter.Gst}
                                 className="form-control input-field"
                               />

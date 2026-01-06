@@ -851,6 +851,28 @@ const routes = [
     element: EditAboutUs,
     navName: "Website Related",
   },
+
+
+
+    {
+    path: "/gst",
+    name: "Website Related",
+    element: Tax,
+    navName: "Settings",
+  },
+
+     {
+    path: "/tax/edit/:id",
+    name: "Website Related",
+    element:Edittax ,
+    navName: "Settings",
+  },
+     {
+    path: "/tax/add",
+    name: "Website Related",
+    element:Addtax ,
+    navName: "Settings",
+  },
   // Home Pannel website
   {
     path: "/home",

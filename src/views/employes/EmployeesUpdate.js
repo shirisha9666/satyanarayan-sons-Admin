@@ -24,7 +24,8 @@ const EmployeUpdate = () => {
     employeDetails,
     handleOneEmploye,
     searchByRole,
-    handlegetEmployeAccessData
+    handlegetEmployeAccessData,
+    getBackendMessage
   } = useEmployees();
 
   const branchess = banner?.result || [];
@@ -93,8 +94,9 @@ const EmployeUpdate = () => {
          await handlegetEmployeAccessData();
       navigate("/employee");
     } catch (error) {
+        const msg = getBackendMessage(error);
       toast.error(error?.response?.data?.message || "Something went wrong");
-      console.log("error?.response?.data?.message",error?.response?.data?.message)
+      console.log("error?.response?.data?.message",msg)
     }finally{
       setLoading(false)
     }

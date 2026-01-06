@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
+
 import {
   FormControl,
   Grid,
@@ -22,10 +23,10 @@ import { useCategory } from "../category/CategoryContext";
 
 const GoldSchemaAdd = () => {
   const token = isAutheticated();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);  
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype } =
+  const { handlegetAllProducts, page, itemPerPage, bannertype ,taxList} =
     useGoldSchema();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
@@ -33,10 +34,10 @@ const GoldSchemaAdd = () => {
     Scheme_Name: "",
     Monthly_Installment: "",
     Months: "",
-
+gstId:"",
     Total_Amount: "",
     Members: "",
-    Start_Date: "",
+    // Start_Date: "",
     End_Date: "",
   });
 
@@ -63,7 +64,8 @@ const GoldSchemaAdd = () => {
       formData.append("Total_Amount", productDetails.Total_Amount);
 
       formData.append("Members", productDetails.Members);
-      formData.append("Start_Date", productDetails.Start_Date);
+           formData.append("gstId", productDetails.gstId);
+      // formData.append("Start_Date", productDetails.Start_Date);
       formData.append("End_Date", productDetails.End_Date);
 
       const res = await axios.post("/api/gold/schema/create", formData, {
@@ -134,17 +136,23 @@ const GoldSchemaAdd = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Scheme Name"
-                name="schemeName"
-                value={productDetails.schemeName}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
+    
+
+                 <Grid item xs={12}>
+                            <TextField
+                              select
+                              label="Select Gst Id"
+                              name="gstId"
+                              value={productDetails.gstId}
+                              onChange={handleChange}
+                              fullWidth
+                              required
+                            >
+                              {taxList.map((subcat) => (
+                                <MenuItem value={subcat._id}>{subcat.tax}</MenuItem>
+                              ))}
+                            </TextField>
+                          </Grid>
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
@@ -178,7 +186,7 @@ const GoldSchemaAdd = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
               type="date"
                 autoComplete="off"
@@ -189,7 +197,7 @@ const GoldSchemaAdd = () => {
                 fullWidth
                 required
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <TextField
               type="date"

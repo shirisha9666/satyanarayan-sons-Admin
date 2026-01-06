@@ -20,6 +20,19 @@ export const EmployeesProvider = ({ children }) => {
     const [accessData, setAccessData] = useState([]);
     const [accessLoading,setAccessLoading]=useState(false)
 
+
+
+
+    const getBackendMessage = (error) => {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.message ||
+    "Something went wrong"
+  );
+};
+
+
   const handlegetAllData = async (page = 1, itemPerPage, employeType,searchByRole) => {
     try {
       setLoading(true);
@@ -132,6 +145,7 @@ export const EmployeesProvider = ({ children }) => {
         handlegetEmployeAccessData,
         accessData,
         accessLoading,
+        getBackendMessage,
       }}
     >
       {children}

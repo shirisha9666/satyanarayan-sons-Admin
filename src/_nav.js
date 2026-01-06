@@ -226,7 +226,7 @@ const _nav = [
         name: "GST",
         icon: <CIcon icon={cilTablet} customClassName="nav-icon" />,
         to: "/gst",
-        group: "Product Management",
+        group: "Settings",
       },
       {
         component: CNavItem,

@@ -16,7 +16,8 @@ export const GoldSchemaProvider = ({ children }) => {
   const [bannerId, setBannerId] = useState(null);
   const [goldSchemaeditId, setGoldSchemaEditId] = useState(null);
   const [goldSchema, setGoldSchema] = useState([]);
-    const [viewDetails,setViewDetails]=useState([])
+  const [viewDetails, setViewDetails] = useState([]);
+    const [taxList, settaxList] = useState([]);
 
   const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -79,11 +80,30 @@ export const GoldSchemaProvider = ({ children }) => {
       setGoldSchemaEditId(null);
     }
   };
+
+  const getTaxes = async (id) => {
+    try {
+      setLoading(true);
+      let resp = await axios.get(`/api/tax/view_tax`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      settaxList(resp.data);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
   useEffect(() => {
     handlegetAllProducts(page, itemPerPage, bannertype);
+    getTaxes()
   }, []);
 
- 
   return (
     <GoldSchemaContext.Provider
       value={{
@@ -102,6 +122,8 @@ export const GoldSchemaProvider = ({ children }) => {
         goldSchemaeditId,
         goldSchema,
         viewDetails,
+        taxList,
+        getTaxes,
       }}
     >
       {children}

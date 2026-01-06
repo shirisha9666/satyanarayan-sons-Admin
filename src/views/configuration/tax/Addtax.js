@@ -10,7 +10,7 @@ function Addtax() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
-    Gst: "",
+    tax: "",
   });
   const [limiter, setLimiter] = useState({
     name: 50,
@@ -29,9 +29,9 @@ function Addtax() {
   };
 
   async function handleSubmit() {
-    if (data.name.trim() === "" || data.tax.trim() === "") {
-      return swal("Error", "All fields are required!", "error");
-    }
+    // if (data.name.trim() === "" || data.tax.trim() === "") {
+    //   return swal("Error", "All fields are required!", "error");
+    // }
     setLoading(true);
     await axios
       .post("/api/tax/add_tax", data, {
@@ -139,10 +139,10 @@ function Addtax() {
                 </label>
                 <input
                   id="tax-input"
-                  value={data.Gst}
+                  value={data.tax}
                   onChange={(e) => handleChange(e)}
                   type="text"
-                  name="Gst"
+                  name="tax"
                   className="form-control"
                   maxLength={limiter.tax}
                   placeholder="Enter GST rate"

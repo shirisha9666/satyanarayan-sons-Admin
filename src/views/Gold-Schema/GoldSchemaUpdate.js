@@ -22,7 +22,7 @@ import { useCategory } from "../category/CategoryContext";
 
 const GoldSchemaUpdate = () => {
   const token = isAutheticated();
-  const {id}=useParams()
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
 
@@ -33,40 +33,39 @@ const GoldSchemaUpdate = () => {
     itemPerPage,
     bannertype,
     handlegeOnegoldRate,
-   
-viewDetails
 
+    viewDetails,
+    taxList,
   } = useGoldSchema();
 
+  const oldValue = viewDetails;
 
-const oldValue = viewDetails;
+  const [productDetails, setProductDetails] = useState({
+    Scheme_Name: "",
+    Monthly_Installment: "",
+    Months: "",
+    Total_Amount: "",
+    Members: "",
+    gstId: "",
+    End_Date: "",
+  });
+  useEffect(() => {
+    handlegeOnegoldRate(id);
+  }, []);
 
-const [productDetails, setProductDetails] = useState({
-  Scheme_Name: "",
-  Monthly_Installment: "",
-  Months: "",
-  Total_Amount: "",
-  Members: "",
-  End_Date: "",
-});
-useEffect(()=>{
-  handlegeOnegoldRate(id)
-},[])
+  useEffect(() => {
+    if (oldValue) {
+      setProductDetails({
+        Scheme_Name: oldValue.Scheme_Name || "",
 
-useEffect(() => {
-  if (oldValue) {
-    setProductDetails({
-      Scheme_Name: oldValue.Scheme_Name || "",
-      Monthly_Installment: oldValue.Monthly_Installment || "",
-      Months: oldValue.Months || "",
-      Total_Amount: oldValue.Total_Amount || "",
-      Members: oldValue.Members || "",
-      End_Date: oldValue.End_Date
-        ? oldValue.End_Date.split("T")[0]
-        : "",
-    });
-  }
-}, [oldValue]);
+        Monthly_Installment: oldValue.Monthly_Installment || "",
+        Months: oldValue.Months || "",
+        Total_Amount: oldValue.Total_Amount || "",
+        Members: oldValue.Members || "",
+        End_Date: oldValue.End_Date ? oldValue.End_Date.split("T")[0] : "",
+      });
+    }
+  }, [oldValue]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,6 +90,7 @@ useEffect(() => {
       formData.append("Total_Amount", productDetails.Total_Amount);
 
       formData.append("Members", productDetails.Members);
+               formData.append("gstId", productDetails.gstId);
       // formData.append("Start_Date", productDetails.Start_Date);
       formData.append("End_Date", productDetails.End_Date);
 
@@ -121,11 +121,9 @@ useEffect(() => {
       setErrorData("");
     }
   };
-//  useEffect(()=>{
-//   handlegeOnegoldRate(id)
-//  },[id])
-
-
+  //  useEffect(()=>{
+  //   handlegeOnegoldRate(id)
+  //  },[id])
 
   return (
     <div>
@@ -152,7 +150,6 @@ useEffect(() => {
                 value={productDetails.Scheme_Name}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
 
@@ -164,10 +161,9 @@ useEffect(() => {
                 value={productDetails.Monthly_Installment}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
-         
+
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
@@ -176,7 +172,6 @@ useEffect(() => {
                 value={productDetails.Months}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
             <Grid item xs={12}>
@@ -187,8 +182,23 @@ useEffect(() => {
                 value={productDetails.Total_Amount}
                 onChange={handleChange}
                 fullWidth
-                
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                select
+                label="Select Gst Id"
+                name="gstId"
+                value={productDetails.gstId}
+                onChange={handleChange}
+                fullWidth
+                required
+              >
+                {taxList.map((subcat) => (
+                  <MenuItem value={subcat._id}>{subcat.tax}</MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -198,10 +208,9 @@ useEffect(() => {
                 value={productDetails.Members}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
-         
+
             <Grid item xs={12}>
               <TextField
                 type="date"
@@ -211,7 +220,6 @@ useEffect(() => {
                 value={productDetails.End_Date}
                 onChange={handleChange}
                 fullWidth
-                
               />
             </Grid>
 
