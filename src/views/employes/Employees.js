@@ -17,6 +17,7 @@ import { GridSearchIcon } from "@material-ui/data-grid";
 
 const Employees = () => {
   const navigate = useNavigate();
+  const [activeBtn, setActiveBtn] = useState("");
   const {
     setPage,
     employeesData,
@@ -34,20 +35,22 @@ const Employees = () => {
     page,
     searchByRole,
     setSearchByRole,
+    handleOneEmploye,
   } = useEmployees();
 
   console.log("searchByRole", searchByRole);
   const tableHeadering = [
     "Employee_ID",
     "Role",
-    "Name",
+    // "Name",
 
     "Branch",
     "Access",
-    "Status",
     "Gold_Count",
+    "Status",
+
     // "Last Login",
-    "Start",
+    // "Start",
     "Actions",
   ];
 
@@ -256,7 +259,7 @@ const Employees = () => {
                         <td>{item?.role}</td>
 
                         {/* Name */}
-                        <td>{item?.name || "-"}</td>
+                        {/* <td>{item?.name || "-"}</td> */}
 
                         {/* Phone */}
                         <td>{item?.branchId?.branchName}</td>
@@ -275,17 +278,10 @@ const Employees = () => {
                             : "-"}
                         </td>
 
+                        {/* Gold Schemes Added */}
+                        <td>{item?.goldSchemaCount ?? 0}</td>
                         {/* Status */}
                         <td>{item?.isActive}</td>
-
-                        {/* Gold Schemes Added */}
-                        <td>{item?.goldSchemeCount ?? 0}</td>
-
-                        {/* Last Login */}
-                        {/* <td>{item?.lastLogin || "-"}</td> */}
-
-                        {/* Created At */}
-                        <td>{item?.createdAt}</td>
 
                         {/* Actions */}
                         <td
@@ -303,6 +299,27 @@ const Employees = () => {
                             }}
                           >
                             <button
+                              style={{
+                                color: "white",
+                                backgroundColor: "#3f51b5",
+                              }}
+                              type="button"
+                              className="btn btn-primary waves-effect waves-light btn-table"
+                              onClick={async () => {
+                                setActiveBtn("View");
+                                await handleOneEmploye(item._id);
+
+                                navigate(`/employee/view/${item._id}`);
+                              }}
+                            >
+                              {viewBannerId === item._id ? (
+                                <CircularProgress size={25} />
+                              ) : (
+                                "View"
+                              )}
+                            </button>
+
+                            <button
                               style={{ color: "white" }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
@@ -310,11 +327,7 @@ const Employees = () => {
                                 navigate(`/employee/update/${item._id}`);
                               }}
                             >
-                              {viewBannerId === item._id ? (
-                                <CircularProgress size={25} />
-                              ) : (
-                                "Edit"
-                              )}
+                              Edit
                             </button>
 
                             <button
