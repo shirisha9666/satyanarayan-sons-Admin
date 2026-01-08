@@ -174,21 +174,29 @@ const _nav = [
     group: "Employees & Access",
   },
 
-  {
+   {
     component: CNavItem,
-    name: "Customers",
+    name: "Transactions",
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
-    to: "/customers-details",
-    group: "Customers",
+    to: "/Transactions",
+    group: "Employees & Access",
   },
 
-  {
-    component: CNavItem,
-    name: "Customer Support",
-    icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
-    to: "/support/request",
-    group: "Customer Service",
-  },
+  // {
+  //   component: CNavItem,
+  //   name: "Customers",
+  //   icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+  //   to: "/customers-details",
+  //   group: "Customers",
+  // },
+
+  // {
+  //   component: CNavItem,
+  //   name: "Customer Support",
+  //   icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
+  //   to: "/support/request",
+  //   group: "Customer Service",
+  // },
   // //Blog start
   // {
   //   component: CNavItem,

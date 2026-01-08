@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -279,6 +280,11 @@ const BannerUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
+               <FormHelperText>
+                  Please upload an image or video.
+                  Recommended resolution: {1920} × {600}.
+                  Max size: 2 MB.
+                </FormHelperText>
 
               {bannerDetails.coverImagePreview && (
                 <Box mt={2}>

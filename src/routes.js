@@ -218,6 +218,7 @@ import AddEmployee from "./views/employes/EmployeesAdd";
 import EmployeUpdate from "./views/employes/EmployeesUpdate";
 import Employees from "./views/employes/Employees";
 import EmployeeDetails from "./views/employes/EmployessView";
+import Transactions from "./views/transactions/Transactions";
 
 
 const GoogleAuthWrapper = () => {
@@ -1212,6 +1213,19 @@ const routes = [
     name: "Employee",
     element: EmployeeDetails,
     navName: "Employees & Access",
+  },
+
+      {
+    path: "/Transactions",
+    name: "Transactions",
+    element: Transactions,
+    navName: "Transactions",
+  },
+      {
+    path: "/Transactions/All/Schemas",
+    name: "Transactions",
+    element: Transactions,
+    navName: "Transactions",
   },
   // ------------------------ End Employee Routes-----------------------
 

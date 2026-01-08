@@ -33,6 +33,7 @@ import { VideoProvider } from "./views/Video/VideoContext";
 import { AboutProvider } from "./views/AboutSection/AboutContext";
 import { BranchePrivoder } from "./views/Branches/BranchesContext";
 import { EmployeesProvider } from "./views/employes/EmployeesContext";
+import { TransactionsProvider } from "./views/transactions/TransactionsContext";
 
 // import { StyledEngineProvider } from '@mui/material/styles';
 // import '@fontsource/roboto';
@@ -62,6 +63,7 @@ const root = createRoot(domNode);
 // );
 root.render(
   <Provider store={store}>
+    <TransactionsProvider>
     <EmployeesProvider>
       <BranchePrivoder>
         <AboutProvider>
@@ -101,6 +103,7 @@ root.render(
         </AboutProvider>
       </BranchePrivoder>
     </EmployeesProvider>
+    </TransactionsProvider>
   </Provider>
 );
 

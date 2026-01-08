@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -250,6 +251,11 @@ const ProductUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
+                    <FormHelperText>
+                                Please upload an image or video.
+                                Recommended resolution: {1920} × {600}.
+                                Max size: 2 MB.
+                              </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img
