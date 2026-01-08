@@ -14,7 +14,7 @@ export const TransactionsProvider = ({ children }) => {
   const [employeesData, setEmployees] = useState([]);
   const [employeType, setEmployeType] = useState("");
   const [delId, setEmployeesId] = useState(null);
-  const [employeDetails, setEmployeesOneDetails] = useState([]);
+  const [usergoldScheme, setUserGoldSchemes] = useState([]);
   const [viewBannerId, setViewBannerId] = useState(null);
   const [searchByRole, setSearchByRole] = useState("");
   const [accessData, setAccessData] = useState([]);
@@ -54,6 +54,7 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
+
   const handleDelete = async (id) => {
     try {
       setEmployeesId(id);
@@ -75,16 +76,16 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
-  const handleOneEmploye = async (id) => {
+  const handleUserSchemas = async (id) => {
     try {
       setViewBannerId(id);
-      let resp = await axios.get(`/api/employe/get/${id}`, {
+      let resp = await axios.get(`/api/customer/get/all/users/schemes/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setEmployeesOneDetails(resp?.data);
+      setUserGoldSchemes(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
@@ -128,10 +129,10 @@ export const TransactionsProvider = ({ children }) => {
         loading,
         page,
         handleDelete,
-        handleOneEmploye,
+        handleUserSchemas,
         delId,
         viewBannerId,
-        employeDetails,
+        usergoldScheme,
         searchByRole,
         setSearchByRole,
         handlegetEmployeAccessData,

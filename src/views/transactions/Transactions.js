@@ -35,7 +35,7 @@ const Transactions = () => {
     page,
     searchByRole,
     setSearchByRole,
-    handleOneEmploye,
+    handleUserSchemas,
   } = useTransactions();
 
   console.log("searchByRole", searchByRole);
@@ -257,12 +257,12 @@ const Transactions = () => {
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={async () => {
                                 setActiveBtn("View");
-                                await handleOneEmploye(item._id);
+                                // await handleUserSchemas(item._id);
 
-                                navigate(`/employee/view/${item._id}`);
+                                navigate(`/Transactions/All/user/Schemas/${item._id}`);
                               }}
                             >
-                              {viewBannerId === item._id ? (
+                              {viewBannerId ===item._id ? (
                                 <CircularProgress size={25} />
                               ) : (
                                 "View"
