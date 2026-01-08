@@ -20,20 +20,27 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 
 export default function GoldSchemeDetails() {
-  let { id } = useParams();
-  const { usergoldScheme, handleUserSchemas } = useTransactions();
+  let { start, schemename, id, name } = useParams();
+
+  const { userInvoices, handleAllUserInvoice } = useTransactions();
   useEffect(() => {
-    handleUserSchemas(id);
+    handleAllUserInvoice(id);
   }, []);
-  console.log("usergoldScheme", usergoldScheme);
+  let result = userInvoices?.invoiceData;
+  console.log("userInvoices", userInvoices);
+  console.log("userInvoices.result", result);
   return (
     <Box p={3}>
       {/* Header */}
       <Typography variant="h6" fontWeight={600}>
-        Suma Family Gold
+        Scheme Name: {schemename}
+      </Typography>
+
+      <Typography variant="h6" fontWeight={600}>
+        Name: {name}
       </Typography>
       <Typography variant="body2" color="text.secondary" mb={3}>
-        Joined on: 7/1/2026
+        Joined on: {start}
       </Typography>
 
       {/* Summary Cards */}
@@ -85,28 +92,30 @@ export default function GoldSchemeDetails() {
             </TableHead>
 
             <TableBody>
-              <TableRow>
-                <TableCell>Month 1</TableCell>
-                <TableCell sx={{ color: "#2563EB", fontWeight: 500 }}>
-                  INV-1
-                </TableCell>
-                <TableCell>₹0</TableCell>
-                <TableCell>
-                  <Chip label="Credit" color="success" size="small" />
-                </TableCell>
-                <TableCell>
-                  <Chip label="ACTIVE" color="warning" size="small" />
-                </TableCell>
-                <TableCell align="right">
-                  <Button
-                    variant="contained"
-                    size="small"
-                    startIcon={<DescriptionIcon />}
-                  >
-                    Invoice
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {result?.map((val, kye) => (
+                <TableRow>
+                  <TableCell>Month 1</TableCell>
+                  <TableCell sx={{ color: "#2563EB", fontWeight: 500 }}>
+                    INV-1
+                  </TableCell>
+                  <TableCell>₹0</TableCell>
+                  <TableCell>
+                    <Chip label="Credit" color="success" size="small" />
+                  </TableCell>
+                  <TableCell>
+                    <Chip label="ACTIVE" color="warning" size="small" />
+                  </TableCell>
+                  <TableCell align="right">
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<DescriptionIcon />}
+                    >
+                      Invoice
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>

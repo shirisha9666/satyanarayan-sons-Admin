@@ -15,6 +15,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTransactions } from "./TransactionsContext";
 import { useEffect } from "react";
+import { Grid } from "@material-ui/core";
 
 // const rows = [
 //   {
@@ -59,6 +60,7 @@ const statusColor = (status) => {
 
 export default function UserAllSchemesTable() {
   const navigate = useNavigate();
+  const {name}=useParams()
   const tableHeading = [
     "Scheme_Name",
     "Total_Amount",
@@ -67,7 +69,7 @@ export default function UserAllSchemesTable() {
     "Date of Completion",
     "MeberShipNo",
     "Status",
-    "Action"
+    "Action",
   ];
   let { id } = useParams();
   const { usergoldScheme, handleUserSchemas } = useTransactions();
@@ -80,6 +82,26 @@ export default function UserAllSchemesTable() {
 
   return (
     <Card sx={{ borderRadius: 2, overflow: "hidden" }}>
+   <Box
+  sx={{
+    p: 2,
+    borderRadius: 2,
+    backgroundColor: "#F9FAFB",
+    border: "1px solid #E5E7EB",
+    display: "flex",
+    alignItems: "center",
+    gap: 1,
+  }}
+>
+  <Typography variant="body2" color="text.secondary">
+    Name
+  </Typography>
+  <Typography variant="body1" fontWeight={600}>
+    : {name}
+  </Typography>
+</Box>
+
+       
       <TableContainer>
         <Table>
           <TableHead>
@@ -87,13 +109,7 @@ export default function UserAllSchemesTable() {
               {tableHeading.map((val) => (
                 <TableCell>{val}</TableCell>
               ))}
-              {/* <TableCell>Scheme_ID</TableCell>
-              <TableCell>Date of Joining</TableCell>
-              <TableCell>Date of Completion</TableCell>
-                        <TableCell>MeberShipNo</TableCell>
-              <TableCell>Status</TableCell>
-                  
-              <TableCell align="right">Action</TableCell> */}
+ 
             </TableRow>
           </TableHead>
 
@@ -105,12 +121,12 @@ export default function UserAllSchemesTable() {
                     {row?.Scheme_ID?.Scheme_Name}
                   </Typography>
                 </TableCell>
-                     <TableCell>{row?.Scheme_ID?.Total_Amount}</TableCell>
-                <TableCell>{row?.Scheme_ID?.Monthly_Installment}</TableCell>
+                <TableCell>₹{row?.Scheme_ID?.Total_Amount}</TableCell>
+                <TableCell>₹{row?.Scheme_ID?.Monthly_Installment}</TableCell>
 
                 <TableCell>{row?.dateOfJoining}</TableCell>
 
-   <TableCell>{row?.dateOfCompletion}</TableCell>
+                <TableCell>{row?.dateOfCompletion}</TableCell>
 
                 <TableCell>{row?.membershipNo}</TableCell>
                 <TableCell>
@@ -126,7 +142,7 @@ export default function UserAllSchemesTable() {
                   <Button
                     onClick={() =>
                       navigate(
-                        `/Transactions/All/invoices/${row?.Scheme_ID?._id}`
+                        `/Transactions/All/invoices/${row?.dateOfJoining}/${row?.Scheme_ID?.Scheme_Name}/${name}/${row?._id}`
                       )
                     }
                     variant="contained"

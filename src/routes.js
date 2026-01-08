@@ -15,7 +15,6 @@ import Socialmedia from "./views/configuration/Socialmedia.js";
 import Address from "./views/configuration/Address.js";
 import Logo from "./views/configuration/Logo.js";
 
-
 //Businesses
 
 // import Products from "./views/Products/Products";
@@ -29,7 +28,6 @@ import NewOrders from "./views/orders/NewOrders.js";
 import ReturnedOrders from "./views/orders/ReturnedOrders.js";
 
 import AddOrder from "./views/orders/AddOrder";
-
 
 //Taxes
 import Tax from "./views/configuration/tax/Tax";
@@ -219,9 +217,8 @@ import EmployeUpdate from "./views/employes/EmployeesUpdate";
 import Employees from "./views/employes/Employees";
 import EmployeeDetails from "./views/employes/EmployessView";
 import Transactions from "./views/transactions/Transactions";
-import GoldSchemeDetails from "./views/transactions/TransctionsUserSchema";
+import GoldSchemeDetails from "./views/transactions/TransctionsUserInvoices";
 import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
-
 
 const GoogleAuthWrapper = () => {
   return (
@@ -552,7 +549,7 @@ const routes = [
     element: SubCategoryAdd,
     navName: "Settings",
   },
-   {
+  {
     path: "/subcategory/update/:name/:id",
     name: "SubCategories",
     element: SubCategoryUpdate,
@@ -574,7 +571,7 @@ const routes = [
     element: ProductAdd,
     navName: "Settings",
   },
-    {
+  {
     path: "/product/update/:id",
     name: "Products",
     element: ProductUpdate,
@@ -586,36 +583,34 @@ const routes = [
     element: HomeCollection,
     navName: "Settings",
   },
-    {
+  {
     path: "/home-collections/add",
     name: "Products",
     element: HomeCollectionAdd,
     navName: "Settings",
   },
-      {
+  {
     path: "/home-collections/update/:id",
     name: "Products",
     element: HomeCollectionUpdate,
     navName: "Settings",
   },
 
-   {
+  {
     path: "/video-section",
     name: "Video",
     element: VideoSection,
     navName: "Settings",
   },
-   
 
-     {
+  {
     path: "/video/add",
     name: "Video",
     element: VideoAdd,
     navName: "Settings",
   },
-   
-   
-       {
+
+  {
     path: "/video/add",
     name: "Video",
     element: VideoAdd,
@@ -630,7 +625,7 @@ const routes = [
 
   //HomeCollectionUpdate
 
-    {
+  {
     path: "/about-section",
     name: "Products",
     element: AboutSection,
@@ -648,7 +643,7 @@ const routes = [
     element: GoldSchema,
     navName: "Settings",
   },
-    {
+  {
     path: "/gold-schemes/add",
     name: "Gold Schemes",
     element: GoldSchemaAdd,
@@ -660,45 +655,45 @@ const routes = [
     element: GoldSchemaUpdate,
     navName: "Settings",
   },
-   {
+  {
     path: "/gold-rates",
     name: "Gold Rates",
     element: GoldRate,
     navName: "Settings",
   },
-     {
+  {
     path: "/gold-rates/add",
     name: "Gold Rates",
     element: GoldRateAdd,
     navName: "Settings",
   },
 
-   {
+  {
     path: "/gold-rates/update/:id",
     name: "Gold Rates",
     element: GoldRateUpdate,
     navName: "Settings",
   },
 
-     {
+  {
     path: "/Branches",
     name: "Branches",
     element: Branches,
     navName: "Settings",
   },
-    {
+  {
     path: "/Branches/add",
     name: "Branches",
     element: BranchCreate,
     navName: "Settings",
   },
-    {
+  {
     path: "/Branches/update/:id",
     name: "Branches",
     element: BranchUpdate,
     navName: "Settings",
   },
-     {
+  {
     path: "/Branches/manager/create/:id",
     name: "Branches",
     element: BranchManagerCreate,
@@ -856,25 +851,23 @@ const routes = [
     navName: "Website Related",
   },
 
-
-
-    {
+  {
     path: "/gst",
     name: "Website Related",
     element: Tax,
     navName: "Settings",
   },
 
-     {
+  {
     path: "/tax/edit/:id",
     name: "Website Related",
-    element:Edittax ,
+    element: Edittax,
     navName: "Settings",
   },
-     {
+  {
     path: "/tax/add",
     name: "Website Related",
-    element:Addtax ,
+    element: Addtax,
     navName: "Settings",
   },
   // Home Pannel website
@@ -1210,27 +1203,27 @@ const routes = [
     element: EmployeUpdate,
     navName: "Employees & Access",
   },
-    {
+  {
     path: "/employee/view/:id",
     name: "Employee",
     element: EmployeeDetails,
     navName: "Employees & Access",
   },
 
-      {
+  {
     path: "/Transactions",
     name: "Transactions",
     element: Transactions,
     navName: "Transactions",
   },
-      {
-    path: "/Transactions/All/invoices/:id",
+  {
+    path: "/Transactions/All/invoices/:start/:schemename/:name/:id",
     name: "Transactions",
     element: GoldSchemeDetails,
     navName: "Transactions",
   },
   {
-    path: "/Transactions/All/user/Schemas/:id",
+    path: "/Transactions/All/user/Schemas/:name/:id",
     name: "Transactions",
     element: UserAllSchemesTable,
     navName: "Transactions",

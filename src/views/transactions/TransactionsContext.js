@@ -19,6 +19,7 @@ export const TransactionsProvider = ({ children }) => {
   const [searchByRole, setSearchByRole] = useState("");
   const [accessData, setAccessData] = useState([]);
   const [accessLoading, setAccessLoading] = useState(false);
+  const [userInvoices, setUserInvoices] = useState([]);
 
   const getBackendMessage = (error) => {
     return (
@@ -54,7 +55,6 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
-
   const handleDelete = async (id) => {
     try {
       setEmployeesId(id);
@@ -86,6 +86,24 @@ export const TransactionsProvider = ({ children }) => {
       });
 
       setUserGoldSchemes(resp?.data);
+    } catch (error) {
+      const errormessage = error.response && error.response.data.error;
+      console.log("errormessage", errormessage);
+    } finally {
+      setViewBannerId(null);
+    }
+  };
+
+  const handleAllUserInvoice = async (id) => {
+    try {
+      setViewBannerId(id);
+      let resp = await axios.get(`/api/customer/get/user/all/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUserInvoices(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
@@ -139,6 +157,8 @@ export const TransactionsProvider = ({ children }) => {
         accessData,
         accessLoading,
         getBackendMessage,
+        handleAllUserInvoice,
+        userInvoices,
       }}
     >
       {children}
