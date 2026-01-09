@@ -219,6 +219,7 @@ import EmployeeDetails from "./views/employes/EmployessView";
 import Transactions from "./views/transactions/Transactions";
 import GoldSchemeDetails from "./views/transactions/TransctionsUserInvoices";
 import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
+import TransctionInvoice from "./views/transactions/Invoice";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -1226,6 +1227,13 @@ const routes = [
     path: "/Transactions/All/user/Schemas/:name/:id",
     name: "Transactions",
     element: UserAllSchemesTable,
+    navName: "Transactions",
+  },
+
+    {
+    path: "/Transactions/user/Invoice/:id",
+    name: "Transactions",
+    element: TransctionInvoice,
     navName: "Transactions",
   },
   // ------------------------ End Employee Routes-----------------------

@@ -16,13 +16,15 @@ import {
 } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useTransactions } from "./TransactionsContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { CircularProgress } from "@material-ui/core";
 
 export default function GoldSchemeDetails() {
   let { start, schemename, id, name } = useParams();
+  const navigate = useNavigate()
 
-  const { userInvoices, handleAllUserInvoice } = useTransactions();
+  const { userInvoices, handleAllUserInvoice, InvoiceDetailLoading ,handleByIdInvoice} = useTransactions();
   useEffect(() => {
     handleAllUserInvoice(id);
   }, []);
@@ -49,12 +51,12 @@ export default function GoldSchemeDetails() {
           <SummaryCard title="Total Scheme Amount" value={`₹${userInvoices?.totalAmount}`} bg="#EEF2FF" />
         </Grid>
         <Grid item xs={12} md={3}>
-          <SummaryCard title="Total Amount Paid" value={`₹${userInvoices?.totalPaidFormatted }`} bg="#E0F2FE" />
+          <SummaryCard title="Total Amount Paid" value={`₹${userInvoices?.totalPaidFormatted}`} bg="#E0F2FE" />
         </Grid>
         <Grid item xs={12} md={3}>
           <SummaryCard title="Total Months" value={`${userInvoices?.totalMonths}`} bg="#e2d6bbff" />
         </Grid>
-      
+
         <Grid item xs={12} md={3}>
           <SummaryCard title="Remaining Months" value={`${userInvoices?.reminingMonths}`} bg="#FFF7ED" />
         </Grid>
@@ -102,12 +104,16 @@ export default function GoldSchemeDetails() {
                     <Chip label="ACTIVE" color="warning" size="small" />
                   </TableCell>
                   <TableCell align="right">
-                    <Button
+                    <Button onClick={async() => {
+                     await  handleByIdInvoice(val._id)
+                      navigate(`/Transactions/user/Invoice/${val._id}`)
+                    }}
                       variant="contained"
                       size="small"
                       startIcon={<DescriptionIcon />}
                     >
-                      Invoice
+                      {InvoiceDetailLoading === val._id ? <CircularProgress size={25} /> : "Invoice"}
+
                     </Button>
                   </TableCell>
                 </TableRow>
