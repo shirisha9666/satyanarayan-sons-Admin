@@ -15,34 +15,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTransactions } from "./TransactionsContext";
 import { useEffect } from "react";
-import { Grid } from "@material-ui/core";
-
-// const rows = [
-//   {
-//     plan: "Suma Family Gold",
-//     joining: "07 Jan 2026",
-//     completion: "Sep 07 2026",
-//     status: "ACTIVE",
-//   },
-//   {
-//     plan: "Festival Dhanteras Plan",
-//     joining: "07 Jan 2026",
-//     completion: "Dec 07 2026",
-//     status: "SUCCESS",
-//   },
-//   {
-//     plan: "Suma Family Gold",
-//     joining: "07 Jan 2026",
-//     completion: "Sep 07 2026",
-//     status: "PENDING",
-//   },
-//   {
-//     plan: "Lakshmi Monthly Gold",
-//     joining: "07 Jan 2026",
-//     completion: "Nov 07 2026",
-//     status: "PENDING",
-//   },
-// ];
+import { CircularProgress, Grid } from "@material-ui/core";
 
 // 🔹 Status Color Handler
 const statusColor = (status) => {
@@ -60,7 +33,7 @@ const statusColor = (status) => {
 
 export default function UserAllSchemesTable() {
   const navigate = useNavigate();
-  const {name}=useParams()
+  const { name } = useParams();
   const tableHeading = [
     "Scheme_Name",
     "Total_Amount",
@@ -72,7 +45,13 @@ export default function UserAllSchemesTable() {
     "Action",
   ];
   let { id } = useParams();
-  const { usergoldScheme, handleUserSchemas } = useTransactions();
+  const {
+    usergoldScheme,
+    handleUserSchemas,
+    handleAllUserInvoice,
+    invoiceTableLoading,
+  } = useTransactions();
+
   let rows = usergoldScheme?.findAllPlans;
 
   console.log("usergoldScheme", usergoldScheme);
@@ -82,26 +61,25 @@ export default function UserAllSchemesTable() {
 
   return (
     <Card sx={{ borderRadius: 2, overflow: "hidden" }}>
-   <Box
-  sx={{
-    p: 2,
-    borderRadius: 2,
-    backgroundColor: "#F9FAFB",
-    border: "1px solid #E5E7EB",
-    display: "flex",
-    alignItems: "center",
-    gap: 1,
-  }}
->
-  <Typography variant="body2" color="text.secondary">
-    Name
-  </Typography>
-  <Typography variant="body1" fontWeight={600}>
-    : {name}
-  </Typography>
-</Box>
+      <Box
+        sx={{
+          p: 2,
+          borderRadius: 2,
+          backgroundColor: "#F9FAFB",
+          border: "1px solid #E5E7EB",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Name
+        </Typography>
+        <Typography variant="body1" fontWeight={600}>
+          : {name}
+        </Typography>
+      </Box>
 
-       
       <TableContainer>
         <Table>
           <TableHead>
@@ -109,7 +87,6 @@ export default function UserAllSchemesTable() {
               {tableHeading.map((val) => (
                 <TableCell>{val}</TableCell>
               ))}
- 
             </TableRow>
           </TableHead>
 
@@ -140,16 +117,21 @@ export default function UserAllSchemesTable() {
 
                 <TableCell align="right">
                   <Button
-                    onClick={() =>
+                    onClick={async () => {
+                      await handleAllUserInvoice(row?._id);
                       navigate(
                         `/Transactions/All/invoices/${row?.dateOfJoining}/${row?.Scheme_ID?.Scheme_Name}/${name}/${row?._id}`
-                      )
-                    }
+                      );
+                    }}
                     variant="contained"
                     size="small"
                     startIcon={<VisibilityIcon />}
                   >
-                    View
+                    {invoiceTableLoading === row?._id ? (
+                      <CircularProgress size={25} />
+                    ) : (
+                      "View"
+                    )}
                   </Button>
                 </TableCell>
               </TableRow>

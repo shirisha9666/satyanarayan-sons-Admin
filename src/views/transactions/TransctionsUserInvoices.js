@@ -27,8 +27,8 @@ export default function GoldSchemeDetails() {
     handleAllUserInvoice(id);
   }, []);
   let result = userInvoices?.invoiceData;
+
   console.log("userInvoices", userInvoices);
-  console.log("userInvoices.result", result);
   return (
     <Box p={3}>
       {/* Header */}
@@ -46,21 +46,17 @@ export default function GoldSchemeDetails() {
       {/* Summary Cards */}
       <Grid container spacing={2} mb={3}>
         <Grid item xs={12} md={3}>
-          <SummaryCard title="Total Scheme Amount" value="₹0" bg="#EEF2FF" />
+          <SummaryCard title="Total Scheme Amount" value={`₹${userInvoices?.totalAmount}`} bg="#EEF2FF" />
         </Grid>
         <Grid item xs={12} md={3}>
-          <SummaryCard title="Total Amount Paid" value="₹0" bg="#E0F2FE" />
+          <SummaryCard title="Total Amount Paid" value={`₹${userInvoices?.totalPaidFormatted }`} bg="#E0F2FE" />
         </Grid>
         <Grid item xs={12} md={3}>
-          <SummaryCard
-            title="Total Months"
-            value="12"
-            sub="Status: ACTIVE"
-            bg="#F3E8FF"
-          />
+          <SummaryCard title="Total Months" value={`${userInvoices?.totalMonths}`} bg="#e2d6bbff" />
         </Grid>
+      
         <Grid item xs={12} md={3}>
-          <SummaryCard title="Remaining Months" value="12" bg="#FFF7ED" />
+          <SummaryCard title="Remaining Months" value={`${userInvoices?.reminingMonths}`} bg="#FFF7ED" />
         </Grid>
       </Grid>
 
@@ -94,11 +90,11 @@ export default function GoldSchemeDetails() {
             <TableBody>
               {result?.map((val, kye) => (
                 <TableRow>
-                  <TableCell>Month 1</TableCell>
+                  <TableCell>{val?.month}</TableCell>
                   <TableCell sx={{ color: "#2563EB", fontWeight: 500 }}>
-                    INV-1
+                    {val?.InvoiceNo}
                   </TableCell>
-                  <TableCell>₹0</TableCell>
+                  <TableCell>₹{val?.monthlyPrice}</TableCell>
                   <TableCell>
                     <Chip label="Credit" color="success" size="small" />
                   </TableCell>

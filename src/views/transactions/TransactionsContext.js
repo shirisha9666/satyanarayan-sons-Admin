@@ -20,6 +20,7 @@ export const TransactionsProvider = ({ children }) => {
   const [accessData, setAccessData] = useState([]);
   const [accessLoading, setAccessLoading] = useState(false);
   const [userInvoices, setUserInvoices] = useState([]);
+  const [invoiceTableLoading,setInvoiceTableLoading]=useState(false)
 
   const getBackendMessage = (error) => {
     return (
@@ -96,7 +97,7 @@ export const TransactionsProvider = ({ children }) => {
 
   const handleAllUserInvoice = async (id) => {
     try {
-      setViewBannerId(id);
+      setInvoiceTableLoading(id);
       let resp = await axios.get(`/api/customer/get/user/all/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -108,7 +109,7 @@ export const TransactionsProvider = ({ children }) => {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
     } finally {
-      setViewBannerId(null);
+      setInvoiceTableLoading(null);
     }
   };
 
@@ -158,6 +159,7 @@ export const TransactionsProvider = ({ children }) => {
         accessLoading,
         getBackendMessage,
         handleAllUserInvoice,
+        invoiceTableLoading,
         userInvoices,
       }}
     >

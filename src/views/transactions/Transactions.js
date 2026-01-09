@@ -257,7 +257,7 @@ const Transactions = () => {
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={async () => {
                                 setActiveBtn("View");
-                                // await handleUserSchemas(item._id);
+                                await handleUserSchemas(item._id);
 
                                 navigate(`/Transactions/All/user/Schemas/${item?.firstname}/${item._id}`);
                               }}
