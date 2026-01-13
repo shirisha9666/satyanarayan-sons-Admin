@@ -232,7 +232,7 @@ export const highervalidateMediaFile = ({
 
   /* ---------------- IMAGE CONFIG ---------------- */
   const {
-    maxSize = 2 * 1024 * 1024, // 2 MB
+    maxSize = 4 * 1024 * 1024, // 2 MB
     width = 2000,              // Allow higher image resolution
   } = imageConfig;
 

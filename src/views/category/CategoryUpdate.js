@@ -278,7 +278,7 @@ const CategoryUpdate = () => {
               {/* Helper Text */}
               <FormHelperText>
                 Please upload an image or video. Recommended resolution: {1920}{" "}
-                × {600}. Max size: 2 MB.
+                × {600}. Max size: 4 MB.
               </FormHelperText>
 
              {categoryDetails.coverImagePreview && (

@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useProduct } from "./ProductContenxt";
 import { useCategory } from "../category/CategoryContext";
+import { validateMediaFile } from "../HelperImageResoluation";
 
 const ProductAdd = () => {
   const token = isAutheticated();
@@ -47,67 +48,93 @@ const ProductAdd = () => {
     }));
   };
 
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   // ----------------------------
+  //   // 1️⃣ FILE SIZE VALIDATION (2MB)
+  //   // ----------------------------
+  //   const MAX_IMAGE_SIZE_MB = 2;
+  //   const fileSizeInMB = file.size / (1024 * 1024);
+
+  //   if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
+  //     toast.error("Please upload an image smaller than 2MB.");
+  //     return;
+  //   }
+
+  //   // ----------------------------
+  //   // 2️⃣ DIMENSION VALIDATION
+  //   // ----------------------------
+  //   const img = new Image();
+  //   img.onload = () => {
+  //     const width = img.naturalWidth;
+  //     const height = img.naturalHeight;
+
+  //     // Required Banner Size
+  //     const REQUIRED_WIDTH = 1920;
+  //     const REQUIRED_HEIGHT = 600;
+
+  //     // Allow small tolerance (±5px)
+  //     const WIDTH_TOLERANCE = 5;
+  //     const HEIGHT_TOLERANCE = 5;
+
+  //     const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
+  //     const heightValid =
+  //       Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
+
+  //     // if (!widthValid || !heightValid) {
+  //     //   toast.error(
+  //     //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
+  //     //   );
+  //     //   return;
+  //     // }
+
+  //     // ----------------------------
+  //     // 3️⃣ VALID IMAGE → SET PREVIEW
+  //     // ----------------------------
+  //     const previewURL = URL.createObjectURL(file);
+
+  //     setProductDetails((prev) => ({
+  //       ...prev,
+  //       productImage: file,
+  //       coverImagePreview: previewURL,
+  //     }));
+  //   };
+
+  //   img.onerror = () => {
+  //     toast.error("Invalid image file.");
+  //   };
+
+  //   img.src = URL.createObjectURL(file); // Must come after setting onload
+  // };
+
+
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
 
-    // ----------------------------
-    // 1️⃣ FILE SIZE VALIDATION (2MB)
-    // ----------------------------
-    const MAX_IMAGE_SIZE_MB = 2;
-    const fileSizeInMB = file.size / (1024 * 1024);
+    validateMediaFile({
+      file,
+      imageConfig: {
+        width: 1920,
+        height: 600,
+        maxSize: 4 * 1024 * 1024,
+      },
+      videoConfig: {
+        maxSize: 4 * 1024 * 1024,
+      },
+      onSuccess: ({ file, previewURL, type }) => {
+        setProductDetails((prev) => ({
+          ...prev,
+          productImage: file,
+          coverImagePreview: previewURL,
+        }));
+      },
+    });
 
-    if (fileSizeInMB > MAX_IMAGE_SIZE_MB) {
-      toast.error("Please upload an image smaller than 2MB.");
-      return;
-    }
-
-    // ----------------------------
-    // 2️⃣ DIMENSION VALIDATION
-    // ----------------------------
-    const img = new Image();
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-
-      // Required Banner Size
-      const REQUIRED_WIDTH = 1920;
-      const REQUIRED_HEIGHT = 600;
-
-      // Allow small tolerance (±5px)
-      const WIDTH_TOLERANCE = 5;
-      const HEIGHT_TOLERANCE = 5;
-
-      const widthValid = Math.abs(width - REQUIRED_WIDTH) <= WIDTH_TOLERANCE;
-      const heightValid =
-        Math.abs(height - REQUIRED_HEIGHT) <= HEIGHT_TOLERANCE;
-
-      // if (!widthValid || !heightValid) {
-      //   toast.error(
-      //     `Invalid banner size! Please upload an image close to 1920x600px for perfect homepage fit.`
-      //   );
-      //   return;
-      // }
-
-      // ----------------------------
-      // 3️⃣ VALID IMAGE → SET PREVIEW
-      // ----------------------------
-      const previewURL = URL.createObjectURL(file);
-
-      setProductDetails((prev) => ({
-        ...prev,
-        productImage: file,
-        coverImagePreview: previewURL,
-      }));
-    };
-
-    img.onerror = () => {
-      toast.error("Invalid image file.");
-    };
-
-    img.src = URL.createObjectURL(file); // Must come after setting onload
+    e.target.value = ""; // allow re-upload same file
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -228,11 +255,10 @@ const ProductAdd = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-                    <FormHelperText>
-                                Please upload an image or video.
-                                Recommended resolution: {1920} × {600}.
-                                Max size: 2 MB.
-                              </FormHelperText>
+              <FormHelperText>
+                Please upload an image . Recommended resolution: {1920}{" "}
+                × {600}. Max size: 4 MB.
+              </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img

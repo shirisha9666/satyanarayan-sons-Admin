@@ -35,12 +35,13 @@ const SubCategoryUpdate = () => {
     subCategoryViewDetais,
     handleSubcategoryDetailsById,
   } = useSubCategory();
-  let subcategoryDetailsData= subCategoryViewDetais?.category;
+  let subcategoryDetailsData = subCategoryViewDetais?.category;
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: subcategoryDetailsData?.name || "",
 
     subcategory: subcategoryDetailsData?.subcategory || "",
-    subcategorythumbnail: subcategoryDetailsData?.subcategorythumbnail?.url || null,
+    subcategorythumbnail:
+      subcategoryDetailsData?.subcategorythumbnail?.url || null,
     coverImagePreview: subcategoryDetailsData?.subcategorythumbnail?.url || "",
   });
   const handleChange = (e) => {
@@ -59,10 +60,10 @@ const SubCategoryUpdate = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 1 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setSubCategoryDeatills((prev) => ({
@@ -185,7 +186,7 @@ const SubCategoryUpdate = () => {
               {/* Helper Text */}
               <FormHelperText>
                 Please upload an image or video. Recommended resolution: {1920}{" "}
-                × {600}. Max size: 2 MB.
+                × {600}. Max size: 4 MB.
               </FormHelperText>
 
               {subCategoryDetails?.coverImagePreview && (

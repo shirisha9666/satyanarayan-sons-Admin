@@ -251,11 +251,10 @@ const ProductUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-                    <FormHelperText>
-                                Please upload an image or video.
-                                Recommended resolution: {1920} × {600}.
-                                Max size: 2 MB.
-                              </FormHelperText>
+                  <FormHelperText>
+                                 Please upload an image . Recommended resolution: {1920}{" "}
+                                 × {600}. Max size: 4 MB.
+                               </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img

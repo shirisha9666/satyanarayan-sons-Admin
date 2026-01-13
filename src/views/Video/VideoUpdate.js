@@ -58,7 +58,7 @@ const VideoUpdate = () => {
       imageConfig: {
         width: 2000,
         height: 600,
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       videoConfig: {
         maxSize: 8 * 1024 * 1024,
