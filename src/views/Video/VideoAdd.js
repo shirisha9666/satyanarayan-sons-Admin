@@ -19,7 +19,7 @@ import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import {  useVideo } from "./VideoContext";
-import { validateMediaFile } from "../HelperImageResoluation";
+import { highervalidateMediaFile, validateMediaFile } from "../HelperImageResoluation";
 
 const VideoAdd = () => {
   const token = isAutheticated()
@@ -49,26 +49,26 @@ const VideoAdd = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
-    validateMediaFile({
-      file,
-      imageConfig: {
-        width: 1920,
-        height: 600,
-        maxSize: 1 * 1024 * 1024,
-      },
-      videoConfig: {
-        maxSize: 2 * 1024 * 1024,
-      },
-      onSuccess: ({ file, previewURL, type }) => {
-        setHomeCollection((prev) => ({
-          ...prev,
-          Thumbnail: file,
-          coverImagePreview: previewURL,
-          coverImageType: type,
-        }));
-      },
-    });
-
+     highervalidateMediaFile({
+       file,
+       imageConfig: {
+         width: 2000,
+         height: 600,
+         maxSize: 2 * 1024 * 1024,
+       },
+       videoConfig: {
+         maxSize: 8 * 1024 * 1024,
+       },
+       onSuccess: ({ file, previewURL, type }) => {
+         setHomeCollection((prev) => ({
+           ...prev,
+           video: file,
+           coverImagePreview: previewURL,
+           coverImageType: type,
+         }));
+       },
+     });
+   
     e.target.value = ""; // allow re-upload same file
   };
   const handleSubmit = async (e) => {
@@ -196,9 +196,9 @@ const VideoAdd = () => {
 
               {/* Helper Text */}
               <FormHelperText>
-                Please upload an image or video.
-                Recommended resolution: {1920} × {600}.
-                Max size: 2 MB.
+                Please upload an video.
+                Recommended resolution: 2000 × 600 px.
+                 Video max size: 8 MB.
               </FormHelperText>
 
               {homeCollections.coverImagePreview && (

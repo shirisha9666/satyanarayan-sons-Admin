@@ -233,7 +233,7 @@ export const highervalidateMediaFile = ({
   /* ---------------- IMAGE CONFIG ---------------- */
   const {
     maxSize = 2 * 1024 * 1024, // 2 MB
-    width = 2560,              // Allow higher image resolution
+    width = 2000,              // Allow higher image resolution
   } = imageConfig;
 
   /* ---------------- VIDEO CONFIG ---------------- */
@@ -246,7 +246,7 @@ export const highervalidateMediaFile = ({
   /* ---------------- VIDEO VALIDATION ---------------- */
   if (isVideo) {
     if (file.size > maxVideoSize) {
-      toast.error("Video size should be less than 5 MB.");
+      toast.error("Video size should be less than 8 MB.");
       return;
     }
 

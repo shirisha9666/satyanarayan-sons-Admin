@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -19,7 +20,7 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useVideo } from "./VideoContext";
 
-import { validateMediaFile } from "../HelperImageResoluation";
+import { highervalidateMediaFile, validateMediaFile } from "../HelperImageResoluation";
 
 const VideoUpdate = () => {
   const token = isAutheticated();
@@ -52,15 +53,15 @@ const VideoUpdate = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
-    validateMediaFile({
+    highervalidateMediaFile({
       file,
       imageConfig: {
-        width: 1920,
+        width: 2000,
         height: 600,
-        maxSize: 1 * 1024 * 1024,
+        maxSize: 2 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 8 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setHomeCollection((prev) => ({
@@ -71,6 +72,7 @@ const VideoUpdate = () => {
         }));
       },
     });
+
 
     e.target.value = ""; // allow re-upload same file
   };
@@ -148,6 +150,11 @@ const VideoUpdate = () => {
                 />
               </Button>
 
+              <FormHelperText>
+                Please upload an video.
+                Recommended resolution: 2000 × 600 px.
+                Video max size: 8 MB.
+              </FormHelperText>
               {/* {homeCollections.coverImagePreview && (
                 <Box mt={2}>
                   {homeCollections.coverImageType === "video" ? (

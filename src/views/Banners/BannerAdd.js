@@ -19,7 +19,7 @@ import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
-import { validateMediaFile } from "../HelperImageResoluation";
+import { highervalidateMediaFile, validateMediaFile } from "../HelperImageResoluation";
 
 const BannerAdd = () => {
   const token = isAutheticated()
@@ -50,15 +50,15 @@ const BannerAdd = () => {
 const handleImageChange = (e) => {
   const file = e.target.files[0];
 
-  validateMediaFile({
+  highervalidateMediaFile({
     file,
     imageConfig: {
-      width: 1920,
+      width: 2000,
       height: 600,
-      maxSize: 1 * 1024 * 1024,
+      maxSize: 2 * 1024 * 1024,
     },
     videoConfig: {
-      maxSize: 2 * 1024 * 1024,
+      maxSize: 8 * 1024 * 1024,
     },
     onSuccess: ({ file, previewURL, type }) => {
       setBannerDetails((prev) => ({
@@ -237,10 +237,11 @@ const handleImageChange = (e) => {
   </Button>
 
   {/* Helper Text */}
-  <FormHelperText>
-   Upload images or videos up to 2 MB. Maximum image width is 1920px..
-   
-  </FormHelperText>
+<FormHelperText>
+  Please upload an image or video.
+  Recommended resolution: 2000 × 600 px.
+  Image max size: 2 MB. Video max size: 8 MB.
+</FormHelperText>
 
   {bannerDetails.coverImagePreview && (
     <Box mt={2}>
