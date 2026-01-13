@@ -34,12 +34,13 @@ const GoldSchemaAdd = () => {
     Scheme_Name: "",
     Monthly_Installment: "",
     Months: "",
-gstId:"",
+Gold_Type:"",
     Total_Amount: "",
     Members: "",
     // Start_Date: "",
     End_Date: "",
   });
+  let goldtypes=["22K", "24K","18K"]
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +65,7 @@ gstId:"",
       formData.append("Total_Amount", productDetails.Total_Amount);
 
       formData.append("Members", productDetails.Members);
-           formData.append("gstId", productDetails.gstId);
+           formData.append("Gold_Type", productDetails.Gold_Type);
       // formData.append("Start_Date", productDetails.Start_Date);
       formData.append("End_Date", productDetails.End_Date);
 
@@ -141,15 +142,15 @@ gstId:"",
                  <Grid item xs={12}>
                             <TextField
                               select
-                              label="Select Gst Id"
-                              name="gstId"
-                              value={productDetails.gstId}
+                              label="Select Gold Type"
+                              name="Gold_Type"
+                              value={productDetails.Gold_Type}
                               onChange={handleChange}
                               fullWidth
                               required
                             >
-                              {taxList.map((subcat) => (
-                                <MenuItem value={subcat._id}>{subcat.tax}</MenuItem>
+                              {goldtypes.map((subcat) => (
+                                <MenuItem value={subcat}>{subcat}</MenuItem>
                               ))}
                             </TextField>
                           </Grid>

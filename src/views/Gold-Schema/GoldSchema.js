@@ -33,6 +33,7 @@ const GoldSchema = () => {
   const tableHeadering = [
     "Scheme Code",
     "Scheme Title",
+    "Gold_Type",
     "Monthly Installment",
     "Months",
     "Members",
@@ -184,6 +185,15 @@ const GoldSchema = () => {
                         >
                           {item?.Scheme_Name}
                         </td>
+                         <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.Gold_Type}
+                        </td>
+
 
                         <td
                           style={{

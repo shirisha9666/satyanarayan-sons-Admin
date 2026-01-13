@@ -25,6 +25,7 @@ const GoldSchemaUpdate = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
+  let goldtypes = ["22K", "24K", "18K"];
 
   const navigate = useNavigate();
   const {
@@ -46,7 +47,7 @@ const GoldSchemaUpdate = () => {
     Months: "",
     Total_Amount: "",
     Members: "",
-    gstId: "",
+    Gold_Type: "",
     End_Date: "",
   });
   useEffect(() => {
@@ -57,6 +58,7 @@ const GoldSchemaUpdate = () => {
     if (oldValue) {
       setProductDetails({
         Scheme_Name: oldValue.Scheme_Name || "",
+        Gold_Type: oldValue.Gold_Type,
 
         Monthly_Installment: oldValue.Monthly_Installment || "",
         Months: oldValue.Months || "",
@@ -90,7 +92,7 @@ const GoldSchemaUpdate = () => {
       formData.append("Total_Amount", productDetails.Total_Amount);
 
       formData.append("Members", productDetails.Members);
-               formData.append("gstId", productDetails.gstId);
+      formData.append("Gold_Type", productDetails.Gold_Type);
       // formData.append("Start_Date", productDetails.Start_Date);
       formData.append("End_Date", productDetails.End_Date);
 
@@ -188,15 +190,15 @@ const GoldSchemaUpdate = () => {
             <Grid item xs={12}>
               <TextField
                 select
-                label="Select Gst Id"
-                name="gstId"
-                value={productDetails.gstId}
+                label="Select Gold Type"
+                name="Gold_Type"
+                value={productDetails.Gold_Type}
                 onChange={handleChange}
                 fullWidth
                 required
               >
-                {taxList.map((subcat) => (
-                  <MenuItem value={subcat._id}>{subcat.tax}</MenuItem>
+                {goldtypes.map((subcat) => (
+                  <MenuItem value={subcat}>{subcat}</MenuItem>
                 ))}
               </TextField>
             </Grid>

@@ -21,7 +21,14 @@ const AddEmployee = () => {
 
   const token = isAutheticated();
   const { banner } = useBranche();
-  const { handlegetAllData, employeType, page, itemPerPage ,searchByRole,handlegetEmployeAccessData} = useEmployees();
+  const {
+    handlegetAllData,
+    employeType,
+    page,
+    itemPerPage,
+    searchByRole,
+    handlegetEmployeAccessData,
+  } = useEmployees();
 
   const branchess = banner?.result || [];
 
@@ -32,6 +39,7 @@ const AddEmployee = () => {
     phone: "",
     branchId: "",
     role: "Employee",
+    employeId: "",
     access: {}, // ✅ OBJECT for checkbox handling
     password: "",
   });
@@ -69,12 +77,12 @@ const AddEmployee = () => {
   // ✅ SUBMIT FORM
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-console.log("employeData",employeData)
+    console.log("employeData", employeData);
     const payload = {
       ...employeData,
       access: prepareAccessForBackend(),
     };
-console.log("payload",payload)
+    console.log("payload", payload);
     try {
       setLoading(true);
       await axios.post("/api/employe/create", payload, {
@@ -85,8 +93,8 @@ console.log("payload",payload)
       });
 
       toast.success("Employee Added Successfully");
-      await handlegetAllData(page, itemPerPage, employeType,searchByRole);
-     await handlegetEmployeAccessData()
+      await handlegetAllData(page, itemPerPage, employeType, searchByRole);
+      await handlegetEmployeAccessData();
       navigate("/employee");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -103,7 +111,7 @@ console.log("payload",payload)
     { role: "Content Manager", sendValue: "content_manager" },
     { role: "Employee", sendValue: "employee" },
   ];
-  console.log("filteredNav",filteredNav)
+  console.log("filteredNav", filteredNav);
 
   return (
     <Box style={{ background: "#fff", padding: "1rem" }}>
@@ -134,6 +142,21 @@ console.log("payload",payload)
           />
         </div>
 
+        <div className="col-md-6 mb-3">
+          <label htmlFor="title" className="form-label">
+            Employe Id*
+          </label>
+
+          <input
+            type="text"
+            className="form-control"
+            // id="title"
+            placeholder="Enter Employe Id"
+            name="employeId"
+            value={employeData.employeId}
+            onChange={handleChange}
+          />
+        </div>
         {/* Role */}
         <div className="col-md-6 mb-3">
           <label className="form-label">Role *</label>

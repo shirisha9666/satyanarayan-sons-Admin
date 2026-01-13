@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
 import { useBanner } from "./bannerContext";
 import { getMediaType, isVideo } from "../TypeOfmedia";
-import { validateMediaFile } from "../HelperImageResoluation";
+import { highervalidateMediaFile } from "../HelperImageResoluation"; 
 
 const BannerUpdate = () => {
   const token = isAutheticated();
@@ -119,7 +119,7 @@ const BannerUpdate = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
   
-    validateMediaFile({
+    highervalidateMediaFile({
       file,
       imageConfig: {
         width: 1920,
@@ -127,7 +127,7 @@ const BannerUpdate = () => {
         maxSize: 1 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 8 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setBannerDetails((prev) => ({

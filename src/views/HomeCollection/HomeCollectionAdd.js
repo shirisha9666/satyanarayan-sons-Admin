@@ -195,11 +195,10 @@ const HomeCollectionAdd = () => {
               </Button>
 
               {/* Helper Text */}
-              <FormHelperText>
-                Please upload an image or video.
-                Recommended resolution: {1920} × {600}.
-                Max size: 2 MB.
-              </FormHelperText>
+           <FormHelperText>
+            Upload images or videos up to 2 MB. Maximum image width is 1920px..
+            
+           </FormHelperText>
 
               {homeCollections.coverImagePreview && (
                 <Box mt={2}>

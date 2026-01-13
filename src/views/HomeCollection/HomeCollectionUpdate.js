@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 
 import {
   FormControl,
+  FormHelperText,
   Grid,
   InputLabel,
   MenuItem,
@@ -216,6 +217,11 @@ const HomeCollectionUpdate = () => {
               <Typography variant="subtitle1" mb={1}>
                 Cover Media (Image / Video)
               </Typography>
+                <FormHelperText>
+                 Upload images or videos up to 2 MB. Maximum image width is 1920px..
+                 
+                </FormHelperText>
+          
 
               <Button variant="contained" component="label">
                 Upload Media
@@ -226,6 +232,7 @@ const HomeCollectionUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
+
 
               {homeCollections.coverImagePreview && (
                 <Box mt={2}>
