@@ -86,7 +86,6 @@ const HomeCollection = () => {
                     }}
                   >
                     Add
-          
                   </Button>
                 </div> */}
               </div>
@@ -131,29 +130,48 @@ const HomeCollection = () => {
                     cursor: "pointer",
                   }}
                 >
-                 Trendy
+                  Trendy
                 </Button>
 
-               <Button
-  onClick={() => {
-    setBannerType("Instagram");
-    handlegetAllData(page, itemPerPage, "Instagram");
-  }}
-  variant="contained"
-  style={{
-    background:
-      bannertype === "Instagram" ? "#D4AF37" : "#E1306C",
-    color: "#fff",
-    fontWeight: "bold",
-    padding: "8px 20px",
-    borderRadius: "10px",
-    textTransform: "none",
-    cursor: "pointer",
-  }}
->
-  Instagram
-</Button>
+                <Button
+                  onClick={() => {
+                    setBannerType("Instagram");
+                    handlegetAllData(page, itemPerPage, "Instagram");
+                  }}
+                  variant="contained"
+                  style={{
+                    background:
+                      bannertype === "Instagram" ? "#D4AF37" : "#E1306C",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    padding: "8px 20px",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  Instagram
+                </Button>
 
+                <Button
+                  onClick={() => {
+                    setBannerType("Almaas");
+                    handlegetAllData(page, itemPerPage, "Almaas");
+                  }}
+                  variant="contained"
+                  style={{
+                   background: bannertype === "Almaas" ? "#C9A227" : "#8E2DE2",
+
+                    color: "#fff",
+                    fontWeight: "bold",
+                    padding: "8px 20px",
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  Almaas
+                </Button>
               </div>
             </div>
 
@@ -168,7 +186,10 @@ const HomeCollection = () => {
                 >
                   <tr>
                     {tableHeadering.map((head) => (
-                      <th className={head==="Actions"?"text-center":""}> {head}</th>
+                      <th className={head === "Actions" ? "text-center" : ""}>
+                        {" "}
+                        {head}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -230,15 +251,29 @@ const HomeCollection = () => {
                           )}
                         </td>
 
-                        <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                          <div style={{ display: "flex", gap: "10px", justifyContent: "center", alignItems: "center" }}>
+                        <td
+                          style={{
+                            textAlign: "center",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
                             <button
                               style={{ color: "white" }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
                               onClick={async () => {
                                 await handleOneBanner(item._id);
-                                navigate(`/home-collections/update/${item._id}`);
+                                navigate(
+                                  `/home-collections/update/${item._id}`
+                                );
                               }}
                             >
                               {viewBannerId === item._id ? (
@@ -267,7 +302,7 @@ const HomeCollection = () => {
                 </tbody>
               </table>
             </div>
-{/* 
+            {/* 
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
                 count={banner?.totalPages}

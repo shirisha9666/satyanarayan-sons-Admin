@@ -54,10 +54,10 @@ const HomeCollectionAdd = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 1 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setHomeCollection((prev) => ({
@@ -145,6 +145,7 @@ const HomeCollectionAdd = () => {
                 <MenuItem value="New_Arrivals">New_Arrivals</MenuItem>
                 <MenuItem value="Trendy">Trendy</MenuItem>
                 <MenuItem value="Instagram">Instagram</MenuItem>
+                <MenuItem value="Almaas">Almaas</MenuItem>
               </TextField>
             </Grid>
 
@@ -195,10 +196,10 @@ const HomeCollectionAdd = () => {
               </Button>
 
               {/* Helper Text */}
-           <FormHelperText>
-            Upload images or videos up to 2 MB. Maximum image width is 1920px..
-            
-           </FormHelperText>
+              <FormHelperText>
+                Upload images or videos up to 2 MB. Maximum image width is 1920px..
+
+              </FormHelperText>
 
               {homeCollections.coverImagePreview && (
                 <Box mt={2}>

@@ -73,10 +73,10 @@ const HomeCollectionUpdate = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 1 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         console.log("type", type);
@@ -133,7 +133,6 @@ const HomeCollectionUpdate = () => {
     }
   };
 
-
   useEffect(() => {
     if (BannerOneDetails) {
       setHomeCollection({
@@ -149,7 +148,6 @@ const HomeCollectionUpdate = () => {
   useEffect(() => {
     handleOneBanner(id);
   }, [id]);
-
 
   return (
     <div>
@@ -176,7 +174,6 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.selectedType}
                 onChange={handleChange}
                 fullWidth
-
               >
                 <MenuItem value="">Select Type</MenuItem>
                 <MenuItem value="New_Arrivals">New_Arrivals</MenuItem>
@@ -193,7 +190,6 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.name}
                 onChange={handleChange}
                 fullWidth
-
               />
             </Grid>
 
@@ -205,7 +201,6 @@ const HomeCollectionUpdate = () => {
                 value={homeCollections.mediaType}
                 onChange={handleChange}
                 fullWidth
-
               >
                 <MenuItem value="">Select Type</MenuItem>
                 <MenuItem value="image">Image</MenuItem>
@@ -217,11 +212,10 @@ const HomeCollectionUpdate = () => {
               <Typography variant="subtitle1" mb={1}>
                 Cover Media (Image / Video)
               </Typography>
-                <FormHelperText>
-                 Upload images or videos up to 2 MB. Maximum image width is 1920px..
-                 
-                </FormHelperText>
-          
+              <FormHelperText>
+                Upload images or videos up to 4 MB. Maximum image width is
+                1920px..
+              </FormHelperText>
 
               <Button variant="contained" component="label">
                 Upload Media
@@ -232,7 +226,6 @@ const HomeCollectionUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-
 
               {homeCollections.coverImagePreview && (
                 <Box mt={2}>

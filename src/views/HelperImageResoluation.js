@@ -83,13 +83,13 @@ export const validateMediaFile = ({
 
   // ✅ IMAGE CONFIG (2 MB, WIDTH ONLY)
   const {
-    maxSize = 2 * 1024 * 1024, // 2MB
+    maxSize = 4 * 1024 * 1024, // 2MB
     width = 1920,              // Max width only
   } = imageConfig;
 
   // ✅ VIDEO CONFIG (2 MB)
   const {
-    maxSize: maxVideoSize = 2 * 1024 * 1024, // 2MB
+    maxSize: maxVideoSize = 4 * 1024 * 1024, // 2MB
   } = videoConfig;
 
   const previewURL = URL.createObjectURL(file);
@@ -97,7 +97,7 @@ export const validateMediaFile = ({
   /* ---------------- VIDEO ---------------- */
   if (isVideo) {
     if (file.size > maxVideoSize) {
-      toast.error("Video size should be less than 2 MB.");
+      toast.error("Video size should be less than 4 MB.");
       return;
     }
 
@@ -112,7 +112,7 @@ export const validateMediaFile = ({
   /* ---------------- IMAGE ---------------- */
   if (isImage) {
     if (file.size > maxSize) {
-      toast.error("Image size should be less than 2 MB.");
+      toast.error("Image size should be less than 4 MB.");
       return;
     }
 
