@@ -106,7 +106,7 @@ export default function GoldSchemeDetails() {
                   <TableCell align="right">
                     <Button onClick={async() => {
                      await  handleByIdInvoice(val._id)
-                      navigate(`/Transactions/user/Invoice/${val._id}`)
+                      navigate(`/Customers/user/Invoice/${val._id}`)
                     }}
                       variant="contained"
                       size="small"

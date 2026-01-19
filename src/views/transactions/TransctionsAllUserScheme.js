@@ -120,7 +120,7 @@ export default function UserAllSchemesTable() {
                     onClick={async () => {
                       await handleAllUserInvoice(row?._id);
                       navigate(
-                        `/Transactions/All/invoices/${row?.dateOfJoining}/${row?.Scheme_ID?.Scheme_Name}/${name}/${row?._id}`
+                        `/Customers/All/invoices/${row?.dateOfJoining}/${row?.Scheme_ID?.Scheme_Name}/${name}/${row?._id}`
                       );
                     }}
                     variant="contained"

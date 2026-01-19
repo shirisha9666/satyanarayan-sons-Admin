@@ -136,13 +136,13 @@ export const TransactionsProvider = ({ children }) => {
     const handleByIdInvoice = async (id) => {
     try {
       setInvoiceDetailLoading(id);
-      let resp = await axios.get(`api/customer/get/user/invoice/${id}`, {
+      let resp = await axios.get(`/api/customer/get/user/invoice/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      setInvoiceDetail(resp?.data?.result);
+     
+      setInvoiceDetail(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);

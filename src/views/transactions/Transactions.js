@@ -259,7 +259,7 @@ const Transactions = () => {
                                 setActiveBtn("View");
                                 await handleUserSchemas(item._id);
 
-                                navigate(`/Transactions/All/user/Schemas/${item?.firstname}/${item._id}`);
+                                navigate(`/Customers/All/user/Schemas/${item?.firstname}/${item._id}`);
                               }}
                             >
                               {viewBannerId ===item._id ? (

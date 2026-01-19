@@ -1212,29 +1212,29 @@ const routes = [
   },
 
   {
-    path: "/Transactions",
-    name: "Transactions",
+    path: "/Customers",
+    name: "Customers ",
     element: Transactions,
-    navName: "Transactions",
+    navName: "Customers ",
   },
   {
-    path: "/Transactions/All/invoices/:start/:schemename/:name/:id",
-    name: "Transactions",
+    path: "/Customers/All/invoices/:start/:schemename/:name/:id",
+    name: "Customers ",
     element: GoldSchemeDetails,
-    navName: "Transactions",
+    navName: "Customers ",
   },
   {
-    path: "/Transactions/All/user/Schemas/:name/:id",
-    name: "Transactions",
+    path: "/Customers/All/user/Schemas/:name/:id",
+    name: "Customers ",
     element: UserAllSchemesTable,
-    navName: "Transactions",
+    navName: "Customers ",
   },
 
     {
-    path: "/Transactions/user/Invoice/:id",
-    name: "Transactions",
+    path: "/Customers/user/Invoice/:id",
+    name: "Customers",
     element: TransctionInvoice,
-    navName: "Transactions",
+    navName: "Customers ",
   },
   // ------------------------ End Employee Routes-----------------------
 
