@@ -4,113 +4,75 @@ import { isAutheticated } from "src/auth";
 import axios from "axios";
 import { CircularProgress } from "@material-ui/core";
 import { useSeries } from "../series/SeriesContext";
+import { useCategory } from "../category/CategoryContext";
+import { useSubCategory } from "../subcategory/subCategoryContext";
+import { useProduct } from "../Product/ProductContenxt";
 
 const WidgetsDropdown = ({ genre = [] }) => {
-  const token = isAutheticated();
-  const {title}=useSeries()
-
-  // Keep only the genre-related data
-  const [genres, setGenres] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [chapters, setChapters] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const getAllGenre = async () => {
-    try {
-      setLoading(true);
-      let res = await axios.get(`/api/genre/getAllGenres`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("genres", res.data);
-      setGenres(res?.data?.genres || []);
-    } catch (error) {
-      console.error("Error fetching genres:", error);
-      // setGenres([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getAllSubjects = async () => {
-    try {
-      let res = await axios.get(`/api/subject/getSubjects`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("subjects", res.data);
-      setSubjects(res?.data?.subjects || []);
-    } catch (error) {
-      console.error("Error fetching genres:", error);
-      setGenres([]);
-    }
-  };
-
-  const getAllChaptersbyUser = async () => {
-    try {
-      let res = await axios.get(`/api/chapter/getAll/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("chapters", res.data);
-      setChapters(res?.data?.chapter || []);
-    } catch (error) {
-      console.error("Error fetching genres:", error);
-      setChapters([]);
-    }
-  };
+  const { category } = useCategory();
+  const { banner } = useSubCategory();
+  const { products, loading, handlegetAllProductsCount, productCount } =
+    useProduct();
 
   useEffect(() => {
-    if (!genres.length && token) {
-      getAllGenre();
-    }
-    if (!subjects.length && token) {
-      getAllSubjects();
-    }
-    if (!chapters.length && token) {
-      getAllChaptersbyUser();
-    }
+    handlegetAllProductsCount();
   }, []);
-  console.log("genres.WidgetsDropdown", genres);
+
+    const colors = ["primary", "dark", "secondary", "info", "success"];
+
+  console.log("products0000000000000000000000000000", productCount);
 
   return (
-    <>
-      <h4>Genre & Subjects</h4>
 
-      <CRow>
+     <div className="px-3 py-2">
+      {/* ===== OVERVIEW ===== */}
+      <h4 className="mb-3 fw-semibold text-dark">Overview</h4>
+
+      <CRow className="mb-4">
         <CCol sm={6} lg={3}>
           <CWidgetStatsA
-            className="mb-4"
-            color="primary"
-            value={<>{loading?<CircularProgress/>:genres.length}</>}
-            title="Total Genres"
+            className="shadow-sm h-100"
+            color="info"
+            value={loading ? <CircularProgress size={22} /> : category?.result?.length}
+            title="Total Categories"
           />
         </CCol>
+
         <CCol sm={6} lg={3}>
           <CWidgetStatsA
-            className="mb-4"
-            color="primary"
-            value={<>{loading?<CircularProgress/>:subjects.length}</>}
-            title="Total SubGenres"
+            className="shadow-sm h-100"
+            color="warning"
+            value={loading ? <CircularProgress size={22} /> : banner?.category?.length}
+            title="Total Subcategories"
+          />
+        </CCol>
+
+        <CCol sm={6} lg={3}>
+          <CWidgetStatsA
+            className="shadow-sm h-100"
+            color="success"
+            value={loading ? <CircularProgress size={22} /> : products?.totalBanners}
+            title="Total Products"
           />
         </CCol>
       </CRow>
 
-      <h4>Title</h4>
+      {/* ===== CATEGORY WISE ===== */}
+      <h4 className="mb-3 fw-semibold text-dark">Category-wise Products</h4>
+
       <CRow>
-        <CCol sm={6} lg={3}>
-          <CWidgetStatsA
-            className="mb-4"
-            color="primary"
-            value={<>{loading?<CircularProgress/>:title?.length}</>}
-            title="Total Title"
-          />
-        </CCol>
+        {productCount?.map((val, index) => (
+          <CCol sm={6} lg={3} key={val.categoryName}>
+            <CWidgetStatsA
+              className="mb-4 shadow-sm h-100"
+              color={colors[index % colors.length]}
+              value={loading ? <CircularProgress size={22} /> : val.totalProducts}
+              title={val.categoryName}
+            />
+          </CCol>
+        ))}
       </CRow>
-    </>
+    </div>
   );
 };
 

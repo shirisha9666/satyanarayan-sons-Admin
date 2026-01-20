@@ -15,7 +15,7 @@ import { useProduct } from "./ProductContenxt";
 const Products = () => {
   const navigate = useNavigate();
   const {
-    banner,
+    products,
     handlegetAllProducts,
     setPage,
     setItemPerPage,
@@ -39,7 +39,7 @@ const Products = () => {
     "Image",
     "Actions",
   ];
-  let fetchProducts = banner?.result;
+  let fetchProducts = products?.result;
 
   return (
     <div className="row">
@@ -276,7 +276,7 @@ const Products = () => {
 
             <div style={{ display: "flex", justifyContent: "right" }}>
               <Pagination
-                count={banner?.totalPages}
+                count={products?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);

@@ -272,13 +272,13 @@ const _nav = [
         to: "/logo",
         group: "Settings",
       },
-      // {
-      //   component: CNavItem,
-      //   name: "Copyright Message",
-      //   icon: <CIcon icon={cilLanguage} customClassName="nav-icon" />,
-      //   to: "/copyright/message",
-      //   group: "Settings",
-      // },
+      {
+        component: CNavItem,
+        name: "Copyright Message",
+        icon: <CIcon icon={cilLanguage} customClassName="nav-icon" />,
+        to: "/copyright/message",
+        group: "Settings",
+      },
      
     ],
   },

@@ -11,11 +11,12 @@ export const ProductProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(5);
-  const [banner, setBanner] = useState([]);
+  const [products, setProducts] = useState([]);
   const [bannertype, setBannerType] = useState("Home Banner");
   const [bannerId, setBannerId] = useState(null);
   const [productId, setProductId] = useState(null);
   const [productViewDetails, setProductViewDetails] = useState([]);
+  const [productCount,setProductsCount]=useState([])
 
   const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
     try {
@@ -31,7 +32,28 @@ export const ProductProvider = ({ children }) => {
         },
       });
       console.log("response?.data", response?.data);
-      setBanner(response?.data);
+      setProducts(response?.data);
+    } catch (error) {
+      const errormssage = error.response && error.response.data.message;
+      console.log("errormssage", errormssage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+    const handlegetAllProductsCount = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/product/getAll/products/count", {
+        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setProductsCount(response?.data?.data);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
       console.log("errormssage", errormssage);
@@ -85,7 +107,7 @@ export const ProductProvider = ({ children }) => {
   return (
     <ProductContext.Provider
       value={{
-        banner,
+        products,
         handlegetAllProducts,
         setPage,
         setItemPerPage,
@@ -98,7 +120,9 @@ export const ProductProvider = ({ children }) => {
         bannerId,
         handlegetOneProduct,
         productViewDetails,
-        productId
+        productId,
+        handlegetAllProductsCount,
+        productCount
       }}
     >
       {children}
