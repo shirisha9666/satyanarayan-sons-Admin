@@ -201,12 +201,12 @@ const AppSidebar = () => {
       />
 
 
-      <h5 
+      {/* <h5 
         className="m-0 text-white"
         style={{ fontSize: "1.4rem", fontWeight: "600" }}
       >
         {appName}
-      </h5>
+      </h5> */}
     </Link>
 
  

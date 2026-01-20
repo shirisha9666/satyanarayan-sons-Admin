@@ -215,27 +215,27 @@ const _nav = [
     group: "",
 
     items: [
-      {
-        component: CNavItem,
-        name: "Advertisement",
-        icon: <CIcon icon={cilFeaturedPlaylist} customClassName="nav-icon" />,
-        to: "/Advertisement",
-        group: "Settings",
-      },
-      {
-        component: CNavItem,
-        name: "Content ",
-        icon: <CIcon icon={cilText} customClassName="nav-icon" />,
-        to: "/content",
-        group: "Settings",
-      },
-      {
-        component: CNavItem,
-        name: "GST",
-        icon: <CIcon icon={cilTablet} customClassName="nav-icon" />,
-        to: "/gst",
-        group: "Settings",
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Advertisement",
+      //   icon: <CIcon icon={cilFeaturedPlaylist} customClassName="nav-icon" />,
+      //   to: "/Advertisement",
+      //   group: "Settings",
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: "Content ",
+      //   icon: <CIcon icon={cilText} customClassName="nav-icon" />,
+      //   to: "/content",
+      //   group: "Settings",
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: "GST",
+      //   icon: <CIcon icon={cilTablet} customClassName="nav-icon" />,
+      //   to: "/gst",
+      //   group: "Settings",
+      // },
       {
         component: CNavItem,
         name: "Social Media",
@@ -258,13 +258,13 @@ const _nav = [
         group: "Settings",
       },
 
-      {
-        component: CNavItem,
-        name: "Address",
-        icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
-        to: "/address",
-        group: "Settings",
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Address",
+      //   icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
+      //   to: "/address",
+      //   group: "Settings",
+      // },
       {
         component: CNavItem,
         name: "Logos",
@@ -272,13 +272,13 @@ const _nav = [
         to: "/logo",
         group: "Settings",
       },
-      {
-        component: CNavItem,
-        name: "Copyright Message",
-        icon: <CIcon icon={cilLanguage} customClassName="nav-icon" />,
-        to: "/copyright/message",
-        group: "Settings",
-      },
+      // {
+      //   component: CNavItem,
+      //   name: "Copyright Message",
+      //   icon: <CIcon icon={cilLanguage} customClassName="nav-icon" />,
+      //   to: "/copyright/message",
+      //   group: "Settings",
+      // },
      
     ],
   },
