@@ -212,6 +212,7 @@ import BranchManagerCreate from "./views/Branches/BranchManagerCreate";
 import BranchUpdate from "./views/Branches/BranchesUpdate";
 import BranchCreate from "./views/Branches/BranchesAdd";
 import Branches from "./views/Branches/Branches";
+import ViewBranches  from "./views/Branches/BranchesView"
 import AddEmployee from "./views/employes/EmployeesAdd";
 import EmployeUpdate from "./views/employes/EmployeesUpdate";
 import Employees from "./views/employes/Employees";
@@ -700,6 +701,17 @@ const routes = [
     element: BranchManagerCreate,
     navName: "Settings",
   },
+
+    {
+    path: "/Branches/view/:id",
+    name: "Branches",
+    element: ViewBranches,
+    navName: "Settings",
+  },
+
+
+
+  
   {
     path: "/Advertisement",
     name: "Advertisement",

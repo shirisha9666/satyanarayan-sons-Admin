@@ -40,8 +40,8 @@ const Branches = () => {
     "City",
     "Contact Number",
     "Branch Manager",
-    "Address",
-    "PIN Code",
+    // "Address",
+    // "PIN Code",
     "Actions",
   ];
 
@@ -175,10 +175,9 @@ const Branches = () => {
                         <td>{item?.state}</td>
                         <td>{item?.city}</td>
                         <td>{item?.contactNumber}</td>
-                        <td>{item?.managerId?.name}</td>
+                        <td>{item?.managerId?.name || "null"}</td>
 
-                        <td>{item?.address}</td>
-                        <td>{item?.pincode}</td>
+               
 
                         <td
                           style={{
@@ -206,6 +205,20 @@ const Branches = () => {
                               }
                             >
                               Manager
+                            </button>
+
+                             <button
+                              style={{ color: "white" }}
+                              type="button"
+                              className="btn btn-info waves-effect waves-light btn-table"
+                              onClick={ () => {
+                             
+                                navigate(
+                                  `/Branches/view/${item._id}`
+                                );
+                              }}
+                            >
+                           View
                             </button>
                             <button
                               style={{ color: "white" }}
