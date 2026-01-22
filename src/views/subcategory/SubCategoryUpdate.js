@@ -37,12 +37,11 @@ const SubCategoryUpdate = () => {
   } = useSubCategory();
   let subcategoryDetailsData = subCategoryViewDetais?.category;
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
-    name: subcategoryDetailsData?.name || "",
+    name: "",
 
-    subcategory: subcategoryDetailsData?.subcategory || "",
-    subcategorythumbnail:
-      subcategoryDetailsData?.subcategorythumbnail?.url || null,
-    coverImagePreview: subcategoryDetailsData?.subcategorythumbnail?.url || "",
+    subcategory: "",
+    subcategorythumbnail: null,
+    coverImagePreview: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +87,7 @@ const SubCategoryUpdate = () => {
 
       formData.append(
         "subcategorythumbnail",
-        subCategoryDetails.subcategorythumbnail
+        subCategoryDetails.subcategorythumbnail,
       );
 
       const res = await axios.patch(
@@ -99,7 +98,7 @@ const SubCategoryUpdate = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const result = res.data;
@@ -122,11 +121,28 @@ const SubCategoryUpdate = () => {
       setErrorData("");
     }
   };
-  useEffect(() => {
-    handleSubcategoryDetailsById(id);
-  }, []);
 
-  console.log("subCategoryViewDetais", subCategoryViewDetais.category);
+  useEffect(() => {
+    if (id) {
+      handleSubcategoryDetailsById(id);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (subcategoryDetailsData) {
+      setSubCategoryDeatills({
+        name: subcategoryDetailsData?.name || "",
+
+        subcategory: subcategoryDetailsData?.subcategory || "",
+        subcategorythumbnail:
+          subcategoryDetailsData?.subcategorythumbnail?.url || null,
+        coverImagePreview:
+          subcategoryDetailsData?.subcategorythumbnail?.url || "",
+      });
+    }
+  }, [subcategoryDetailsData]);
+
+
   return (
     <div>
       <Box
@@ -193,7 +209,7 @@ const SubCategoryUpdate = () => {
                 <Box mt={2}>
                   {isVideo(
                     subCategoryDetails.coverImagePreview,
-                    subCategoryDetails.subcategorythumbnail
+                    subCategoryDetails.subcategorythumbnail,
                   ) ? (
                     <video
                       src={subCategoryDetails.coverImagePreview}
