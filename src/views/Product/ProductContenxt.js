@@ -92,7 +92,7 @@ export const ProductProvider = ({ children }) => {
         },
       });
 
-      setProductViewDetails(resp?.data?.product);
+      setProductViewDetails(resp?.data);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);

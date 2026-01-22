@@ -37,14 +37,14 @@ const ProductUpdate = () => {
   } = useProduct();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
-
+  let productView = productViewDetails?.product;
   const [productDetails, setProductDetails] = useState({
-    productName: productViewDetails?.productName || "",
-    categoryId: productViewDetails?.categoryId?._id || "",
-    subcategoryId: productViewDetails?.subcategoryId?._id || "",
+    productName: "",
+    categoryId: "",
+    subcategoryId: "",
 
-    productImage: productViewDetails?.productImage?.url || null,
-    coverImagePreview: productViewDetails?.productImage?.url || "",
+    productImage: null,
+    coverImagePreview: "",
   });
 
   console.log("category", category?.result);
@@ -145,7 +145,7 @@ const ProductUpdate = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -157,9 +157,22 @@ const ProductUpdate = () => {
       setErrorData("");
     }
   };
+
+  useEffect(() => {
+    if (productView) {
+      setProductDetails({
+        productName: productView?.productName || "",
+        categoryId: productView?.categoryId?._id || "",
+        subcategoryId: productView?.subcategoryId?._id || "",
+
+        productImage: productView?.productImage?.url || null,
+        coverImagePreview: productView?.productImage?.url || "",
+      });
+    }
+  }, [productView]);
   useEffect(() => {
     handlegetOneProduct(id);
-  }, []);
+  }, [id]);
 
   return (
     <div>
@@ -221,22 +234,22 @@ const ProductUpdate = () => {
                 ))}
               </TextField>
             </Grid> */}
-           <Grid item xs={12}>
-                <TextField
-                  select
-                  label="Select Subcategory Type"
-                  name="subcategoryId"
-                  value={productDetails.subcategoryId}
-                  onChange={handleChange}
-                  fullWidth
-                >
-                  {subcategorys.map((subcat) => (
-                    <MenuItem key={subcat._id} value={subcat._id}>
-                      {subcat.subcategory}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+            <Grid item xs={12}>
+              <TextField
+                select
+                label="Select Subcategory Type"
+                name="subcategoryId"
+                value={productDetails.subcategoryId}
+                onChange={handleChange}
+                fullWidth
+              >
+                {subcategorys.map((subcat) => (
+                  <MenuItem key={subcat._id} value={subcat._id}>
+                    {subcat.subcategory}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
@@ -251,10 +264,10 @@ const ProductUpdate = () => {
                   onChange={handleImageChange}
                 />
               </Button>
-                  <FormHelperText>
-                                 Please upload an image . Recommended resolution: {1920}{" "}
-                                 × {600}. Max size: 4 MB.
-                               </FormHelperText>
+              <FormHelperText>
+                Please upload an image . Recommended resolution: {1920} × {600}.
+                Max size: 4 MB.
+              </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>
                   <img
