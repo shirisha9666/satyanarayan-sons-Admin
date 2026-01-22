@@ -227,7 +227,7 @@ const HomeCollectionUpdate = () => {
                 />
               </Button>
 
-              {homeCollections.coverImagePreview && (
+              {/* {homeCollections.coverImagePreview && (
                 <Box mt={2}>
                   {homeCollections.coverImageType === "video" ? (
                     <video
@@ -255,7 +255,40 @@ const HomeCollectionUpdate = () => {
                     />
                   )}
                 </Box>
-              )}
+              )} */}
+
+                {homeCollections.coverImagePreview && (
+                              <Box mt={2}>
+                                {isVideo(
+                                  homeCollections.coverImagePreview,
+                                  homeCollections.Thumbnail,
+                                ) ? (
+                                  <video
+                                    src={homeCollections.coverImagePreview}
+                                    controls
+                                    muted
+                                    playsInline
+                                    style={{
+                                      width: "100%",
+                                      maxHeight: 300,
+                                      objectFit: "cover",
+                                      borderRadius: 8,
+                                    }}
+                                  />
+                                ) : (
+                                  <img
+                                    src={homeCollections.coverImagePreview}
+                                    alt="Cover Preview"
+                                    style={{
+                                      width: "100%",
+                                      maxHeight: 300,
+                                      objectFit: "cover",
+                                      borderRadius: 8,
+                                    }}
+                                  />
+                                )}
+                              </Box>
+                            )}
             </Grid>
 
             <Grid item xs={12}>
