@@ -27,7 +27,7 @@ const Billing = () => {
   const { appdetails } = useCustomer();
 
   const [totalpages, setTotalPages] = useState();
-  const [itemPerPage, setItemPerPage] = useState(10);
+  const [itemPerPage, setItemPerPage] = useState(5);
 
   const [currentPage, setCurrentPage] = useState();
   const [errormsge, setErrorMessage] = useState("");
@@ -58,8 +58,8 @@ const Billing = () => {
 
       setBiling(res?.data);
       setTotalPages(res.data.totalPages);
-
       setItemPerPage(limit);
+      // setCurrentPage(data.currentPage);
     } catch (error) {
       const msg = error.response?.data?.message || "Internal Server Error";
       setErrorMessage(msg);
@@ -93,13 +93,23 @@ const Billing = () => {
     },
   ];
 
+  // const handlePrev = () => {
+  //   if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  // };
+  // const handleNext = () => {
+  //   if (currentPage < totalpages) setCurrentPage((prev) => prev - 1);
+  // };
+
   const handlePrev = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
   const handleNext = () => {
-    if (currentPage < totalpages) setCurrentPage((prev) => prev - 1);
+    if (currentPage < totalpages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
-
   return (
     <>
       <div>
@@ -311,7 +321,7 @@ const Billing = () => {
                                 ›
                             </button>
                         </div> */}
-            <div className="orders-pagination">
+            {/* <div className="orders-pagination">
               <button
                 className="page-nav-btn"
                 onClick={handlePrev}
@@ -329,6 +339,38 @@ const Billing = () => {
                     onClick={() => setCurrentPage(i + 1)}
                   >
                     {i + 1}
+                  </button>
+                );
+              })}
+
+              <button
+                className="page-nav-btn"
+                onClick={handleNext}
+                disabled={currentPage === totalpages}
+              >
+                ›
+              </button>
+            </div> */}
+            <div className="orders-pagination">
+              <button
+                className="page-nav-btn"
+                onClick={handlePrev}
+                disabled={currentPage === 1}
+              >
+                ‹
+              </button>
+
+              {Array.from({ length: totalpages }, (_, i) => {
+                const page = i + 1;
+                return (
+                  <button
+                    key={page}
+                    className={`page-num-btn ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
                   </button>
                 );
               })}
