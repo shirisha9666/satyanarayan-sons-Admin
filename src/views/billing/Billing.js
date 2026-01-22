@@ -36,7 +36,6 @@ const Billing = () => {
   const navigate = useNavigate();
 
   const getBiling = async (
-
     invoiceNo = search,
     page = 1,
     limit = itemPerPage,
@@ -92,7 +91,6 @@ const Billing = () => {
       value: `₹  ${biling?.summary?.totalReceivedAmount}`,
       color: "#111",
     },
-
   ];
 
   const handlePrev = () => {
@@ -110,7 +108,6 @@ const Billing = () => {
       <div className="billing-page">
         <main className="billing-main">
           <header className="billing-header">
-          
             {/* <div className="date-range-picker">
               <label htmlFor="filterDate" className="date-label">
                 Select Date:
@@ -137,7 +134,11 @@ const Billing = () => {
                 type="text"
                 placeholder="Search By Invoice Number"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  setSearch(val);
+                  getBiling(val, currentPage, itemPerPage, searchByDate);
+                }}
               />
             </div>
           </header>
@@ -185,7 +186,9 @@ const Billing = () => {
                           ? "Null"
                           : r?.transactionId}
                       </td>
-                      <td className="text-center">{r?.customerId?.firstname} {r?.customerId?.lastname}</td>
+                      <td className="text-center">
+                        {r?.customerId?.firstname} {r?.customerId?.lastname}
+                      </td>
                       <td className="text-center">
                         {r.InvoiceId?.Amount === "0"
                           ? r?.InvoiceId?.Amount
@@ -238,7 +241,9 @@ const Billing = () => {
                               (e.target.style.backgroundColor = "#1E88E5")
                             }
                             // onClick={() => navigate(`/view/${r?.userId?._id}`)}
-                            onClick={() => navigate(`/Customers/user/Invoice/${r?._id}`)}
+                            onClick={() =>
+                              navigate(`/Customers/user/Invoice/${r?._id}`)
+                            }
                           >
                             👁 View
                           </button>
