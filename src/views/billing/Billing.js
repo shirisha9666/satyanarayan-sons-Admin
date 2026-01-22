@@ -19,7 +19,17 @@ const tableheadings = [
 ];
 
 const Billing = () => {
-  const { billingInvoice, getBilingInvoice } = useBilling();
+  const formatDateForBackend = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date
+      .toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      })
+      .replace(",", "");
+  };
 
   const token = isAutheticated();
   const [search, setSearch] = useState();
@@ -43,13 +53,15 @@ const Billing = () => {
   ) => {
     try {
       setLoading(true);
+      console.log("date", date);
       const params = { limit, page };
       if (invoiceNo && invoiceNo.trim() !== "") {
         params.invoiceNo = invoiceNo.trim();
       }
-      if (date && date.trim() !== "") {
-        params.startDate = date.trim();
+      if (date) {
+        params.startDate = formatDateForBackend(searchByDate);
       }
+      console.log(" params.startDate", params.startDate);
 
       const res = await axios.get("/api/billing/get", {
         params,
@@ -137,6 +149,24 @@ const Billing = () => {
                 Filter
               </button>
             </div> */}
+
+            <div className="date-range-picker">
+              <label htmlFor="filterDate" className="date-label">
+                Select Date:
+              </label>
+
+              <input
+                type="date"
+                id="filterDate"
+                value={searchByDate}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  setSearchByDate(e.target.value);
+                  getBiling(search, currentPage, itemPerPage, val);
+                }}
+                className="date-input"
+              />
+            </div>
 
             <div className="">
               <input

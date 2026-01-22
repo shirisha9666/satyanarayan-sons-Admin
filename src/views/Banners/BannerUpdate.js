@@ -38,12 +38,12 @@ const BannerUpdate = () => {
   } = useBanner();
   let bannerdetails = BannerOneDetails?.homeBanner;
   const [bannerDetails, setBannerDetails] = useState({
-    name: bannerdetails?.name || "",
-    subtitle: bannerdetails?.subtitle || "",
-    content: bannerdetails?.content || "",
-    banneryType: bannerdetails?.bannerType || "",
-    banner: bannerdetails?.banner?.url || null,
-    coverImagePreview: bannerdetails?.banner.url || "",
+    name: "",
+    subtitle: "",
+    content: "",
+    banneryType: "",
+    banner: null,
+    coverImagePreview: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +109,7 @@ const BannerUpdate = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -122,10 +122,23 @@ const BannerUpdate = () => {
     }
   };
   useEffect(() => {
-    handleOneBanner(id);
+    if (id) {
+      handleOneBanner(id);
+    }
   }, [id]);
-
-  console.log("BannerOneDetails", BannerOneDetails.homeBanner);
+  useEffect(() => {
+    if (bannerdetails) {
+      setBannerDetails({
+        name: bannerdetails.name || "",
+        subtitle: bannerdetails.subtitle || "",
+        content: bannerdetails.content || "",
+        banneryType: bannerdetails.bannerType || "",
+        banner: bannerdetails.banner?.url || null,
+        coverImagePreview: bannerdetails.banner?.url || "",
+      });
+    }
+  }, [bannerdetails]);
+  console.log("bannerdetails?.bannerdetails", bannerdetails?.bannerdetails);
   return (
     <div>
       <Box
@@ -226,7 +239,7 @@ const BannerUpdate = () => {
                 <Box mt={2}>
                   {isVideo(
                     bannerDetails.coverImagePreview,
-                    bannerDetails.banner
+                    bannerDetails.banner,
                   ) ? (
                     <video
                       src={bannerDetails.coverImagePreview}
