@@ -37,11 +37,12 @@ const CategoryUpdate = () => {
     handlegetOneCategory,
     categoryViewDetails,
   } = useCategory();
+  let categoryViewDetailsData = categoryViewDetails?.category;
   const [categoryDetails, setCategoryDetails] = useState({
-    name: categoryViewDetails?.category?.name || "",
-    category: categoryViewDetails?.category?.category || "",
-    categorybanner: categoryViewDetails?.category?.categorybanner?.url || null,
-    coverImagePreview: categoryViewDetails?.category?.categorybanner?.url || "",
+    name: "",
+    category: "",
+    categorybanner: null,
+    coverImagePreview: "",
   });
 
   const handleChange = (e) => {
@@ -126,10 +127,10 @@ const CategoryUpdate = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 1 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 2 * 1024 * 1024,
+        maxSize: 4 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setCategoryDetails((prev) => ({
@@ -162,7 +163,7 @@ const CategoryUpdate = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const result = res.data;
@@ -175,7 +176,7 @@ const CategoryUpdate = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -187,6 +188,16 @@ const CategoryUpdate = () => {
       setErrorData("");
     }
   };
+  useEffect(() => {
+    if (categoryViewDetailsData) {
+      setCategoryDetails({
+        name: categoryViewDetailsData?.name || "",
+        category: categoryViewDetailsData?.category || "",
+        categorybanner: categoryViewDetailsData?.categorybanner?.url || null,
+        coverImagePreview: categoryViewDetailsData?.categorybanner?.url || "",
+      });
+    }
+  }, [categoryViewDetailsData]);
   useEffect(() => {
     handlegetOneCategory(id);
   }, [id]);
@@ -281,11 +292,11 @@ const CategoryUpdate = () => {
                 × {600}. Max size: 4 MB.
               </FormHelperText>
 
-             {categoryDetails.coverImagePreview && (
+              {categoryDetails.coverImagePreview && (
                 <Box mt={2}>
                   {isVideo(
                     categoryDetails.coverImagePreview,
-                    categoryDetails.categorybanner
+                    categoryDetails.categorybanner,
                   ) ? (
                     <video
                       src={categoryDetails.coverImagePreview}
