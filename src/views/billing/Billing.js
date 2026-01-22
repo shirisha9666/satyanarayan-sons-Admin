@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useBilling } from "./billingContext";
 
 const tableheadings = [
-  "Date & Time",
+  "Date",
   "Invoice Number",
   "TransactionId",
   "Customer Name",
@@ -36,19 +36,20 @@ const Billing = () => {
   const navigate = useNavigate();
 
   const getBiling = async (
-    searchName = search,
+
+    invoiceNo = search,
     page = 1,
     limit = itemPerPage,
-    date = searchByDate
+    date = searchByDate,
   ) => {
     try {
       setLoading(true);
       const params = { limit, page };
-      if (searchName && searchName.trim() !== "") {
-        params.name = searchName.trim();
+      if (invoiceNo && invoiceNo.trim() !== "") {
+        params.invoiceNo = invoiceNo.trim();
       }
-      if (searchByDate && searchByDate.trim() !== "") {
-        params.date = searchByDate.trim();
+      if (date && date.trim() !== "") {
+        params.startDate = date.trim();
       }
 
       const res = await axios.get("/api/billing/get", {
@@ -58,7 +59,7 @@ const Billing = () => {
 
       setBiling(res?.data);
       setTotalPages(res.data.totalPages);
-      // setCurrentPage(res.data.currentPage);
+
       setItemPerPage(limit);
     } catch (error) {
       const msg = error.response?.data?.message || "Internal Server Error";
@@ -72,14 +73,26 @@ const Billing = () => {
     getBiling(search, currentPage, itemPerPage, searchByDate);
   }, [search, currentPage, itemPerPage, searchByDate]);
 
+  let billingFetchData = biling?.AllSchemas;
+
   const summaryData = [
-    { title: "Total Sales", value: `${biling?.totalsales}`, color: "#27ae60" },
+    {
+      title: "Total Sales",
+      value: `${biling?.summary?.totalSales}`,
+      color: "#27ae60",
+    },
+    {
+      title: "Total Customers",
+      value: `${biling?.summary?.totalCustomers}   `,
+      color: "#111",
+    },
 
     {
       title: "Total Received Amount",
-      value: `₹${biling?.totalAmount}`,
+      value: `₹  ${biling?.summary?.totalReceivedAmount}`,
       color: "#111",
     },
+
   ];
 
   const handlePrev = () => {
@@ -88,6 +101,7 @@ const Billing = () => {
   const handleNext = () => {
     if (currentPage < totalpages) setCurrentPage((prev) => prev - 1);
   };
+
   return (
     <>
       <div>
@@ -96,10 +110,8 @@ const Billing = () => {
       <div className="billing-page">
         <main className="billing-main">
           <header className="billing-header">
-            {/* <div className="date-range">
-                            Last 7 Days - 15 July 2023 to 21 July 2023
-                        </div> */}
-            <div className="date-range-picker">
+          
+            {/* <div className="date-range-picker">
               <label htmlFor="filterDate" className="date-label">
                 Select Date:
               </label>
@@ -117,7 +129,7 @@ const Billing = () => {
               >
                 Filter
               </button>
-            </div>
+            </div> */}
 
             <div className="">
               <input
@@ -164,20 +176,20 @@ const Billing = () => {
                     </td>
                   </tr>
                 ) : (
-                  biling?.data?.map((r, i) => (
+                  billingFetchData?.map((r, i) => (
                     <tr key={i} className={i % 2 === 0 ? "odd" : "even"}>
                       <td>{r?.createdAt}</td>
-                      <td>{r?.InvoiceId?.InvoiceNo}</td>
+                      <td>{r?.InvoiceNo}</td>
                       <td>
                         {r?.InvoiceId?.TransactionId === null
                           ? "Null"
-                          : r?.InvoiceId?.TransactionId}
+                          : r?.transactionId}
                       </td>
-                      <td className="text-center">{r?.userId?.name}</td>
+                      <td className="text-center">{r?.customerId?.firstname} {r?.customerId?.lastname}</td>
                       <td className="text-center">
                         {r.InvoiceId?.Amount === "0"
                           ? r?.InvoiceId?.Amount
-                          : `₹${r?.InvoiceId?.Amount}`}
+                          : `₹${r?.totalPricewithGst}`}
                       </td>
 
                       {/* <td>{r.due}</td> */}
@@ -226,7 +238,7 @@ const Billing = () => {
                               (e.target.style.backgroundColor = "#1E88E5")
                             }
                             // onClick={() => navigate(`/view/${r?.userId?._id}`)}
-                            onClick={() => navigate(`/invoice/view/${r?.InvoiceId?._id}`)}
+                            onClick={() => navigate(`/Customers/user/Invoice/${r?._id}`)}
                           >
                             👁 View
                           </button>

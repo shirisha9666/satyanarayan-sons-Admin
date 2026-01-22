@@ -9,6 +9,11 @@ import { cilHome } from '@coreui/icons'
 import { cilVideo } from '@coreui/icons'
 import { cilInfo } from '@coreui/icons'
 import { cilBuilding } from "@coreui/icons";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { MdPayments } from "react-icons/md";
+import { cilDescription } from "@coreui/icons";
+
+
 
 
 
@@ -180,6 +185,14 @@ const _nav = [
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     to: "/Customers ",
     group: "Employees & Access",
+  },
+
+    {
+    component: CNavItem,
+    name: "Billing ",
+    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
+    to: "/Billing",
+    group: "Billing",
   },
 
   // {

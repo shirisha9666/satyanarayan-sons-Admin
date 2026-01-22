@@ -17,24 +17,26 @@ import { useBranche } from "./BranchesContext";
 import { useParams } from "react-router-dom";
 
 const ViewBranches = () => {
-    const {id}=useParams()
+  const { id } = useParams();
   const { BannerOneDetails, handleOneBanner } = useBranche();
 
   useEffect(() => {
     handleOneBanner(id); // fetch branch details
   }, []);
 
+  console.log("branch  details ",BannerOneDetails)
+
   const LabelValue = ({ label, value }) => (
-  <Grid item xs={12} sm={6}>
-    <Typography variant="caption" color="text.secondary">
-      {label}
-    </Typography>
-    <Typography variant="body1" fontWeight={500}>
-      {value || "-"}
-    </Typography>
-  </Grid>
-);
-  console.log("BannerOneDetails",BannerOneDetails)
+    <Grid item xs={12} sm={6}>
+      <Typography variant="caption" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body1" fontWeight={500}>
+        {value || "-"}
+      </Typography>
+    </Grid>
+  );
+  console.log("BannerOneDetails", BannerOneDetails);
   if (!BannerOneDetails) return null;
 
   return (
@@ -62,9 +64,7 @@ const ViewBranches = () => {
             <Chip
               label={BannerOneDetails.isActive}
               color={
-                BannerOneDetails.isActive === "Active"
-                  ? "success"
-                  : "error"
+                BannerOneDetails.isActive === "Active" ? "success" : "error"
               }
               variant="outlined"
             />
@@ -74,7 +74,10 @@ const ViewBranches = () => {
 
           {/* DETAILS GRID */}
           <Grid container spacing={3}>
-            <LabelValue label="Branch Code" value={BannerOneDetails.branchCode} />
+            <LabelValue
+              label="Branch Code"
+              value={BannerOneDetails.branchCode}
+            />
             <LabelValue label="Branch ID" value={BannerOneDetails.branchId} />
 
             <LabelValue label="Address" value={BannerOneDetails.address} />
@@ -90,9 +93,24 @@ const ViewBranches = () => {
             />
 
             <LabelValue label="Email" value={BannerOneDetails.email} />
-            {/* <LabelValue label="Manager ID" value={BannerOneDetails.managerId} />
+            <LabelValue
+              label="Manager Name"
+              value={BannerOneDetails?.managerId?.name}
+            />
+            <LabelValue
+              label="Manager Phone"
+              value={BannerOneDetails?.managerId?.phone}
+            />
+            <LabelValue
+              label="Manager Email"
+              value={BannerOneDetails?.managerId?.email}
+            />
+            <LabelValue
+              label="Manager EmployeId"
+              value={BannerOneDetails?.managerId?.employeId}
+            />
 
-            <LabelValue label="Created By" value={BannerOneDetails.createdBy} /> */}
+            {/* <LabelValue label="Created By" value={BannerOneDetails.createdBy} /> */}
 
             <LabelValue
               label="Created At"

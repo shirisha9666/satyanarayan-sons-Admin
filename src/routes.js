@@ -212,7 +212,7 @@ import BranchManagerCreate from "./views/Branches/BranchManagerCreate";
 import BranchUpdate from "./views/Branches/BranchesUpdate";
 import BranchCreate from "./views/Branches/BranchesAdd";
 import Branches from "./views/Branches/Branches";
-import ViewBranches  from "./views/Branches/BranchesView"
+import ViewBranches from "./views/Branches/BranchesView"
 import AddEmployee from "./views/employes/EmployeesAdd";
 import EmployeUpdate from "./views/employes/EmployeesUpdate";
 import Employees from "./views/employes/Employees";
@@ -702,7 +702,7 @@ const routes = [
     navName: "Settings",
   },
 
-    {
+  {
     path: "/Branches/view/:id",
     name: "Branches",
     element: ViewBranches,
@@ -711,7 +711,7 @@ const routes = [
 
 
 
-  
+
   {
     path: "/Advertisement",
     name: "Advertisement",
@@ -1242,11 +1242,18 @@ const routes = [
     navName: "Customers ",
   },
 
-    {
+  {
     path: "/Customers/user/Invoice/:id",
     name: "Customers",
     element: TransctionInvoice,
     navName: "Customers ",
+  },
+
+  {
+    path: "/Billing",
+    name: "Billing",
+    element: Billing,
+    navName: "Billing",
   },
   // ------------------------ End Employee Routes-----------------------
 
