@@ -24,6 +24,7 @@ const Banners = () => {
     bannertype,
     bannerId,
     itemPerPage,
+
     viewBannerId,
     loading,
     page,

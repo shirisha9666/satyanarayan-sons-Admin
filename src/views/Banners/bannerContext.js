@@ -97,6 +97,7 @@ export const BannerProvider = ({ children }) => {
         handleDelete,
         handleOneBanner,
         bannerId,
+        viewBannerId,
         BannerOneDetails,
       }}
     >
