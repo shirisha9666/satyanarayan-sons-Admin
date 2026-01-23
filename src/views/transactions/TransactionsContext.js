@@ -23,6 +23,7 @@ export const TransactionsProvider = ({ children }) => {
   const [invoiceTableLoading,setInvoiceTableLoading]=useState(false)
   const[InvoiceDetail,setInvoiceDetail]=useState([])
   const [InvoiceDetailLoading,setInvoiceDetailLoading]=useState(null)
+  const [searchName,setSearchName]=useState("")
 
   const getBackendMessage = (error) => {
     return (
@@ -33,7 +34,7 @@ export const TransactionsProvider = ({ children }) => {
     );
   };
 
-  const handlegetAllData = async (page = 1, itemPerPage, searchByRole) => {
+  const handlegetAllData = async (page = 1, itemPerPage, searchByRole,searchName) => {
     try {
       setLoading(true);
       const response = await axios.get("/api/customer/get/all", {
@@ -41,6 +42,7 @@ export const TransactionsProvider = ({ children }) => {
           page,
           limit: itemPerPage,
           searchType: searchByRole,
+          searchName:searchName
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,7 +71,7 @@ export const TransactionsProvider = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllData(page, itemPerPage, employeType);
+      await handlegetAllData(page, itemPerPage, employeType,searchName);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
@@ -151,7 +153,7 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
   useEffect(() => {
-    handlegetAllData(page, itemPerPage, employeType);
+    handlegetAllData(page, itemPerPage, employeType,searchName);
     handlegetEmployeAccessData();
   }, []);
 
@@ -183,7 +185,9 @@ export const TransactionsProvider = ({ children }) => {
         userInvoices,
         InvoiceDetailLoading,
         handleByIdInvoice,
-        InvoiceDetail
+        InvoiceDetail,
+        setSearchName,
+        searchName
       }}
     >
       {children}

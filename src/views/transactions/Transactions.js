@@ -36,6 +36,8 @@ const Transactions = () => {
     searchByRole,
     setSearchByRole,
     handleUserSchemas,
+    setSearchName,
+    searchName
   } = useTransactions();
 
   console.log("searchByRole", searchByRole);
@@ -74,9 +76,9 @@ const Transactions = () => {
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setEmployeType(value);
+    setSearchName(value);
 
-    handlegetAllData(page, itemPerPage, value);
+    handlegetAllData(page, itemPerPage, employeType,value);
   };
 
   return (
@@ -94,7 +96,7 @@ const Transactions = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllData(page, Number(val), employeType);
+                        handlegetAllData(page, Number(val), employeType,searchName);
                       }}
                       className="
                                        select-w
@@ -120,7 +122,7 @@ const Transactions = () => {
                       onClick={() => {
                         setSearchByRole(val.sendValue);
 
-                        handlegetAllData(page, itemPerPage, val.sendValue);
+                        handlegetAllData(page, itemPerPage, val.sendValue,searchName);
                       }}
                       variant="contained"
                       style={{
@@ -153,9 +155,9 @@ const Transactions = () => {
                 >
                   <TextField
                     size="small"
-                    placeholder="Search by Name or Id"
+                    placeholder="Search by first Name"
                     autoComplete="off"
-                    value={employeType}
+                    value={searchName}
                     onChange={handleSearchChange}
                     sx={{
                       width: "280px",
@@ -283,7 +285,7 @@ const Transactions = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, employeType);
+                  handlegetAllData(value, itemPerPage, employeType,searchName);
                 }}
                 color="primary"
               />
