@@ -7,13 +7,13 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useProduct } from "./ProductContenxt";
 
 const Products = () => {
-  const navigate = useNavigate();
   const {
     products,
     handlegetAllProducts,
@@ -27,8 +27,11 @@ const Products = () => {
     loading,
     page,
     handlegetOneProduct,
-  
+    setSearchBtn,
+    setSearchInput,
     productId,
+    searchBtn,
+    searchInput,
   } = useProduct();
 
   const tableHeadering = [
@@ -40,6 +43,19 @@ const Products = () => {
     "Actions",
   ];
   let fetchProducts = products?.result;
+  const btnStyle = (color) => ({
+    backgroundColor: color,
+    color: "#fff",
+    fontWeight: "bold",
+    textTransform: "none",
+    borderRadius: "20px",
+    padding: "8px 20px",
+    "&:hover": {
+      backgroundColor: color,
+      opacity: 0.9,
+    },
+  });
+  console.log("searchInput", searchInput);
 
   return (
     <div className="row">
@@ -56,7 +72,14 @@ const Products = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllProducts(page, Number(val), bannertype);
+
+                        handlegetAllProducts(
+                          page,
+                          Number(val),
+                          searchBtn,
+                          searchInput,
+                        );
+                        Wedding;
                       }}
                       className="
                                        select-w
@@ -72,6 +95,7 @@ const Products = () => {
                     entries
                   </label>
                 </div>
+
                 <div>
                   <Button
                     variant="contained"
@@ -89,46 +113,107 @@ const Products = () => {
                   </Button>
                 </div>
               </div>
-              {/* <div style={{ display: "flex", gap: "12px", marginTop: "10px" }}>
+            </div>
+            <div className="d-flex justify-content-between">
+              <Stack direction="row" spacing={2} flexWrap="wrap">
                 <Button
+                  sx={btnStyle("#37d488")}
                   onClick={() => {
-                    setBannerType("Home Banner");
+                    setSearchBtn("");
 
-                    handlegetAllProducts(page, itemPerPage, "Home Banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Home Banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
+                    handlegetAllProducts(page, itemPerPage, "", searchInput);
                   }}
                 >
-                  Home Banner
+                  All
                 </Button>
-
                 <Button
+                  sx={btnStyle("#D4AF37")}
                   onClick={() => {
-                    setBannerType("Campaign banner");
-                    handlegetAllProducts(page, itemPerPage, "Campaign banner");
-                  }}
-                  variant="contained"
-                  style={{
-                    background: `${bannertype === "Campaign banner" ? "#D4AF37" : "#1B1A1A"}`,
-                    color: "#fff",
-                    fontWeight: "bold",
-                    padding: "8px 20px",
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    cursor: "pointer",
+                    setSearchBtn("Gold");
+
+                    handlegetAllProducts(
+                      page,
+                      itemPerPage,
+                      "Gold",
+                      searchInput,
+                    );
                   }}
                 >
-                  Campaign Banner
+                  Gold
                 </Button>
-              </div> */}
+                <Button
+                  sx={btnStyle("#B9F2FF")}
+                  onClick={() => {
+                    setSearchBtn("Diamond");
+
+                    handlegetAllProducts(
+                      page,
+                      itemPerPage,
+                      "Diamond",
+                      searchInput,
+                    );
+                  }}
+                >
+                  Diamond
+                </Button>
+                <Button
+                  sx={btnStyle("#7D3C98")}
+                  onClick={() => {
+                    setSearchBtn("Gemstones");
+                    handlegetAllProducts(
+                      page,
+                      itemPerPage,
+                      "Gemstones",
+                      searchInput,
+                    );
+                  }}
+                >
+                  Gemstones
+                </Button>
+                <Button
+                  sx={btnStyle("#A0522D")}
+                  onClick={() => {
+                    setSearchBtn("Daily Wear");
+                    handlegetAllProducts(
+                      page,
+                      itemPerPage,
+                      "Daily Wear",
+                      searchInput,
+                    );
+                  }}
+                >
+                  Daily Wear
+                </Button>
+                <Button
+                  sx={btnStyle("#8B0000")}
+                  onClick={() => {
+                    setSearchBtn("Wedding");
+                    handlegetAllProducts(
+                      page,
+                      itemPerPage,
+                      "Wedding",
+                      searchInput,
+                    );
+                  }}
+                >
+                  Wedding
+                </Button>
+              </Stack>
+
+              <div className="">
+                <input
+                  className="billing-search"
+                  type="text"
+                  placeholder="Search By Product Name"
+                  value={searchInput}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSearchInput(val); // ✅ missing line
+
+                    handlegetAllProducts(page, itemPerPage, searchBtn, val);
+                  }}
+                />
+              </div>
             </div>
 
             <div className="table-responsive table-shoot mt-3">
@@ -239,10 +324,9 @@ const Products = () => {
                               }}
                               type="button"
                               className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={async() => {
-                                await handlegetOneProduct(item._id)
+                              onClick={async () => {
+                                await handlegetOneProduct(item._id);
                                 navigate(`/product/update/${item._id}`);
-                                
                               }}
                             >
                               {productId === item._id ? (

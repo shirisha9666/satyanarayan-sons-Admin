@@ -17,15 +17,21 @@ export const ProductProvider = ({ children }) => {
   const [productId, setProductId] = useState(null);
   const [productViewDetails, setProductViewDetails] = useState([]);
   const [productCount,setProductsCount]=useState([])
+  
+  const [searchBtn, setSearchBtn] = useState("");
 
-  const handlegetAllProducts = async (page = 1, itemPerPage, bannertype) => {
+  const [searchInput, setSearchInput] = useState("");
+
+
+  const handlegetAllProducts = async (page = 1, itemPerPage, searchBtn,searchInput) => {
     try {
       setLoading(true);
       const response = await axios.get("/api/product/getAll/", {
         params: {
           page,
           limit: itemPerPage,
-          bannerType: bannertype,
+          category: searchBtn,
+          productName:searchInput,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -73,7 +79,7 @@ export const ProductProvider = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllProducts(page, itemPerPage, bannertype);
+      await handlegetAllProducts(page, itemPerPage, searchBtn,searchInput);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
@@ -101,7 +107,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
   useEffect(() => {
-    handlegetAllProducts(page, itemPerPage, bannertype);
+    handlegetAllProducts(page, itemPerPage, searchBtn,searchInput);
   }, []);
 
   return (
@@ -122,7 +128,9 @@ export const ProductProvider = ({ children }) => {
         productViewDetails,
         productId,
         handlegetAllProductsCount,
-        productCount
+        productCount,
+          setSearchBtn,setSearchInput,
+            searchBtn,searchInput
       }}
     >
       {children}

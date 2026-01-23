@@ -68,7 +68,7 @@ const GoldRateAdd = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -101,7 +101,7 @@ const GoldRateAdd = () => {
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
-                label="Gold 24Kt Rate "
+                label="Enter gold purity number only (Example: 24 for 24Kt) "
                 name="lable"
                 value={productDetails.lable}
                 onChange={handleChange}

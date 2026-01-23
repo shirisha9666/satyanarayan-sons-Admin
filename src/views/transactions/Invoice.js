@@ -106,6 +106,9 @@ const TransctionInvoice = () => {
                 <b>Gold Rate :</b>{" "}
                 ₹ {Number(invoice?.monthlyPrice).toLocaleString("en-IN")}
               </Typography>
+                <Typography sx={{ p: 1 }}>
+                <b>gold wegiht :</b> {InvoiceDetail?.goldWeight}
+              </Typography>
             </Grid>
 
             <Grid item xs={4}>

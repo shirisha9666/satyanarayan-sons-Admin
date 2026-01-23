@@ -30,7 +30,7 @@ const GoldRate = () => {
     page,
   } = useGoldRate();
 
-  const tableHeadering = ["Label", "Rate", "Unit", "Created", "Action "];
+  const tableHeadering = ["Label", "Unit", "Rate","Created", "Action "];
   let fetchProducts = goldRate?.result;
 
   return (
@@ -126,7 +126,15 @@ const GoldRate = () => {
                             textAlign: "center",
                           }}
                         >
-                          {item?.lable}
+                         Gold {item?.lable}Kt Rate 
+                        </td>
+                           <td
+                          style={{
+                            verticalAlign: "middle",
+                            textAlign: "center",
+                          }}
+                        >
+                          {item?.unit}
                         </td>
                         <td
                           style={{
@@ -137,14 +145,7 @@ const GoldRate = () => {
                           ₹{item?.rate}
                         </td>
 
-                        <td
-                          style={{
-                            verticalAlign: "middle",
-                            textAlign: "center",
-                          }}
-                        >
-                          {item?.unit}
-                        </td>
+                     
                         <td
                           style={{
                             verticalAlign: "middle",
