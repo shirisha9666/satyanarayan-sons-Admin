@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +29,25 @@ const SubCategory = () => {
     page,
     handleSubcategoryDetailsById,
     subcategoryViweId,
+    categoryBtn,
+    setCategoryBtn,
+    seachSubCategory,
+    setSearchSubCategory,
+    categoryError,
   } = useSubCategory();
+
+  const btnStyle = (color) => ({
+    backgroundColor: color,
+    color: "#fff",
+    fontWeight: "bold",
+    textTransform: "none",
+    borderRadius: "20px",
+    padding: "8px 20px",
+    "&:hover": {
+      backgroundColor: color,
+      opacity: 0.9,
+    },
+  });
 
   const tableHeadering = [
     "Name",
@@ -54,7 +73,12 @@ const SubCategory = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllSubcategorys(page, Number(val), bannertype);
+                        handlegetAllSubcategorys(
+                          page,
+                          Number(val),
+                          categoryBtn,
+                          seachSubCategory,
+                        );
                       }}
                       className="
                                        select-w
@@ -70,6 +94,118 @@ const SubCategory = () => {
                     entries
                   </label>
                 </div>
+              </div>
+            </div>
+            <div className="d-flex justify-content-between">
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                <Button
+                  sx={btnStyle("#37d488")}
+                  onClick={() => {
+                    setCategoryBtn("");
+                    setSearchSubCategory;
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  All
+                </Button>
+                <Button
+                  sx={btnStyle("#D4AF37")}
+                  onClick={() => {
+                    setCategoryBtn("Gold");
+
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "Gold",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  Gold
+                </Button>
+                <Button
+                  sx={btnStyle("#B9F2FF")}
+                  onClick={() => {
+                    setCategoryBtn("Diamond");
+
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "Diamond",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  Diamond
+                </Button>
+                <Button
+                  sx={btnStyle("#7D3C98")}
+                  onClick={() => {
+                    setCategoryBtn("Gemstones");
+
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "Gemstones",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  Gemstones
+                </Button>
+                <Button
+                  sx={btnStyle("#A0522D")}
+                  onClick={() => {
+                    setCategoryBtn("DailyWere");
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "DailyWere",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  Daily Wear
+                </Button>
+                <Button
+                  sx={btnStyle("#8B0000")}
+                  onClick={() => {
+                    setCategoryBtn("Wedding");
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      "Wedding",
+                      seachSubCategory,
+                    );
+                  }}
+                >
+                  Wedding
+                </Button>
+              </Stack>
+
+              <div className="">
+                <input
+                  className="billing-search"
+                  type="text"
+                  placeholder="Search By Subcategory Name"
+                  value={seachSubCategory}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSearchSubCategory(val);
+
+                    handlegetAllSubcategorys(
+                      page,
+                      itemPerPage,
+                      categoryBtn,
+                      val,
+                    );
+                  }}
+                />
               </div>
             </div>
 
@@ -92,6 +228,7 @@ const SubCategory = () => {
                   {!loading && fetchBanner?.length === 0 && (
                     <tr className="text-center">
                       <td colSpan="6">
+                        {/* <h5>{categoryError?categoryError:"No Data Available"}</h5> */}
                         <h5>No Data Available</h5>
                       </td>
                     </tr>
@@ -126,7 +263,7 @@ const SubCategory = () => {
                         <td>
                           {item?.subcategorythumbnail?.url ? (
                             item.subcategorythumbnail.url.match(
-                              /\.(mp4|webm|ogg)$/i
+                              /\.(mp4|webm|ogg)$/i,
                             ) ? (
                               <video
                                 src={item.subcategorythumbnail.url}
@@ -185,7 +322,7 @@ const SubCategory = () => {
                               onClick={async () => {
                                 await handleSubcategoryDetailsById(item._id);
                                 navigate(
-                                  `/subcategory/update/${item?.name}/${item._id}`
+                                  `/subcategory/update/${item?.name}/${item._id}`,
                                 );
                               }}
                             >

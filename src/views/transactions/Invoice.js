@@ -168,11 +168,11 @@ const TransctionInvoice = () => {
           </Box>
         </Box>
 
-        <Box textAlign="center" mt={2}>
+        {/* <Box textAlign="center" mt={2}>
           <Typography variant="caption">
             Subject to Hyderabad Jurisdiction Only
           </Typography>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );
