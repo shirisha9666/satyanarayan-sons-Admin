@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useProduct } from "./ProductContenxt";
 
 const Products = () => {
+  const navigate = useNavigate()
   const {
     products,
     handlegetAllProducts,
@@ -173,11 +174,11 @@ const Products = () => {
                 <Button
                   sx={btnStyle("#A0522D")}
                   onClick={() => {
-                    setSearchBtn("Daily Wear");
+                    setSearchBtn("DailyWere");
                     handlegetAllProducts(
                       page,
                       itemPerPage,
-                      "Daily Wear",
+                      "DailyWere",
                       searchInput,
                     );
                   }}
@@ -364,7 +365,13 @@ const Products = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllProducts(value, itemPerPage, bannertype);
+
+                  handlegetAllProducts(
+                    value, itemPerPage,
+                    searchBtn,
+                    searchInput,
+                  );
+
                 }}
                 color="primary"
               />

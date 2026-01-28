@@ -37,7 +37,7 @@ const Transactions = () => {
     setSearchByRole,
     handleUserSchemas,
     setSearchName,
-    searchName
+    searchName,
   } = useTransactions();
 
   console.log("searchByRole", searchByRole);
@@ -78,7 +78,7 @@ const Transactions = () => {
     const value = e.target.value;
     setSearchName(value);
 
-    handlegetAllData(page, itemPerPage, employeType,value);
+    handlegetAllData(page, itemPerPage, employeType, value);
   };
 
   return (
@@ -96,7 +96,12 @@ const Transactions = () => {
                       onChange={(e) => {
                         let val = e.target.value;
                         setItemPerPage(Number(val));
-                        handlegetAllData(page, Number(val), employeType,searchName);
+                        handlegetAllData(
+                          page,
+                          Number(val),
+                          employeType,
+                          searchName,
+                        );
                       }}
                       className="
                                        select-w
@@ -122,7 +127,12 @@ const Transactions = () => {
                       onClick={() => {
                         setSearchByRole(val.sendValue);
 
-                        handlegetAllData(page, itemPerPage, val.sendValue,searchName);
+                        handlegetAllData(
+                          page,
+                          itemPerPage,
+                          val.sendValue,
+                          searchName,
+                        );
                       }}
                       variant="contained"
                       style={{
@@ -261,10 +271,12 @@ const Transactions = () => {
                                 setActiveBtn("View");
                                 await handleUserSchemas(item._id);
 
-                                navigate(`/Customers/All/user/Schemas/${item?.firstname}/${item._id}`);
+                                navigate(
+                                  `/Customers/All/user/Schemas/${item?.firstname}/${item._id}`,
+                                );
                               }}
                             >
-                              {viewBannerId ===item._id ? (
+                              {viewBannerId === item._id ? (
                                 <CircularProgress size={25} />
                               ) : (
                                 "View"
@@ -285,7 +297,7 @@ const Transactions = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, employeType,searchName);
+                  handlegetAllData(value, itemPerPage, employeType, searchName);
                 }}
                 color="primary"
               />

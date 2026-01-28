@@ -30,7 +30,8 @@ const SubCategoryAdd = () => {
   const navigate = useNavigate();
   const { name, id } = useParams();
   const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
-  const { handlegetAllSubcategorys } = useSubCategory();
+  const { handlegetAllSubcategorys , categoryBtn,
+        seachSubCategory,} = useSubCategory();
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: "",
 
@@ -110,6 +111,8 @@ const SubCategoryAdd = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+      // console.log("FILE FROM INPUT:", file);
+    if (!file) return;
 
     validateMediaFile({
       file,
@@ -131,7 +134,11 @@ const SubCategoryAdd = () => {
       },
     });
 
-    e.target.value = ""; // allow re-upload same file
+     e.target.value = ""; // allow re-upload same file
+
+    // setTimeout(() => {
+    //   if (e.target) e.target.value = null;
+    // }, 100);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,7 +151,7 @@ const SubCategoryAdd = () => {
 
       formData.append(
         "subcategorythumbnail",
-        subCategoryDetails.subcategorythumbnail
+        subCategoryDetails.subcategorythumbnail,
       );
 
       const res = await axios.post(
@@ -155,10 +162,16 @@ const SubCategoryAdd = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      await handlegetAllSubcategorys(page, itemPerPage, bannertype);
+      // await handlegetAllSubcategorys(page, itemPerPage, bannertype);
+        await handlegetAllSubcategorys(
+        page,
+        itemPerPage,
+        categoryBtn,
+        seachSubCategory,
+      );
       navigate("/subcategory");
     } catch (error) {
       console.log("error add banner", error);
@@ -166,7 +179,7 @@ const SubCategoryAdd = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -178,6 +191,7 @@ const SubCategoryAdd = () => {
       setErrorData("");
     }
   };
+  console.log("  subCategoryDetails.subcategorythumbnail", subCategoryDetails);
   return (
     <div>
       <Box
@@ -268,7 +282,6 @@ const SubCategoryAdd = () => {
                 Please upload an image or video. Recommended resolution: {1920}{" "}
                 × {600}. Max size: 4 MB.
               </FormHelperText>
-
 
               {subCategoryDetails.coverImagePreview && (
                 <Box mt={2}>

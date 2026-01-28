@@ -27,7 +27,8 @@ const ProductAdd = () => {
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype } = useProduct();
+  const { handlegetAllProducts, page, itemPerPage, searchBtn, searchInput } =
+    useProduct();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
   const [productDetails, setProductDetails] = useState({
@@ -109,8 +110,6 @@ const ProductAdd = () => {
   //   img.src = URL.createObjectURL(file); // Must come after setting onload
   // };
 
-
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -155,7 +154,8 @@ const ProductAdd = () => {
 
       const result = res.data;
 
-      await handlegetAllProducts(page, itemPerPage, bannertype);
+      // await handlegetAllProducts(page, itemPerPage, bannertype);
+      await handlegetAllProducts(page, itemPerPage, "", searchInput);
       navigate("/products");
     } catch (error) {
       console.log("error add banner", error);
@@ -163,7 +163,7 @@ const ProductAdd = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -256,8 +256,8 @@ const ProductAdd = () => {
                 />
               </Button>
               <FormHelperText>
-                Please upload an image . Recommended resolution: {1920}{" "}
-                × {600}. Max size: 4 MB.
+                Please upload an image . Recommended resolution: {1920} × {600}.
+                Max size: 4 MB.
               </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>

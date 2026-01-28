@@ -365,7 +365,14 @@ const SubCategory = () => {
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllSubcategorys(value, itemPerPage, bannertype);
+
+                  // handlegetAllSubcategorys(value, itemPerPage, bannertype);
+                  handlegetAllSubcategorys(
+                    value,
+                    itemPerPage,
+                    categoryBtn,
+                    seachSubCategory,
+                  );
                 }}
                 color="primary"
               />

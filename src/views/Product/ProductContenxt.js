@@ -16,28 +16,32 @@ export const ProductProvider = ({ children }) => {
   const [bannerId, setBannerId] = useState(null);
   const [productId, setProductId] = useState(null);
   const [productViewDetails, setProductViewDetails] = useState([]);
-  const [productCount,setProductsCount]=useState([])
-  
+  const [productCount, setProductsCount] = useState([]);
+
   const [searchBtn, setSearchBtn] = useState("");
 
   const [searchInput, setSearchInput] = useState("");
 
-
-  const handlegetAllProducts = async (page = 1, itemPerPage, searchBtn,searchInput) => {
+  const handlegetAllProducts = async (
+    page = 1,
+    itemPerPage,
+    searchBtn,
+    searchInput,
+  ) => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/product/getAll/", {
+      const response = await axios.get("/api/product/admin/getAll/", {
         params: {
           page,
           limit: itemPerPage,
           category: searchBtn,
-          productName:searchInput,
+          productName: searchInput,
         },
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("response?.data", response?.data);
+   
       setProducts(response?.data);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
@@ -47,13 +51,10 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-
-
-    const handlegetAllProductsCount = async () => {
+  const handlegetAllProductsCount = async () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/product/getAll/products/count", {
-        
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,7 +80,7 @@ export const ProductProvider = ({ children }) => {
       let message = resp?.data?.message;
       console.log("message", resp?.data);
 
-      await handlegetAllProducts(page, itemPerPage, searchBtn,searchInput);
+      await handlegetAllProducts(page, itemPerPage, searchBtn, searchInput);
       toast.success(message);
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
@@ -107,7 +108,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
   useEffect(() => {
-    handlegetAllProducts(page, itemPerPage, searchBtn,searchInput);
+    handlegetAllProducts(page, itemPerPage, searchBtn, searchInput);
   }, []);
 
   return (
@@ -129,8 +130,10 @@ export const ProductProvider = ({ children }) => {
         productId,
         handlegetAllProductsCount,
         productCount,
-          setSearchBtn,setSearchInput,
-            searchBtn,searchInput
+        setSearchBtn,
+        setSearchInput,
+        searchBtn,
+        searchInput,
       }}
     >
       {children}

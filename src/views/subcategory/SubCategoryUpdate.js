@@ -34,6 +34,8 @@ const SubCategoryUpdate = () => {
     handlegetAllSubcategorys,
     subCategoryViewDetais,
     handleSubcategoryDetailsById,
+       categoryBtn,
+        seachSubCategory,
   } = useSubCategory();
   let subcategoryDetailsData = subCategoryViewDetais?.category;
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
@@ -43,6 +45,7 @@ const SubCategoryUpdate = () => {
     subcategorythumbnail: null,
     coverImagePreview: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSubCategoryDeatills((prev) => ({
@@ -65,6 +68,7 @@ const SubCategoryUpdate = () => {
         maxSize: 4 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
+        console.log("file",file)
         setSubCategoryDeatills((prev) => ({
           ...prev,
           subcategorythumbnail: file,
@@ -103,7 +107,13 @@ const SubCategoryUpdate = () => {
 
       const result = res.data;
 
-      await handlegetAllSubcategorys(page, itemPerPage, bannertype);
+      // await handlegetAllSubcategorys(page, itemPerPage, bannertype);
+       await handlegetAllSubcategorys(
+        page,
+        itemPerPage,
+        categoryBtn,
+        seachSubCategory,
+      );
       navigate("/subcategory");
     } catch (error) {
       console.log("error add banner", error);
@@ -141,6 +151,7 @@ const SubCategoryUpdate = () => {
       });
     }
   }, [subcategoryDetailsData]);
+    console.log("subCategoryDetails",subCategoryDetails.subcategorythumbnail)
 
 
   return (
