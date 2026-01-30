@@ -41,7 +41,7 @@ const HomeCollectionUpdate = () => {
     name: "",
     selectedType: "",
     mediaType: "",
-
+    InstagramLink: "",
     Thumbnail: null,
     coverImagePreview: "",
   });
@@ -51,7 +51,7 @@ const HomeCollectionUpdate = () => {
         name: "",
         selectedType: "",
         mediaType: "",
-
+        InstagramLink: "",
         Thumbnail: null,
         coverImagePreview: "",
       });
@@ -99,6 +99,7 @@ const HomeCollectionUpdate = () => {
       let formData = new FormData();
       formData.append("name", homeCollections.name);
       formData.append("selectedType", homeCollections.selectedType);
+      formData.append("InstagramLink", homeCollections.InstagramLink);
       formData.append("mediaType", homeCollections.mediaType);
       formData.append("Thumbnail", homeCollections.Thumbnail);
 
@@ -120,7 +121,7 @@ const HomeCollectionUpdate = () => {
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -139,6 +140,7 @@ const HomeCollectionUpdate = () => {
         name: BannerOneDetails?.name || "",
         selectedType: BannerOneDetails?.selectedType || "",
         mediaType: BannerOneDetails?.mediaType || "",
+        InstagramLink: BannerOneDetails?.InstagramLink || "",
 
         Thumbnail: BannerOneDetails?.Thumbnail?.url || null,
         coverImagePreview: BannerOneDetails?.Thumbnail?.url || "",
@@ -181,6 +183,18 @@ const HomeCollectionUpdate = () => {
                 <MenuItem value="Instagram">Instagram</MenuItem>
               </TextField>
             </Grid>
+            {BannerOneDetails?.selectedType === "Instagram" && (
+              <Grid item xs={12}>
+                <TextField
+                  autoComplete="off"
+                  label="Instagram Link"
+                  name="InstagramLink"
+                  value={homeCollections.InstagramLink}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <TextField
@@ -257,38 +271,38 @@ const HomeCollectionUpdate = () => {
                 </Box>
               )} */}
 
-                {homeCollections.coverImagePreview && (
-                              <Box mt={2}>
-                                {isVideo(
-                                  homeCollections.coverImagePreview,
-                                  homeCollections.Thumbnail,
-                                ) ? (
-                                  <video
-                                    src={homeCollections.coverImagePreview}
-                                    controls
-                                    muted
-                                    playsInline
-                                    style={{
-                                      width: "100%",
-                                      maxHeight: 300,
-                                      objectFit: "cover",
-                                      borderRadius: 8,
-                                    }}
-                                  />
-                                ) : (
-                                  <img
-                                    src={homeCollections.coverImagePreview}
-                                    alt="Cover Preview"
-                                    style={{
-                                      width: "100%",
-                                      maxHeight: 300,
-                                      objectFit: "cover",
-                                      borderRadius: 8,
-                                    }}
-                                  />
-                                )}
-                              </Box>
-                            )}
+              {homeCollections.coverImagePreview && (
+                <Box mt={2}>
+                  {isVideo(
+                    homeCollections.coverImagePreview,
+                    homeCollections.Thumbnail,
+                  ) ? (
+                    <video
+                      src={homeCollections.coverImagePreview}
+                      controls
+                      muted
+                      playsInline
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={homeCollections.coverImagePreview}
+                      alt="Cover Preview"
+                      style={{
+                        width: "100%",
+                        maxHeight: 300,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
+                </Box>
+              )}
             </Grid>
 
             <Grid item xs={12}>

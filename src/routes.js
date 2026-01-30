@@ -221,6 +221,7 @@ import Transactions from "./views/transactions/Transactions";
 import GoldSchemeDetails from "./views/transactions/TransctionsUserInvoices";
 import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
 import TransctionInvoice from "./views/transactions/Invoice";
+import Anniversary from "./views/annivarsaryCampaign/AnnivarsaryCampaign";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -1247,6 +1248,13 @@ const routes = [
     name: "Customers",
     element: TransctionInvoice,
     navName: "Customers ",
+  },
+  
+  {
+    path: "/Anniversary/Campaign",
+    name: "Anniversary",
+    element: Anniversary,
+    navName: "Anniversary ",
   },
 
   {

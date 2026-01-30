@@ -12,6 +12,7 @@ import { cilBuilding } from "@coreui/icons";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 import { cilDescription } from "@coreui/icons";
+import { cilGift } from '@coreui/icons';
 
 
 
@@ -193,6 +194,13 @@ const _nav = [
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
     to: "/Billing",
     group: "Billing",
+  },
+   {
+    component: CNavItem,
+    name: "Anniversary Campaign",
+    icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
+    to: "/Anniversary/Campaign",
+    group: "Anniversary Campaign",
   },
 
   // {
