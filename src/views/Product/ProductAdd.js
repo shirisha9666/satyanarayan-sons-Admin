@@ -118,10 +118,10 @@ const ProductAdd = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 4 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 4 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setProductDetails((prev) => ({
@@ -257,7 +257,7 @@ const ProductAdd = () => {
               </Button>
               <FormHelperText>
                 Please upload an image . Recommended resolution: {1920} × {600}.
-                Max size: 4 MB.
+                Max size: 10 MB.
               </FormHelperText>
               {productDetails.coverImagePreview && (
                 <Box mt={2}>

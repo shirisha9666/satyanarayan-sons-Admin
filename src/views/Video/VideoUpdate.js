@@ -58,10 +58,10 @@ const VideoUpdate = () => {
       imageConfig: {
         width: 2000,
         height: 600,
-        maxSize: 4 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 8 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setHomeCollection((prev) => ({
@@ -153,7 +153,7 @@ const VideoUpdate = () => {
               <FormHelperText>
                 Please upload an video.
                 Recommended resolution: 2000 × 600 px.
-                Video max size: 8 MB.
+                Video max size: 10 MB.
               </FormHelperText>
               {/* {homeCollections.coverImagePreview && (
                 <Box mt={2}>

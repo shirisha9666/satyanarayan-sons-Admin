@@ -64,7 +64,7 @@ const GoldRate = () => {
                     entries
                   </label>
                 </div>
-                <div>
+                {/* <div>
                   <Button
                     variant="contained"
                     color="primary"
@@ -79,7 +79,7 @@ const GoldRate = () => {
                   >
                     Add New Gold Rate
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
 

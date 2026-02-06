@@ -55,10 +55,10 @@ const handleImageChange = (e) => {
     imageConfig: {
       width: 2000,
       height: 600,
-      maxSize: 4 * 1024 * 1024,
+      maxSize: 10 * 1024 * 1024,
     },
     videoConfig: {
-      maxSize: 8 * 1024 * 1024,
+      maxSize: 10 * 1024 * 1024,
     },
     onSuccess: ({ file, previewURL, type }) => {
       setBannerDetails((prev) => ({
@@ -240,7 +240,7 @@ const handleImageChange = (e) => {
 <FormHelperText>
   Please upload an image or video.
   Recommended resolution: 2000 × 600 px.
-  Image max size: 4 MB. Video max size: 8 MB.
+  Image max size: 10 MB. Video max size: 10 MB.
 </FormHelperText>
 
   {bannerDetails.coverImagePreview && (

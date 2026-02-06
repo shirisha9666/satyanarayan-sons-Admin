@@ -13,13 +13,13 @@ export const validateMediaFile = ({
 
   // ✅ IMAGE CONFIG (2 MB, WIDTH ONLY)
   const {
-    maxSize = 4 * 1024 * 1024, // 2MB
+    maxSize = 10 * 1024 * 1024, // 2MB
     width = 1920,              // Max width only
   } = imageConfig;
 
   // ✅ VIDEO CONFIG (2 MB)
   const {
-    maxSize: maxVideoSize = 4 * 1024 * 1024, // 2MB
+    maxSize: maxVideoSize = 10 * 1024 * 1024, // 2MB
   } = videoConfig;
 
   const previewURL = URL.createObjectURL(file);
@@ -88,13 +88,13 @@ export const highervalidateMediaFile = ({
 
   /* ---------------- IMAGE CONFIG ---------------- */
   const {
-    maxSize = 4 * 1024 * 1024, // 2 MB
+    maxSize = 10 * 1024 * 1024, // 2 MB
     width = 2000,              // Allow higher image resolution
   } = imageConfig;
 
   /* ---------------- VIDEO CONFIG ---------------- */
   const {
-    maxSize: maxVideoSize = 8 * 1024 * 1024, // 5 MB (good quality videos)
+    maxSize: maxVideoSize = 10 * 1024 * 1024, // 5 MB (good quality videos)
   } = videoConfig;
 
   const previewURL = URL.createObjectURL(file);

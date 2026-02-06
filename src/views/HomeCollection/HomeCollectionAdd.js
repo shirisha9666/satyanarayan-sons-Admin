@@ -54,10 +54,10 @@ const HomeCollectionAdd = () => {
       imageConfig: {
         width: 1920,
         height: 600,
-        maxSize: 4 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       videoConfig: {
-        maxSize: 4 * 1024 * 1024,
+        maxSize: 10 * 1024 * 1024,
       },
       onSuccess: ({ file, previewURL, type }) => {
         setHomeCollection((prev) => ({
@@ -197,7 +197,7 @@ const HomeCollectionAdd = () => {
 
               {/* Helper Text */}
               <FormHelperText>
-                Upload images or videos up to 2 MB. Maximum image width is 1920px..
+                Upload images or videos up to 10 MB. Maximum image width is 1920px..
 
               </FormHelperText>
 
