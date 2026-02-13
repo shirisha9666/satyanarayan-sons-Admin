@@ -27,7 +27,7 @@ export const validateMediaFile = ({
   /* ---------------- VIDEO ---------------- */
   if (isVideo) {
     if (file.size > maxVideoSize) {
-      toast.error("Video size should be less than 4 MB.");
+      toast.error("Video size should be less than 10 MB.");
       return;
     }
 
@@ -42,7 +42,7 @@ export const validateMediaFile = ({
   /* ---------------- IMAGE ---------------- */
   if (isImage) {
     if (file.size > maxSize) {
-      toast.error("Image size should be less than 4 MB.");
+      toast.error("Image size should be less than 10 MB.");
       return;
     }
 
@@ -102,7 +102,7 @@ export const highervalidateMediaFile = ({
   /* ---------------- VIDEO VALIDATION ---------------- */
   if (isVideo) {
     if (file.size > maxVideoSize) {
-      toast.error("Video size should be less than 8 MB.");
+      toast.error("Video size should be less than 10 MB.");
       return;
     }
 
@@ -117,7 +117,7 @@ export const highervalidateMediaFile = ({
   /* ---------------- IMAGE VALIDATION ---------------- */
   if (isImage) {
     if (file.size > maxSize) {
-      toast.error("Image size should be less than 2 MB.");
+      toast.error("Image size should be less than 10 MB.");
       return;
     }
 
