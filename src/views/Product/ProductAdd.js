@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -41,12 +41,31 @@ const ProductAdd = () => {
   });
 
   console.log("category", category?.result);
+  const hasSubcategories = useMemo(
+    () => Array.isArray(subcategorys) && subcategorys.length > 0,
+    [subcategorys],
+  );
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductDetails((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleCategoryChange = async (e) => {
+    const categoryId = e.target.value;
+
+    setProductDetails((prev) => ({
+      ...prev,
+      categoryId,
+      subcategoryId: "",
+    }));
+
+    if (categoryId) {
+      await handleCategorySubcategoryFilter(categoryId);
+    }
   };
 
   // const handleImageChange = (e) => {
@@ -139,10 +158,26 @@ const ProductAdd = () => {
 
     try {
       setLoading(true);
+      const latestSubcategories = await handleCategorySubcategoryFilter(
+        productDetails.categoryId,
+      );
+      const requireSubcategory =
+        Array.isArray(latestSubcategories) && latestSubcategories.length > 0;
+
+      if (requireSubcategory && !productDetails.subcategoryId) {
+        toast.error("Please choose subcategory");
+        setLoading(false);
+        return;
+      }
+
       let formData = new FormData();
       formData.append("productName", productDetails.productName);
       formData.append("categoryId", productDetails.categoryId);
-      formData.append("subcategoryId", productDetails.subcategoryId);
+      if (requireSubcategory) {
+        formData.append("subcategoryId", productDetails.subcategoryId);
+      } else {
+        formData.append("subcategoryId", productDetails.categoryId);
+      }
       formData.append("productImage", productDetails.productImage);
 
       const res = await axios.post("/api/product/create/", formData, {
@@ -159,7 +194,10 @@ const ProductAdd = () => {
       navigate("/products");
     } catch (error) {
       console.log("error add banner", error);
-      const message = error?.response?.data?.message;
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Something went wrong. Please try again.";
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
@@ -210,21 +248,18 @@ const ProductAdd = () => {
                 label="Select Category Type"
                 name="categoryId"
                 value={productDetails.categoryId}
-                onChange={handleChange}
+                onChange={handleCategoryChange}
                 fullWidth
                 required
               >
                 {category?.result?.map((cat) => (
-                  <MenuItem
-                    value={cat._id}
-                    onClick={() => handleCategorySubcategoryFilter(cat._id)}
-                  >
+                  <MenuItem key={cat._id} value={cat._id}>
                     {cat.category}
                   </MenuItem>
                 ))}
               </TextField>
             </Grid>
-            {productDetails.categoryId && (
+            {productDetails.categoryId && hasSubcategories && (
               <Grid item xs={12}>
                 <TextField
                   select
@@ -233,10 +268,12 @@ const ProductAdd = () => {
                   value={productDetails.subcategoryId}
                   onChange={handleChange}
                   fullWidth
-                  required
+                  required={hasSubcategories}
                 >
                   {subcategorys.map((subcat) => (
-                    <MenuItem value={subcat._id}>{subcat.subcategory}</MenuItem>
+                    <MenuItem key={subcat._id} value={subcat._id}>
+                      {subcat.subcategory}
+                    </MenuItem>
                   ))}
                 </TextField>
               </Grid>

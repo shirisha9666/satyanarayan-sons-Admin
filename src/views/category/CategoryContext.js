@@ -64,6 +64,7 @@ export const CategoryProvider = ({ children }) => {
 
   const handleCategorySubcategoryFilter = async (id) => {
     try {
+      setSubcategorys([]);
       let resp = await axios.get(
         `/api/product/category/all/subcategory/${id}`,
         {
@@ -72,10 +73,14 @@ export const CategoryProvider = ({ children }) => {
           },
         }
       );
-      setSubcategorys(resp?.data?.result);
+      const result = resp?.data?.result || [];
+      setSubcategorys(result);
+      return result;
     } catch (error) {
       const errormessage = error.response && error.response.data.error;
       console.log("errormessage", errormessage);
+      setSubcategorys([]);
+      return [];
     }
   };
 
