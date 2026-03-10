@@ -12,6 +12,12 @@ import { useSubCategory } from "./subCategoryContext";
 import { useCategory } from "../category/CategoryContext";
 
 const SubCategoryAdd = () => {
+  const MAX_THUMBNAIL_SIZE_MB = 10;
+  const MAX_BANNER_VIDEO_SIZE_MB = 10;
+  const MAX_THUMBNAIL_SIZE_BYTES = MAX_THUMBNAIL_SIZE_MB * 1024 * 1024;
+  const MAX_BANNER_VIDEO_SIZE_BYTES = MAX_BANNER_VIDEO_SIZE_MB * 1024 * 1024;
+  const REQUIRED_MEDIA_WIDTH = 1920;
+
   const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
@@ -42,12 +48,47 @@ const SubCategoryAdd = () => {
     }));
   };
 
-  const handleThumbnailChange = (e) => {
+  const validateImageWidth = (file) =>
+    new Promise((resolve, reject) => {
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+
+      img.onload = () => {
+        const width = img.naturalWidth;
+        URL.revokeObjectURL(objectUrl);
+        if (width !== REQUIRED_MEDIA_WIDTH) {
+          reject(new Error(`Image width must be ${REQUIRED_MEDIA_WIDTH}px.`));
+          return;
+        }
+        resolve();
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("Invalid image file."));
+      };
+
+      img.src = objectUrl;
+    });
+
+  const handleThumbnailChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       toast.error("Please upload an image file for thumbnail.");
+      return;
+    }
+    if (file.size > MAX_THUMBNAIL_SIZE_BYTES) {
+      toast.error(
+        `Thumbnail image must be under ${MAX_THUMBNAIL_SIZE_MB} MB.`,
+      );
+      return;
+    }
+    try {
+      await validateImageWidth(file);
+    } catch (error) {
+      toast.error(error.message);
       return;
     }
 
@@ -60,7 +101,7 @@ const SubCategoryAdd = () => {
     }));
   };
 
-  const handleBannerVideoChange = (e) => {
+  const handleBannerVideoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -68,7 +109,10 @@ const SubCategoryAdd = () => {
       toast.error("Please upload a video file for banner.");
       return;
     }
-
+    if (file.size > MAX_BANNER_VIDEO_SIZE_BYTES) {
+      toast.error(`Banner video must be under ${MAX_BANNER_VIDEO_SIZE_MB} MB.`);
+      return;
+    }
     const preview = URL.createObjectURL(file);
 
     setSubCategoryDeatills((prev) => ({
@@ -108,8 +152,19 @@ const SubCategoryAdd = () => {
       await handlegetAllSubcategorys(page, itemPerPage, categoryBtn, seachSubCategory);
       navigate("/subcategory");
     } catch (error) {
-      const message = error?.response?.data?.message;
-      toast.error(message);
+      const message = error?.response?.data?.message || "";
+      const isLargeFileError =
+        error?.response?.status === 413 ||
+        /file too large|payload too large|limit/i.test(message);
+
+      if (isLargeFileError) {
+        toast.error(
+          `File is too large. Use image <= ${MAX_THUMBNAIL_SIZE_MB} MB and video <= ${MAX_BANNER_VIDEO_SIZE_MB} MB.`,
+        );
+        return;
+      }
+
+      toast.error(message || "Something went wrong. Please try again.");
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData("Series Number already exists. Please use a unique value.");
       } else if (message) {
