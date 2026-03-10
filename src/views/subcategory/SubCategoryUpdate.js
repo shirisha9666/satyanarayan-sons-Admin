@@ -1,49 +1,44 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-
-import {
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import Button from "@mui/material/Button";
 import { Alert, Stack } from "@mui/material";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
-import { useBanner, useSubCategory } from "./subCategoryContext";
+import { useSubCategory } from "./subCategoryContext";
 import { useCategory } from "../category/CategoryContext";
-import { isVideo } from "../TypeOfmedia";
-import { validateMediaFile } from "../HelperImageResoluation";
 
 const SubCategoryUpdate = () => {
   const token = isAutheticated();
   const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { name, id } = useParams();
-  const { handleAllCategorys, page, itemPerPage, bannertype } = useCategory();
+  const { id } = useParams();
+  const { page, itemPerPage } = useCategory();
   const {
     handlegetAllSubcategorys,
     subCategoryViewDetais,
     handleSubcategoryDetailsById,
-       categoryBtn,
-        seachSubCategory,
+    categoryBtn,
+    seachSubCategory,
   } = useSubCategory();
-  let subcategoryDetailsData = subCategoryViewDetais?.category;
+
+  const subcategoryDetailsData = subCategoryViewDetais?.category;
+
   const [subCategoryDetails, setSubCategoryDeatills] = useState({
     name: "",
-
     subcategory: "",
+
+    // image
     subcategorythumbnail: null,
-    coverImagePreview: "",
+    thumbnailPreview: "",
+
+    // video banner
+    bannerVideo: null,
+    bannerPreview: "",
   });
 
   const handleChange = (e) => {
@@ -54,69 +49,72 @@ const SubCategoryUpdate = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
 
-    validateMediaFile({
-      file,
-      imageConfig: {
-        width: 1920,
-        height: 600,
-        maxSize: 10 * 1024 * 1024,
-      },
-      videoConfig: {
-        maxSize: 10 * 1024 * 1024,
-      },
-      onSuccess: ({ file, previewURL, type }) => {
-        console.log("file",file)
-        setSubCategoryDeatills((prev) => ({
-          ...prev,
-          subcategorythumbnail: file,
-          coverImagePreview: previewURL,
-          coverImageType: type,
-        }));
-      },
-    });
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file for thumbnail.");
+      return;
+    }
 
-    e.target.value = ""; // allow re-upload same file
+    const preview = URL.createObjectURL(file);
+
+    setSubCategoryDeatills((prev) => ({
+      ...prev,
+      subcategorythumbnail: file,
+      thumbnailPreview: preview,
+    }));
   };
+
+  const handleBannerVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      toast.error("Please upload a video file for banner.");
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+
+    setSubCategoryDeatills((prev) => ({
+      ...prev,
+      bannerVideo: file,
+      bannerPreview: preview,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("name", subCategoryDetails.name);
       formData.append("subcategory", subCategoryDetails.subcategory);
 
-      formData.append(
-        "subcategorythumbnail",
-        subCategoryDetails.subcategorythumbnail,
-      );
+      if (subCategoryDetails.subcategorythumbnail) {
+        formData.append(
+          "subcategorythumbnail",
+          subCategoryDetails.subcategorythumbnail,
+        );
+      }
 
-      const res = await axios.patch(
-        `/api/product/category/subcategory/update/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+      if (subCategoryDetails.bannerVideo) {
+        formData.append("bannerVideo", subCategoryDetails.bannerVideo);
+      }
+
+      await axios.patch(`/api/product/category/subcategory/update/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
-      const result = res.data;
-
-      // await handlegetAllSubcategorys(page, itemPerPage, bannertype);
-       await handlegetAllSubcategorys(
-        page,
-        itemPerPage,
-        categoryBtn,
-        seachSubCategory,
-      );
+      await handlegetAllSubcategorys(page, itemPerPage, categoryBtn, seachSubCategory);
       navigate("/subcategory");
     } catch (error) {
-      console.log("error add banner", error);
       const message = error?.response?.data?.message;
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
@@ -142,17 +140,17 @@ const SubCategoryUpdate = () => {
     if (subcategoryDetailsData) {
       setSubCategoryDeatills({
         name: subcategoryDetailsData?.name || "",
-
         subcategory: subcategoryDetailsData?.subcategory || "",
-        subcategorythumbnail:
-          subcategoryDetailsData?.subcategorythumbnail?.url || null,
-        coverImagePreview:
-          subcategoryDetailsData?.subcategorythumbnail?.url || "",
+        subcategorythumbnail: null,
+        thumbnailPreview: subcategoryDetailsData?.subcategorythumbnail?.url || "",
+        bannerVideo: null,
+        bannerPreview:
+          subcategoryDetailsData?.bannerVideo?.url ||
+          subcategoryDetailsData?.banner?.url ||
+          "",
       });
     }
   }, [subcategoryDetailsData]);
-    console.log("subCategoryDetails",subCategoryDetails.subcategorythumbnail)
-
 
   return (
     <div>
@@ -160,7 +158,6 @@ const SubCategoryUpdate = () => {
         sx={{
           maxWidth: 800,
           mx: "auto",
-
           p: 3,
           boxShadow: 3,
           borderRadius: 2,
@@ -169,6 +166,7 @@ const SubCategoryUpdate = () => {
         <Typography variant="h5" mb={2}>
           Update Subcategory
         </Typography>
+
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -197,55 +195,62 @@ const SubCategoryUpdate = () => {
 
             <Grid item xs={12}>
               <Typography variant="subtitle1" mb={1}>
-                Cover Media (Image / Video)
+                Subcategory Thumbnail (Image)
               </Typography>
 
               <Button variant="contained" component="label">
-                Upload Media
+                Upload Image
                 <input
                   type="file"
-                  accept="image/*,video/*"
+                  accept="image/*"
                   hidden
-                  onChange={handleImageChange}
+                  onChange={handleThumbnailChange}
                 />
               </Button>
 
-              {/* Helper Text */}
-              <FormHelperText>
-                Please upload an image or video. Recommended resolution: {1920}{" "}
-                × {600}. Max size: 10 MB.
-              </FormHelperText>
-
-              {subCategoryDetails?.coverImagePreview && (
+              {subCategoryDetails.thumbnailPreview && (
                 <Box mt={2}>
-                  {isVideo(
-                    subCategoryDetails.coverImagePreview,
-                    subCategoryDetails.subcategorythumbnail,
-                  ) ? (
-                    <video
-                      src={subCategoryDetails.coverImagePreview}
-                      controls
-                      muted
-                      playsInline
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={subCategoryDetails.coverImagePreview}
-                      alt="Cover Preview"
-                      style={{
-                        width: "100%",
-                        maxHeight: 300,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                      }}
-                    />
-                  )}
+                  <img
+                    src={subCategoryDetails.thumbnailPreview}
+                    alt="Thumbnail Preview"
+                    style={{
+                      width: "100%",
+                      maxHeight: 300,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
+                  />
+                </Box>
+              )}
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" mb={1}>
+                Banner Video
+              </Typography>
+
+              <Button variant="contained" component="label">
+                Upload Video
+                <input
+                  type="file"
+                  accept="video/*"
+                  hidden
+                  onChange={handleBannerVideoChange}
+                />
+              </Button>
+
+              {subCategoryDetails.bannerPreview && (
+                <Box mt={2}>
+                  <video
+                    src={subCategoryDetails.bannerPreview}
+                    controls
+                    style={{
+                      width: "100%",
+                      maxHeight: 300,
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
+                  />
                 </Box>
               )}
             </Grid>
@@ -257,6 +262,7 @@ const SubCategoryUpdate = () => {
             </Grid>
           </Grid>
         </form>
+
         {errordata && (
           <Stack sx={{ width: "100%", mt: 2, mb: 2 }}>
             <Alert variant="filled" severity="error">
@@ -268,4 +274,5 @@ const SubCategoryUpdate = () => {
     </div>
   );
 };
+
 export default SubCategoryUpdate;
