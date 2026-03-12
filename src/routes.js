@@ -788,12 +788,12 @@ const routes = [
     navName: "Website Related",
   },
   //seo
-  // {
-  //   path: "/seo/request/new",
-  //   name: "seo Request",
-  //   element: AddSeoRequest,
-  //   navName: "Settings",
-  // },
+  {
+    path: "/seo/request/new",
+    name: "seo Request",
+    element: AddSeoRequest,
+    navName: "Settings",
+  },
 
   // Content ---- >
   {

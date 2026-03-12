@@ -300,6 +300,13 @@ const _nav = [
         to: "/copyright/message",
         group: "Settings",
       },
+      {
+        component: CNavItem,
+        name: "SEO Settings",
+        icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+        to: "/seo/request/new",
+        group: "Settings",
+      },
      
     ],
   },
