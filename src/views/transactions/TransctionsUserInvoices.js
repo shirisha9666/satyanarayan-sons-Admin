@@ -84,6 +84,7 @@ export default function GoldSchemeDetails() {
                 <TableCell>Invoice</TableCell>
                 <TableCell>Amount</TableCell>
                 <TableCell>Type</TableCell>
+                <TableCell>Branch</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell align="right">Action</TableCell>
               </TableRow>
@@ -91,17 +92,42 @@ export default function GoldSchemeDetails() {
 
             <TableBody>
               {result?.map((val, kye) => (
-                <TableRow>
+                <TableRow key={val?._id || kye}>
                   <TableCell>{val?.month}</TableCell>
                   <TableCell sx={{ color: "#2563EB", fontWeight: 500 }}>
                     {val?.InvoiceNo}
                   </TableCell>
                   <TableCell>₹{val?.monthlyPrice}</TableCell>
                   <TableCell>
-                    <Chip label="Credit" color="success" size="small" />
+                    <Chip
+                      label={val?.PymentType || val?.paymentType || "N/A"}
+                      color={
+                        (val?.PymentType || val?.paymentType) === "Offline"
+                          ? "info"
+                          : "primary"
+                      }
+                      size="small"
+                    />
                   </TableCell>
                   <TableCell>
-                    <Chip label="ACTIVE" color="warning" size="small" />
+                    {(val?.PymentType || val?.paymentType) === "Online"
+                      ? "Online"
+                      : userInvoices?.scheme?.branch?.branchName ||
+                        userInvoices?.scheme?.branch ||
+                        "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={val?.paymentStatus || "PENDING"}
+                      color={
+                        val?.paymentStatus === "SUCCESS"
+                          ? "success"
+                          : val?.paymentStatus === "PENDING"
+                          ? "warning"
+                          : "error"
+                      }
+                      size="small"
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <Button onClick={async() => {

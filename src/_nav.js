@@ -187,6 +187,14 @@ const _nav = [
     to: "/Customers ",
     group: "Employees & Access",
   },
+  {
+    component: CNavItem,
+    name: "Offline Payments",
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    to: "/offlineusers",
+    group: "Employees & Access",
+  },
+  
 
     {
     component: CNavItem,
@@ -202,6 +210,7 @@ const _nav = [
     to: "/Anniversary/Campaign",
     group: "Anniversary Campaign",
   },
+  
 
   // {
   //   component: CNavItem,

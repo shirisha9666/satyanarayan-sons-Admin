@@ -222,6 +222,7 @@ import GoldSchemeDetails from "./views/transactions/TransctionsUserInvoices";
 import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
 import TransctionInvoice from "./views/transactions/Invoice";
 import Anniversary from "./views/annivarsaryCampaign/AnnivarsaryCampaign";
+import OfflineUsersPage from "./views/transactions/offlineusers";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -1271,6 +1272,12 @@ const routes = [
     name: "Point of Sale",
     element: Pos,
     navName: "Point of Sale",
+  },
+  {
+    path: "/offlineusers",
+    name: "Offlineusers",
+    element: OfflineUsersPage,
+    navName: "Orders",
   },
 
   // Export to excel

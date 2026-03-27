@@ -86,7 +86,7 @@ export default function UserAllSchemesTable() {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f9fafb" }}>
               {tableHeading.map((val) => (
-                <TableCell>{val}</TableCell>
+                <TableCell key={val}>{val}</TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -105,7 +105,11 @@ export default function UserAllSchemesTable() {
                 <TableCell>{row?.dateOfJoining}</TableCell>
 
                 <TableCell>{row?.dateOfCompletion}</TableCell>
-                <TableCell>{row?.branch}</TableCell>
+                <TableCell>
+                  {typeof row?.branch === "string"
+                    ? row?.branch
+                    : row?.branch?.branchName || "-"}
+                </TableCell>
 
                 <TableCell>{row?.membershipNo}</TableCell>
                 <TableCell>
