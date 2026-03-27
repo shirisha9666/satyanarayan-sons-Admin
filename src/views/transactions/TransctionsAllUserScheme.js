@@ -40,6 +40,7 @@ export default function UserAllSchemesTable() {
     "Monthly_Installment",
     "Date of Joining",
     "Date of Completion",
+    "Branch",
     "MeberShipNo",
     "Status",
     "Action",
@@ -53,7 +54,7 @@ export default function UserAllSchemesTable() {
   } = useTransactions();
 
   let rows = usergoldScheme?.findAllPlans;
-
+  
   console.log("usergoldScheme", usergoldScheme);
   useEffect(() => {
     handleUserSchemas(id);
@@ -104,6 +105,7 @@ export default function UserAllSchemesTable() {
                 <TableCell>{row?.dateOfJoining}</TableCell>
 
                 <TableCell>{row?.dateOfCompletion}</TableCell>
+                <TableCell>{row?.branch}</TableCell>
 
                 <TableCell>{row?.membershipNo}</TableCell>
                 <TableCell>

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-
 import {
   FormControl,
   Grid,
@@ -23,10 +22,10 @@ import { useCategory } from "../category/CategoryContext";
 
 const GoldSchemaAdd = () => {
   const token = isAutheticated();
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   const [errordata, setErrorData] = useState("");
   const navigate = useNavigate();
-  const { handlegetAllProducts, page, itemPerPage, bannertype ,taxList} =
+  const { handlegetAllProducts, page, itemPerPage, bannertype, taxList } =
     useGoldSchema();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
@@ -34,13 +33,13 @@ const GoldSchemaAdd = () => {
     Scheme_Name: "",
     Monthly_Installment: "",
     Months: "",
-Gold_Type:"",
+    Gold_Type: "",
     Total_Amount: "",
     Members: "",
     // Start_Date: "",
     End_Date: "",
   });
-  let goldtypes=["22K", "24K","18K"]
+  let goldtypes = ["22K", "24K", "18K"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,13 +58,13 @@ Gold_Type:"",
       formData.append("Scheme_Name", productDetails.Scheme_Name);
       formData.append(
         "Monthly_Installment",
-        productDetails.Monthly_Installment
+        productDetails.Monthly_Installment,
       );
       formData.append("Months", productDetails.Months);
       formData.append("Total_Amount", productDetails.Total_Amount);
 
       formData.append("Members", productDetails.Members);
-           formData.append("Gold_Type", productDetails.Gold_Type);
+      formData.append("Gold_Type", productDetails.Gold_Type);
       // formData.append("Start_Date", productDetails.Start_Date);
       formData.append("End_Date", productDetails.End_Date);
 
@@ -84,7 +83,7 @@ Gold_Type:"",
       toast.error(message);
       if (message && message.includes("E11000 duplicate key error")) {
         setErrorData(
-          "Series Number already exists. Please use a unique value."
+          "Series Number already exists. Please use a unique value.",
         );
       } else if (message) {
         setErrorData(message);
@@ -116,14 +115,20 @@ Gold_Type:"",
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                autoComplete="off"
-                label="Scheme Name"
+                select
+                label="Scheme Type"
                 name="Scheme_Name"
                 value={productDetails.Scheme_Name}
                 onChange={handleChange}
                 fullWidth
                 required
-              />
+              >
+                {["Saving Scheme","Bonus Scheme"].map((scheme) => (
+                  <MenuItem key={scheme} value={scheme}>
+                    {scheme}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12}>
@@ -137,23 +142,22 @@ Gold_Type:"",
                 required
               />
             </Grid>
-    
 
-                 <Grid item xs={12}>
-                            <TextField
-                              select
-                              label="Select Gold Type"
-                              name="Gold_Type"
-                              value={productDetails.Gold_Type}
-                              onChange={handleChange}
-                              fullWidth
-                              required
-                            >
-                              {goldtypes.map((subcat) => (
-                                <MenuItem value={subcat}>{subcat}</MenuItem>
-                              ))}
-                            </TextField>
-                          </Grid>
+            <Grid item xs={12}>
+              <TextField
+                select
+                label="Select Gold Type"
+                name="Gold_Type"
+                value={productDetails.Gold_Type}
+                onChange={handleChange}
+                fullWidth
+                required
+              >
+                {goldtypes.map((subcat) => (
+                  <MenuItem value={subcat}>{subcat}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 autoComplete="off"
@@ -201,7 +205,7 @@ Gold_Type:"",
             </Grid> */}
             <Grid item xs={12}>
               <TextField
-              type="date"
+                type="date"
                 autoComplete="off"
                 label="End Date"
                 name="End_Date"
@@ -224,7 +228,7 @@ Gold_Type:"",
             <Alert variant="filled" severity="error">
               {errordata}
             </Alert>
-          </Stack>
+          </Stack> 
         )}
       </Box>
     </div>
