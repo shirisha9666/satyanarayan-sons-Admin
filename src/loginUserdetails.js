@@ -8,7 +8,7 @@ export const getUser = () => {
     const decoded = jwtDecode(token);
     return decoded;
   } catch (error) {
-    console.error("Invalid token", err);
+    console.error("Invalid token", error);
     return null;
   }
 };

@@ -1,625 +1,737 @@
-import {
-  Box,
-  Card,
-  Typography,
-  Chip,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Avatar,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { isAutheticated } from "src/auth";
+import { getUser } from "src/loginUserdetails";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { CircularProgress } from "@material-ui/core";
-import { isAutheticated } from "../../auth";
-import { useNavigate } from "react-router-dom";
-import DescriptionIcon from "@mui/icons-material/Description";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select
+} from "@material-ui/core";
 
-export default function OfflineUsersPage() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+const colors = {
+  gradientHeader: "linear-gradient(135deg, #92400e 0%, #b45309 40%, #d97706 80%, #f59e0b 100%)",
+  gradientBtn: "linear-gradient(135deg, #b45309 0%, #d97706 60%, #f59e0b 100%)",
+  pageBg: "linear-gradient(160deg, #fffbeb 0%, #fef3c7 50%, #fde68a 100%)",
+  cardBg: "#ffffff",
+  sectionBorder: "1px solid #fde68a",
+  inputBg: "#fffbf0",
+  inputBorder: "1.5px solid #fcd88a",
+  inputFocusBorder: "#d97706",
+  inputFocusShadow: "0 0 0 3px rgba(217,119,6,0.15)",
+  labelColor: "#92400e",
+  textPrimary: "#1c1917",
+  textMuted: "#78350f",
+  amber100: "#fef3c7",
+  amber200: "#fde68a",
+  amber700: "#b45309",
+  amber800: "#92400e",
+};
 
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
+const styles = {
+  page: {
+  minHeight: "100vh",
+  width: "100%",
+  background: colors.pageBg,
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "stretch",
+  padding: "0",
+},
+  card: {
+  background: colors.cardBg,
+  width: "100%",
+  minHeight: "100vh",
+  borderRadius: "0", // remove rounded look
+  boxShadow: "none", // remove floating effect
+},
+  heroHeader: {
+    background: colors.gradientHeader,
+    padding: "32px 40px 28px",
+    textAlign: "center",
+    position: "relative",
+    overflow: "hidden",
+  },
+  heroIcon: {
+    width: "56px",
+    height: "56px",
+    borderRadius: "16px",
+    background: "rgba(255,255,255,0.2)",
+    border: "1.5px solid rgba(255,255,255,0.4)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 14px",
+  },
+  heroTitle: {
+    margin: 0,
+    fontSize: "26px",
+    fontWeight: 700,
+    color: "#fff",
+    letterSpacing: "-0.01em",
+  },
+  heroSub: {
+    margin: "6px 0 0",
+    fontSize: "14px",
+    color: "rgba(255,255,255,0.8)",
+    fontWeight: 400,
+  },
+  formBody: {
+  padding: "20px 40px",
+  background: "#fffdf7",
+},
+  section: {
+    background: "#fff",
+    borderRadius: "16px",
+    border: "1px solid #fde68a",
+    marginBottom: "20px",
+    overflow: "hidden",
+    boxShadow: "0 2px 10px rgba(180,120,40,0.06)",
+  },
+  sectionHead: {
+    background: "linear-gradient(135deg, #b45309 0%, #d97706 60%, #f59e0b 100%)",
+    padding: "12px 20px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+  badge: {
+    width: "26px",
+    height: "26px",
+    borderRadius: "50%",
+    background: "rgba(255,255,255,0.22)",
+    border: "1.5px solid rgba(255,255,255,0.5)",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  sectionTitle: {
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: "14px",
+    letterSpacing: "0.01em",
+  },
+  sectionBody: {
+    padding: "18px 20px",
+  },
+  grid2: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "14px",
+  },
+  grid3: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr",
+    gap: "14px",
+  },
+  grid4: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr 1fr",
+    gap: "14px",
+  },
+  fieldGroup: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "5px",
+  },
+  label: {
+    fontSize: "11px",
+    fontWeight: 700,
+    color: colors.labelColor,
+    textTransform: "uppercase",
+    letterSpacing: "0.06em",
+  },
+  input: {
+    width: "100%",
+    padding: "10px 13px",
+    border: colors.inputBorder,
+    borderRadius: "10px",
+    fontSize: "14px",
+    color: colors.textPrimary,
+    background: colors.inputBg,
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+    fontFamily: "inherit",
+  },
+  textarea: {
+    width: "100%",
+    padding: "10px 13px",
+    border: colors.inputBorder,
+    borderRadius: "10px",
+    fontSize: "14px",
+    color: colors.textPrimary,
+    background: colors.inputBg,
+    outline: "none",
+    boxSizing: "border-box",
+    resize: "vertical",
+    minHeight: "80px",
+    fontFamily: "inherit",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+  },
+  checkCard: (checked) => ({
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "10px",
+    padding: "12px 14px",
+    border: `2px solid ${checked ? "#d97706" : "#fde68a"}`,
+    borderRadius: "12px",
+    background: checked ? "#fffbeb" : "#fffdf5",
+    cursor: "pointer",
+    transition: "all 0.18s",
+  }),
+  checkLabel: (checked) => ({
+    fontSize: "13px",
+    fontWeight: 600,
+    color: checked ? "#92400e" : "#44403c",
+    cursor: "pointer",
+  }),
+  checkDesc: {
+    fontSize: "11px",
+    color: "#a16207",
+    marginTop: "2px",
+  },
+  radioCard: (selected) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "10px 14px",
+    border: `2px solid ${selected ? "#d97706" : "#fde68a"}`,
+    borderRadius: "10px",
+    background: selected ? "#fffbeb" : "#fffdf5",
+    cursor: "pointer",
+    transition: "all 0.18s",
+    fontSize: "13px",
+    fontWeight: selected ? 600 : 400,
+    color: selected ? "#92400e" : "#44403c",
+  }),
+  uploadZone: {
+    border: "2px dashed #fcd88a",
+    borderRadius: "12px",
+    padding: "18px",
+    textAlign: "center",
+    background: "#fffbf0",
+    cursor: "pointer",
+    transition: "border-color 0.2s",
+    marginTop: "14px",
+  },
+  submitBtn: (disabled) => ({
+    width: "100%",
+    padding: "15px",
+    borderRadius: "14px",
+    border: "none",
+    background: disabled
+      ? "#d6d3d1"
+      : colors.gradientBtn,
+    color: disabled ? "#a8a29e" : "#fff",
+    fontWeight: 700,
+    fontSize: "16px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "10px",
+    letterSpacing: "0.02em",
+    boxShadow: disabled ? "none" : "0 4px 20px rgba(180,83,9,0.35)",
+    transition: "opacity 0.2s, transform 0.1s",
+    fontFamily: "inherit",
+    marginTop: "4px",
+  }),
+};
 
-  const [branchesById, setBranchesById] = useState({});
-
-  const navigate = useNavigate();
-
-  const apiBase = "https://satyanaran-sons-api.onrender.com";
-
-  // ✅ GET API
-  const fetchOfflineUsers = async () => {
-    try {
-      setLoading(true);
-      const token = isAutheticated();
-      const res = await axios.get(`${apiBase}/api/gold/scheme/offline/users`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
-      const payload = res?.data;
-      const list = Array.isArray(payload) ? payload : payload?.result || [];
-      setData(list);
-    } catch (err) {
-      if (err?.response?.status === 404) {
-        setData([]);
-        return;
-      }
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBranches = async () => {
-    try {
-      const token = isAutheticated();
-      const res = await axios.get(
-        `${apiBase}/api/branch/getAll?page=1&limit=500`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
-      );
-      const list = res?.data?.result || [];
-      const map = {};
-      for (const branch of list) {
-        if (branch?._id) {
-          map[branch._id] = branch?.branchName || branch?.name || branch._id;
-        }
-      }
-      setBranchesById(map);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchOfflineUsers();
-    fetchBranches();
-  }, []);
-
-  // ✅ PATCH API
-  const handleStatusUpdate = async (status) => {
-    try {
-      setActionLoading(true);
-
-      const token = isAutheticated();
-      await axios.patch(
-        `${apiBase}/api/gold/scheme/status/${selectedId}`,
-        {
-          status: status,
-        },
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        }
-      );
-
-      setOpenDialog(false);
-      fetchOfflineUsers();
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const getStatusColor = (val) => {
-    const s = val?.paymentStatus || val?.status || "";
-    if (s === "SUCCESS" || s === "ACTIVE" || s === "Approved") return "success";
-    if (["FAILED", "CANCELLED", "Rejected"].includes(s)) return "error";
-    return "warning";
-  };
-
-  const getInitials = (name) => {
-    if (!name) return "?";
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
-  };
-
-  const avatarColors = [
-    "#E67E22", "#8E44AD", "#2980B9", "#27AE60", "#C0392B",
-    "#16A085", "#D35400", "#2C3E50",
-  ];
-
-  const getAvatarColor = (name = "") => {
-    let hash = 0;
-    for (let c of name) hash += c.charCodeAt(0);
-    return avatarColors[hash % avatarColors.length];
-  };
-
-  const columns = [
-    "Member", "Receipt No", "Invoice", "Amount", "Payment Type", "Branch", "Status", ""
-  ];
-
+// Focused input wrapper
+function Input({ label, type = "text", placeholder, value, onChange, readOnly, style }) {
+  const [focused, setFocused] = useState(false);
   return (
-    <Box
-      sx={{
-        p: { xs: 2, sm: 3, md: 4 },
-        minHeight: "100vh",
-        background: "#F7F8FC",
-      }}
-    >
-      {/* ── Header ── */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-          mb: 3,
+    <div style={styles.fieldGroup}>
+      {label && <label style={styles.label}>{label}</label>}
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        readOnly={readOnly}
+        style={{
+          ...styles.input,
+          ...(focused ? { borderColor: colors.inputFocusBorder, boxShadow: colors.inputFocusShadow } : {}),
+          ...(readOnly ? { background: "#f5f5f4", color: "#78350f", fontWeight: 600 } : {}),
+          ...style,
         }}
-      >
-        <Box
-          sx={{
-            width: 44,
-            height: 44,
-            borderRadius: "12px",
-            background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 12px rgba(245,158,11,0.35)",
-          }}
-        >
-          <AccountBalanceWalletOutlinedIcon sx={{ color: "#fff", fontSize: 22 }} />
-        </Box>
-        <Box>
-          <Typography
-            sx={{
-              fontWeight: 700,
-              fontSize: "1.35rem",
-              color: "#1A1D23",
-              lineHeight: 1.2,
-            }}
-          >
-            Offline Payment Verification
-          </Typography>
-          <Typography sx={{ fontSize: "0.8rem", color: "#8A8FA3", mt: 0.2 }}>
-            Review and approve member payment receipts
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* ── Table Card ── */}
-      <Card
-        elevation={0}
-        sx={{
-          borderRadius: "16px",
-          border: "1px solid #E8EAF0",
-          overflow: "hidden",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.06)",
-        }}
-      >
-        <TableContainer component={Paper} elevation={0} sx={{ background: "#fff" }}>
-          <Table>
-            {/* Head */}
-            <TableHead>
-              <TableRow sx={{ background: "#F9FAFB" }}>
-                {columns.map((col) => (
-                  <TableCell
-                    key={col}
-                    align={col === "" ? "right" : "left"}
-                    sx={{
-                      fontWeight: 600,
-                      fontSize: "0.72rem",
-                      color: "#6B7280",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      py: 1.8,
-                      borderBottom: "2px solid #F0F1F5",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {col}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-
-            {/* Body */}
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
-                      <CircularProgress size={32} thickness={4} style={{ color: "#F59E0B" }} />
-                      <Typography sx={{ color: "#9CA3AF", fontSize: "0.85rem" }}>
-                        Loading records...
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ) : data.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ py: 7 }}>
-                    <ReceiptLongIcon sx={{ fontSize: 40, color: "#D1D5DB", mb: 1 }} />
-                    <Typography sx={{ color: "#9CA3AF", fontSize: "0.9rem" }}>
-                      No offline payments found
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                (Array.isArray(data) ? data : []).map((val, idx) => {
-                  const name = val?.SchemaId?.name || val?.name || "N/A";
-                  return (
-                    <TableRow
-                      key={val._id}
-                      sx={{
-                        "&:hover": { background: "#FAFBFF" },
-                        transition: "background 0.15s",
-                        borderBottom: "1px solid #F3F4F6",
-                      }}
-                    >
-                      {/* Member */}
-                      <TableCell sx={{ py: 1.8 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                          <Avatar
-                            sx={{
-                              width: 34,
-                              height: 34,
-                              fontSize: "0.72rem",
-                              fontWeight: 700,
-                              background: getAvatarColor(name),
-                              borderRadius: "10px",
-                            }}
-                          >
-                            {getInitials(name)}
-                          </Avatar>
-                          <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#1A1D23" }}>
-                            {name}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-
-                      {/* Branch */}
-                     <TableCell>
-                        <Typography
-                          sx={{
-                            fontSize: "0.82rem",
-                            color: "#6B7280",
-                            fontFamily: "monospace",
-                            background: "#F3F4F6",
-                            px: 1,
-                            py: 0.3,
-                            borderRadius: "6px",
-                            display: "inline-block",
-                          }}
-                        >
-                          {val?.ReceipmentNumber ||
-                            val?.receiptNo ||
-                            val?.reciptNo ||
-                            "—"}
-                        </Typography>
-                      </TableCell>
-
-                      {/* Invoice */}
-                      <TableCell>
-                        <Button
-                          variant="text"
-                          size="small"
-                          startIcon={<DescriptionIcon sx={{ fontSize: "15px !important" }} />}
-                          onClick={() => navigate(`/Customers/user/Invoice/${val._id}`)}
-                          sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            fontSize: "0.82rem",
-                            color: "#2563EB",
-                            background: "#EFF6FF",
-                            borderRadius: "8px",
-                            px: 1.5,
-                            py: 0.5,
-                            minWidth: 0,
-                            "&:hover": { background: "#DBEAFE" },
-                          }}
-                        >
-                          {val?.InvoiceNo || "Invoice"}
-                        </Button>
-                      </TableCell>
-
-                      {/* Amount */}
-                      <TableCell>
-                        <Typography sx={{ fontWeight: 700, fontSize: "0.9rem", color: "#1A1D23" }}>
-                          ₹{val?.monthlyPrice}
-                        </Typography>
-                      </TableCell>
-
-                      {/* Payment Type */}
-                      <TableCell>
-                        <Typography sx={{ fontSize: "0.85rem", color: "#4B5563" }}>
-                          {val?.PymentType || val?.paymentType || "Offline"}
-                          {val?.paymentMethod ? (
-                            <Box
-                              component="span"
-                              sx={{ color: "#9CA3AF", fontSize: "0.78rem", ml: 0.5 }}
-                            >
-                              ({val.paymentMethod})
-                            </Box>
-                          ) : null}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography sx={{ fontSize: "0.85rem", color: "#4B5563" }}>
-                          {typeof val?.SchemaId?.branch === "object"
-                            ? val?.SchemaId?.branch?.branchName || "N/A"
-                            : branchesById?.[val?.SchemaId?.branch] ||
-                              val?.SchemaId?.branch ||
-                              "N/A"}
-                        </Typography>
-                      </TableCell>
-
-                      {/* Receipt No */}
-                      
-
-                      {/* Status */}
-                      <TableCell>
-                        <Chip
-                          label={val?.paymentStatus || val?.status || "PENDING"}
-                          color={getStatusColor(val)}
-                          size="small"
-                          sx={{
-                            fontWeight: 600,
-                            fontSize: "0.72rem",
-                            borderRadius: "8px",
-                            letterSpacing: "0.03em",
-                          }}
-                        />
-                      </TableCell>
-
-                      {/* Action */}
-                      <TableCell align="right">
-                        <Button
-                          variant="contained"
-                          size="small"
-                          startIcon={<VerifiedUserOutlinedIcon sx={{ fontSize: "15px !important" }} />}
-                          onClick={() => {
-                            setSelectedId(val._id);
-                            setSelectedData(val);
-                            setOpenDialog(true);
-                          }}
-                          sx={{
-                            textTransform: "none",
-                            fontWeight: 600,
-                            fontSize: "0.82rem",
-                            borderRadius: "9px",
-                            background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-                            boxShadow: "0 2px 8px rgba(245,158,11,0.3)",
-                            px: 2,
-                            "&:hover": {
-                              background: "linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)",
-                              boxShadow: "0 4px 12px rgba(245,158,11,0.4)",
-                            },
-                          }}
-                        >
-                          Verify
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
-
-      {/* ✅ POPUP */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: "20px",
-            p: 0,
-            overflow: "hidden",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-          },
-        }}
-      >
-        {/* Dialog Header */}
-        <Box
-          sx={{
-            background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)",
-            px: 3,
-            py: 2.5,
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-          }}
-        >
-          <VerifiedUserOutlinedIcon sx={{ color: "#fff", fontSize: 24 }} />
-          <DialogTitle
-            sx={{
-              p: 0,
-              fontWeight: 700,
-              fontSize: "1.1rem",
-              color: "#fff",
-            }}
-          >
-            Verify Payment
-          </DialogTitle>
-        </Box>
-
-        <DialogContent sx={{ p: 3 }}>
-          <Typography
-            sx={{ color: "#6B7280", fontSize: "0.875rem", mb: 2.5 }}
-          >
-            Review the details below and approve or reject this payment.
-          </Typography>
-
-          {/* Detail rows */}
-          {[
-            {
-              label: "Member Name",
-              value: selectedData?.SchemaId?.name || selectedData?.name || "N/A",
-            },
-            {
-              label: "Branch",
-              value:
-                typeof selectedData?.SchemaId?.branch === "object"
-                  ? selectedData?.SchemaId?.branch?.branchName || "N/A"
-                  : branchesById?.[selectedData?.SchemaId?.branch] ||
-                    selectedData?.SchemaId?.branch ||
-                    "N/A",
-            },
-            {
-              label: "Invoice No",
-              value: selectedData?.InvoiceNo || "N/A",
-            },
-            {
-              label: "Receipt No",
-              value:
-                selectedData?.ReceipmentNumber ||
-                selectedData?.receiptNo ||
-                selectedData?.reciptNo ||
-                "N/A",
-              mono: true,
-            },
-          ].map(({ label, value, mono }) => (
-            <Box
-              key={label}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                py: 1.4,
-                borderBottom: "1px solid #F3F4F6",
-              }}
-            >
-              <Typography sx={{ fontSize: "0.82rem", color: "#9CA3AF", fontWeight: 500 }}>
-                {label}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "#1A1D23",
-                  fontFamily: mono ? "monospace" : "inherit",
-                  background: mono ? "#F3F4F6" : "transparent",
-                  px: mono ? 1 : 0,
-                  py: mono ? 0.3 : 0,
-                  borderRadius: mono ? "6px" : 0,
-                }}
-              >
-                {value}
-              </Typography>
-            </Box>
-          ))}
-
-          {/* ✅ IMAGE */}
-          {selectedData?.ReceiptUpload?.url && (
-            <Box
-              sx={{
-                mt: 2.5,
-                borderRadius: "12px",
-                overflow: "hidden",
-                border: "2px solid #F0F1F5",
-              }}
-            >
-              <Typography
-                sx={{
-                  px: 2,
-                  py: 1,
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#6B7280",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                  background: "#F9FAFB",
-                  borderBottom: "1px solid #F0F1F5",
-                }}
-              >
-                Receipt Image
-              </Typography>
-              <img
-                src={selectedData.ReceiptUpload.url}
-                alt="Receipt"
-                style={{
-                  width: "100%",
-                  display: "block",
-                }}
-              />
-            </Box>
-          )}
-        </DialogContent>
-
-        <DialogActions
-          sx={{
-            px: 3,
-            py: 2.5,
-            gap: 1.5,
-            borderTop: "1px solid #F3F4F6",
-            background: "#FAFBFC",
-          }}
-        >
-          <Button
-            onClick={() => setOpenDialog(false)}
-            sx={{
-              textTransform: "none",
-              fontWeight: 600,
-              color: "#6B7280",
-              borderRadius: "10px",
-              px: 2.5,
-              "&:hover": { background: "#F3F4F6" },
-            }}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onClick={() => handleStatusUpdate("Rejected")}
-            color="error"
-            variant="outlined"
-            disabled={actionLoading}
-            startIcon={<CancelOutlinedIcon />}
-            sx={{
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "10px",
-              px: 2.5,
-              borderWidth: "1.5px",
-              "&:hover": { borderWidth: "1.5px", background: "#FEF2F2" },
-            }}
-          >
-            Reject
-          </Button>
-
-          <Button
-            onClick={() => handleStatusUpdate("Approved")}
-            variant="contained"
-            disabled={actionLoading}
-            startIcon={!actionLoading && <CheckCircleOutlineIcon />}
-            sx={{
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "10px",
-              px: 2.5,
-              background: "linear-gradient(135deg, #22C55E 0%, #16A34A 100%)",
-              boxShadow: "0 2px 8px rgba(34,197,94,0.3)",
-              "&:hover": {
-                background: "linear-gradient(135deg, #4ADE80 0%, #22C55E 100%)",
-                boxShadow: "0 4px 12px rgba(34,197,94,0.4)",
-              },
-            }}
-          >
-            {actionLoading ? <CircularProgress size={18} style={{ color: "#fff" }} /> : "Approve"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
   );
 }
+
+function Textarea({ label, placeholder, value, onChange }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div style={styles.fieldGroup}>
+      {label && <label style={styles.label}>{label}</label>}
+      <textarea
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        style={{
+          ...styles.textarea,
+          ...(focused ? { borderColor: colors.inputFocusBorder, boxShadow: colors.inputFocusShadow } : {}),
+        }}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+    </div>
+  );
+}
+
+function  CustomSelect({ label, value, onChange, children }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div style={styles.fieldGroup}>
+      {label && <label style={styles.label}>{label}</label>}
+      <select
+        value={value}
+        onChange={onChange}
+        style={{
+          ...styles.input,
+          cursor: "pointer",
+          ...(focused ? { borderColor: colors.inputFocusBorder, boxShadow: colors.inputFocusShadow } : {}),
+        }}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      >
+        {children}
+      </select>
+    </div>
+  );
+}
+
+function Section({ num, title, children }) {
+  return (
+    <div style={styles.section}>
+      <div style={styles.sectionHead}>
+        <div style={styles.badge}>{num}</div>
+        <span style={styles.sectionTitle}>{title}</span>
+      </div>
+      <div style={styles.sectionBody}>{children}</div>
+    </div>
+  );
+}
+
+const extractUserFromResponse = (response) =>
+  response?.data?.data ?? response?.data?.user ?? response?.data ?? null;
+
+const extractBranchFromUser = (user) => {
+  if (!user) return { id: "", name: "", code: "" };
+
+  const branchFromBranchId =
+    user?.branchId && typeof user.branchId === "object" ? user.branchId : null;
+  const branchFromBranch =
+    user?.branch && typeof user.branch === "object" ? user.branch : null;
+  const branchObj = branchFromBranchId || branchFromBranch;
+
+  const id =
+    branchObj?._id ??
+    branchObj?.id ??
+    (typeof user?.branchId === "string" ? user.branchId : "");
+
+  const name = branchObj?.branchName ?? branchObj?.name ?? user?.branchName ?? "";
+
+  const code = branchObj?.branchCode ?? branchObj?.code ?? user?.branchCode ?? "";
+
+  return {
+    id: id ? String(id) : "",
+    name: name ? String(name) : "",
+    code: code ? String(code) : "",
+  };
+};
+
+const GoldForm = () => {
+  const [selectedId, setSelectedId] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const token = isAutheticated();
+
+  const [goldRateAvg, setGoldRateAvg] = useState(false);
+  const [goldRatePurchase, setGoldRatePurchase] = useState(false);
+  const [planBonus, setPlanBonus] = useState(false);
+  const [planNoVA, setPlanNoVA] = useState(false);
+
+  const [uploadFile, setUploadFile] = useState(null);
+  const [membershipNo, setMembershipNo] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+const [transactionId, setTransactionId] = useState("");
+
+  const idOptions = ["Aadhar", "PAN", "Driving Licence", "Passport"];
+  const getTodayDate = () => {
+  return new Date().toISOString().split("T")[0];};
+const getCompletionDate = () => {
+  const date = new Date();
+  date.setMonth(date.getMonth() + 11); // 👉 11 months added
+  return date.toISOString().split("T")[0];
+};
+const [branch, setBranch] = useState({
+  name: "",
+  id: "",
+  code: "",
+});
+const fetchMembershipId = async () => {
+  try {
+    const res = await axios.post(
+      "/api/get/membership/",
+      {}, // 🔥 no need to send branch
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setMembershipNo(res.data.result);
+  } catch (err) {
+    console.log("Membership error:", err);
+  }
+};
+useEffect(() => {
+  if (token) {
+    fetchMembershipId();
+  }
+}, [token]);
+const [branchLoading, setBranchLoading] = useState(false);
+
+useEffect(() => {
+  let cancelled = false;
+
+  const fetchLoginUserAndBranch = async () => {
+    if (!token) {
+      setBranch({ id: "", name: "", code: "" });
+      return;
+    }
+
+    setBranchLoading(true);
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+
+      let user = null;
+      try {
+        const resp = await axios.get("/api/v1/user/login/", { headers });
+        user = extractUserFromResponse(resp);
+      } catch (_) {
+        const resp = await axios.get("/api/v1/user/details", { headers });
+        user = extractUserFromResponse(resp);
+      }
+
+      if (cancelled) return;
+
+      const fromApi = extractBranchFromUser(user);
+      const fromToken = extractBranchFromUser(getUser());
+
+      setBranch(fromApi?.name || fromApi?.id || fromApi?.code ? fromApi : fromToken);
+    } catch (error) {
+      if (cancelled) return;
+      setBranch(extractBranchFromUser(getUser()));
+    } finally {
+      if (!cancelled) setBranchLoading(false);
+    }
+  };
+
+  fetchLoginUserAndBranch();
+  return () => {
+    cancelled = true;
+  };
+}, [token]);
+
+
+  return (
+    <div style={styles.page}>
+      <div style={styles.card}>
+
+        {/* HERO HEADER */}
+        <div style={styles.heroHeader}>
+          {/* decorative circles */}
+          <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
+          <div style={{ position: "absolute", bottom: -40, left: -20, width: 160, height: 160, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
+
+          <div style={styles.heroIcon}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h1 style={styles.heroTitle}>P. Satyanarayan Sons Jewellers</h1>
+          <p style={styles.heroSub}>Easy Gold Buying Plans — Application Form</p>
+        </div>
+
+        {/* FORM BODY */}
+        <div style={styles.formBody}>
+          <form onSubmit={(e) => e.preventDefault()}>
+
+            {/* 1. MEMBERSHIP */}
+            <Section num="1" title="Membership Details">
+              <div style={{ ...styles.grid2, marginBottom: "14px" }}>
+               <Input
+      label="Date of Joining"
+      type="date"
+      value={getTodayDate()}
+      readOnly
+    />
+
+    <Input
+      label="Date of Completion"
+      type="date"
+      value={getCompletionDate()}
+      readOnly
+    />
+
+              </div>
+              <div style={styles.grid2}>
+                <Input
+  label="Branch"
+  value={
+    branchLoading
+      ? "Loading..."
+      : `${branch?.name || branch?.id || ""}${
+          branch?.code ? ` (${branch.code})` : ""
+        }`
+  }
+  placeholder="Branch"
+  readOnly
+/>
+                <Input
+  label="Membership No."
+  value={membershipNo}
+  readOnly
+/>
+              </div>
+            </Section>
+
+            {/* 2. PERSONAL INFO */}
+            <Section num="2" title="Personal Information">
+              <div style={{ marginBottom: "14px" }}>
+                <Input label="Full Name" placeholder="Enter your full name" />
+              </div>
+              <div style={{ ...styles.grid2, marginBottom: "14px" }}>
+               
+                <Input label="Mobile" placeholder="Mobile number" />
+                 <Input label="Email Address" type="email" placeholder="email@example.com" />
+              </div>
+              <Textarea label="Address" placeholder="Full residential address" />
+              
+              {/* <Textarea label="Address" placeholder="Full residential address" /> */}
+            </Section>
+
+            {/* 3. NOMINEE */}
+            <Section num="3" title="Nominee Details">
+              <div style={styles.grid3}>
+                <Input label="Nominee Name" placeholder="Full name" />
+                <Input label="Nominee Phone" placeholder="Phone number" />
+                <CustomSelect label="Relationship">
+                  <option value="">Select</option>
+                  <option>Spouse</option>
+                  <option>Father</option>
+                  <option>Mother</option>
+                  <option>Son</option>
+                  <option>Daughter</option>
+                  <option>Sibling</option>
+                  <option>Other</option>
+                </CustomSelect>
+              </div>
+            </Section>
+
+            {/* 4. PLAN OPTIONS */}
+            <Section num="4" title="Gold Rate & Plan Options">
+              <div style={{ marginBottom: "10px" }}>
+                <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>Gold Rate Option</label>
+                <div style={styles.grid2}>
+                  {[
+                    { state: goldRateAvg, set: setGoldRateAvg, label: "Average Rate", desc: "Based on monthly average" },
+                    { state: goldRatePurchase, set: setGoldRatePurchase, label: "Rate at Purchase", desc: "Live rate on purchase date" },
+                  ].map(({ state, set, label, desc }) => (
+                    <label key={label} style={styles.checkCard(state)}>
+                      <input
+                        type="checkbox"
+                        checked={state}
+                        onChange={(e) => set(e.target.checked)}
+                        style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
+                      />
+                      <div>
+                        <p style={{ margin: 0, ...styles.checkLabel(state) }}>{label}</p>
+                        <p style={{ margin: 0, ...styles.checkDesc }}>{desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>Plan Benefits</label>
+                <div style={styles.grid2}>
+                  {[
+                    { state: planBonus, set: setPlanBonus, label: "Bonus Included", desc: "Eligible for scheme bonus" },
+                    { state: planNoVA, set: setPlanNoVA, label: "No V.A. up to 10%", desc: "Value addition waived" },
+                  ].map(({ state, set, label, desc }) => (
+                    <label key={label} style={styles.checkCard(state)}>
+                      <input
+                        type="checkbox"
+                        checked={state}
+                        onChange={(e) => set(e.target.checked)}
+                        style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
+                      />
+                      <div>
+                        <p style={{ margin: 0, ...styles.checkLabel(state) }}>{label}</p>
+                        <p style={{ margin: 0, ...styles.checkDesc }}>{desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </Section>
+
+            {/* 5. ID PROOF */}
+            <Section num="5" title="ID Proof Details">
+              <label style={{ ...styles.label, marginBottom: "10px", display: "block" }}>Select ID Type</label>
+              <div style={styles.grid4}>
+                {idOptions.map((id) => (
+                  <label key={id} style={styles.radioCard(selectedId === id)}>
+                    <input
+                      type="radio"
+                      name="idProof"
+                      value={id}
+                      checked={selectedId === id}
+                      onChange={() => setSelectedId(id)}
+                      style={{ accentColor: "#d97706", cursor: "pointer" }}
+                    />
+                    {id}
+                  </label>
+                ))}
+              </div>
+
+              {selectedId && (
+                <div
+                  style={styles.uploadZone}
+                  onClick={() => document.getElementById("idFileUpload").click()}
+                >
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto 8px", display: "block" }}>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <p style={{ margin: 0, fontSize: "13px", color: "#92400e", fontWeight: 600 }}>
+                    {uploadFile ? uploadFile.name : `Click to upload ${selectedId}`}
+                  </p>
+                  <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#b45309" }}>
+                    JPG, PNG or PDF — max 5MB
+                  </p>
+                  <input
+                    id="idFileUpload"
+                    type="file"
+                    accept="image/*,.pdf"
+                    style={{ display: "none" }}
+                    onChange={(e) => setUploadFile(e.target.files[0] || null)}
+                  />
+                </div>
+              )}
+            </Section>
+
+            {/* 6. BANK DETAILS */}
+            <Section num="6" title="Bank Details">
+              <div style={{ ...styles.grid2, marginBottom: "14px" }}>
+                <Input label="Bank Name" placeholder="e.g. State Bank of India" />
+                <Input label="Branch" placeholder="Branch name" />
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <Input label="Account Holder Name" placeholder="Name as per bank records" />
+              </div>
+              <div style={styles.grid2}>
+                <Input label="Account Number" placeholder="Account number" />
+                <Input label="IFSC Code" placeholder="e.g. SBIN0001234" />
+              </div>
+            </Section>
+            <Section num="7" title="Payment Details">
+  <div style={styles.grid2}>
+
+    {/* PAYMENT TYPE */}
+    <FormControl fullWidth>
+      <InputLabel>Payment Type</InputLabel>
+      <Select
+        value={paymentType}
+        onChange={(e) => setPaymentType(e.target.value)}
+      >
+        <MenuItem value="">Select Payment Type</MenuItem>
+        <MenuItem value="cash">Cash</MenuItem>
+        <MenuItem value="upi">UPI</MenuItem>
+        <MenuItem value="online">Online</MenuItem>
+      </Select>
+    </FormControl>
+
+    {/* TRANSACTION ID (ONLY FOR UPI / ONLINE) */}
+    {(paymentType === "upi" || paymentType === "online") && (
+      <Input
+        label="Transaction ID"
+        value={transactionId}
+        onChange={(e) => setTransactionId(e.target.value)}
+        placeholder="Enter Transaction ID"
+      />
+    )}
+
+  </div>
+</Section>
+            {/* TERMS + SUBMIT */}
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: "16px",
+                border: "1px solid #fde68a",
+                padding: "18px 20px",
+                boxShadow: "0 2px 10px rgba(180,120,40,0.06)",
+              }}
+            >
+              <label style={{ display: "flex", alignItems: "flex-start", gap: "12px", cursor: "pointer", marginBottom: "18px" }}>
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  style={{ accentColor: "#d97706", width: "16px", height: "16px", marginTop: "3px", flexShrink: 0, cursor: "pointer" }}
+                />
+                <span style={{ fontSize: "13px", color: "#57534e", lineHeight: 1.6 }}>
+                  I declare that all information provided is true and correct. I agree to the{" "}
+                  <span style={{ color: "#d97706", fontWeight: 600, textDecoration: "underline" }}>
+                    Terms & Conditions
+                  </span>{" "}
+                  of P. Satyanarayan Sons Jewellers Gold Buying Plan.
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={!acceptTerms}
+                style={styles.submitBtn(!acceptTerms)}
+                onMouseEnter={(e) => {
+                  if (acceptTerms) e.currentTarget.style.transform = "scale(1.01)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Submit Application
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(45%) sepia(80%) saturate(400%) hue-rotate(10deg);
+        }
+        select option { background: #fff; color: #1c1917; }
+      `}</style>
+    </div>
+  );
+};
+
+export default GoldForm;

@@ -2,10 +2,16 @@ import {
   Box,
   Card,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Typography,
   Grid,
   Chip,
   Button,
+  MenuItem,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -13,22 +19,85 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TextField,
 } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { useTransactions } from "./TransactionsContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CircularProgress } from "@material-ui/core";
+
+const normalizeRole = (role) => String(role || "").trim().toLowerCase();
+
+const OFFLINE_PAYMENT_METHODS = [
+  { label: "Cash", value: "CASH" },
+  { label: "UPI", value: "UPI" },
+  { label: "Card", value: "CARD" },
+  { label: "Net Banking", value: "NET_BANKING" },
+];
 
 export default function GoldSchemeDetails() {
   let { start, schemename, id, name } = useParams();
   const navigate = useNavigate()
 
-  const { userInvoices, handleAllUserInvoice, InvoiceDetailLoading ,handleByIdInvoice} = useTransactions();
+  const {
+    userInvoices,
+    handleAllUserInvoice,
+    InvoiceDetailLoading,
+    handleByIdInvoice,
+    markInvoicePaidOffline,
+    markOfflineLoadingId,
+    accessData,
+    accessLoading,
+  } = useTransactions();
+
+  const role = normalizeRole(accessData?.role);
+  const canManageOffline =
+    role === "branch_manager" || role === "employee";
+
+  const [offlineDialogOpen, setOfflineDialogOpen] = useState(false);
+  const [offlinePayment, setOfflinePayment] = useState({
+    invoiceId: null,
+    paymentMethod: "CASH",
+    transactionId: "",
+  });
+
   useEffect(() => {
     handleAllUserInvoice(id);
   }, []);
   let result = userInvoices?.invoiceData;
+
+  const selectedInvoice = useMemo(() => {
+    if (!offlinePayment.invoiceId) return null;
+    return result?.find((r) => String(r?._id) === String(offlinePayment.invoiceId));
+  }, [offlinePayment.invoiceId, result]);
+
+  const openOfflineDialog = (invoiceId) => {
+    setOfflinePayment({
+      invoiceId,
+      paymentMethod: "CASH",
+      transactionId: "",
+    });
+    setOfflineDialogOpen(true);
+  };
+
+  const closeOfflineDialog = () => {
+    setOfflineDialogOpen(false);
+  };
+
+  const confirmOfflinePayment = async () => {
+    if (!offlinePayment.invoiceId) return;
+    try {
+      await markInvoicePaidOffline(offlinePayment.invoiceId, {
+        paymentMethod: offlinePayment.paymentMethod,
+        transactionId: offlinePayment.transactionId,
+      });
+      await handleAllUserInvoice(id);
+      closeOfflineDialog();
+    } catch {
+      // keep dialog open on error
+    }
+  };
 
   console.log("userInvoices", userInvoices);
   return (
@@ -130,17 +199,41 @@ export default function GoldSchemeDetails() {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <Button onClick={async() => {
-                     await  handleByIdInvoice(val._id)
-                      navigate(`/Customers/user/Invoice/${val._id}`)
-                    }}
-                      variant="contained"
-                      size="small"
-                      startIcon={<DescriptionIcon />}
-                    >
-                      {InvoiceDetailLoading === val._id ? <CircularProgress size={25} /> : "Invoice"}
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      {canManageOffline &&
+                        !accessLoading &&
+                        (val?.paymentStatus || "PENDING") !== "SUCCESS" && (
+                          <Button
+                            onClick={() => openOfflineDialog(val._id)}
+                            variant="outlined"
+                            size="small"
+                            color="success"
+                            disabled={markOfflineLoadingId === val._id}
+                          >
+                            {markOfflineLoadingId === val._id ? (
+                              <CircularProgress size={18} />
+                            ) : (
+                              "Mark Paid (Offline)"
+                            )}
+                          </Button>
+                        )}
 
-                    </Button>
+                      <Button
+                        onClick={async () => {
+                          await handleByIdInvoice(val._id);
+                          navigate(`/Customers/user/Invoice/${val._id}`);
+                        }}
+                        variant="contained"
+                        size="small"
+                        startIcon={<DescriptionIcon />}
+                      >
+                        {InvoiceDetailLoading === val._id ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          "Invoice"
+                        )}
+                      </Button>
+                    </Stack>
                   </TableCell>
                 </TableRow>
               ))}
@@ -148,6 +241,66 @@ export default function GoldSchemeDetails() {
           </Table>
         </TableContainer>
       </Card>
+
+      <Dialog open={offlineDialogOpen} onClose={closeOfflineDialog} fullWidth>
+        <DialogTitle>Mark Installment Paid (Offline)</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" mb={2}>
+            {selectedInvoice?.month ? `Month: ${selectedInvoice.month}. ` : ""}
+            {selectedInvoice?.monthlyPrice
+              ? `Amount: ₹${selectedInvoice.monthlyPrice}.`
+              : ""}
+          </Typography>
+
+          <Stack spacing={2}>
+            <TextField
+              select
+              label="Payment Method"
+              value={offlinePayment.paymentMethod}
+              onChange={(e) =>
+                setOfflinePayment((p) => ({
+                  ...p,
+                  paymentMethod: e.target.value,
+                }))
+              }
+            >
+              {OFFLINE_PAYMENT_METHODS.map((m) => (
+                <MenuItem key={m.value} value={m.value}>
+                  {m.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              label="Transaction Ref (optional)"
+              value={offlinePayment.transactionId}
+              onChange={(e) =>
+                setOfflinePayment((p) => ({
+                  ...p,
+                  transactionId: e.target.value,
+                }))
+              }
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeOfflineDialog} variant="outlined">
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmOfflinePayment}
+            variant="contained"
+            color="success"
+            disabled={markOfflineLoadingId === offlinePayment.invoiceId}
+          >
+            {markOfflineLoadingId === offlinePayment.invoiceId ? (
+              <CircularProgress size={22} color="inherit" />
+            ) : (
+              "Confirm Paid"
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

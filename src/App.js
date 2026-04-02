@@ -33,6 +33,7 @@ const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
 const App = () => {
   const [userdata, setUserData] = useState(null);
   const token = isAutheticated();
+  console.log("gjgcyjhgsdhyjcgvywjhgcchjwgbcjhwbc",userdata);
 
   useEffect(() => {
     const getUser = async () => {

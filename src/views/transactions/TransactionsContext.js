@@ -1,6 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { isAutheticated } from "src/auth";
+import { getUser } from "src/loginUserdetails";
 
 const { createContext, useContext, useState, useEffect } = require("react");
 
@@ -23,8 +24,8 @@ export const TransactionsProvider = ({ children }) => {
   const [invoiceTableLoading,setInvoiceTableLoading]=useState(false)
   const[InvoiceDetail,setInvoiceDetail]=useState([])
   const [InvoiceDetailLoading,setInvoiceDetailLoading]=useState(null)
+  const [markOfflineLoadingId, setMarkOfflineLoadingId] = useState(null);
   const [searchName,setSearchName]=useState("")
-
   const getBackendMessage = (error) => {
     return (
       error?.response?.data?.message ||
@@ -126,12 +127,73 @@ export const TransactionsProvider = ({ children }) => {
         },
       });
 
-      setAccessData(response?.data?.data);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(
+          "[TransactionsContext] login user details:",
+          response?.data?.data ?? response?.data?.user ?? response?.data
+        );
+      }
+      setAccessData(response?.data?.data ?? response?.data?.user ?? null);
     } catch (error) {
       const errormssage = error.response && error.response.data.message;
       console.log("errormssage", errormssage);
     } finally {
       setAccessLoading(false);
+    }
+  };
+
+  const markInvoicePaidOffline = async (invoiceId, details = {}) => {
+    const payload = {
+      paymentType: "Offline",
+      paymentStatus: "SUCCESS",
+      ...details,
+    };
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const requests = [
+      () =>
+        axios.patch(`/api/customer/offline/mark-paid/${invoiceId}`, payload, {
+          headers,
+        }),
+      () =>
+        axios.post(`/api/customer/offline/pay/${invoiceId}`, payload, {
+          headers,
+        }),
+      () =>
+        axios.patch(`/api/customer/pay/offline/${invoiceId}`, payload, {
+          headers,
+        }),
+    ];
+
+    try {
+      setMarkOfflineLoadingId(invoiceId);
+      let response = null;
+      let lastError = null;
+
+      for (const req of requests) {
+        try {
+          response = await req();
+          break;
+        } catch (error) {
+          const status = error?.response?.status;
+          lastError = error;
+          if (status === 404 || status === 405) continue;
+          throw error;
+        }
+      }
+
+      if (!response) throw lastError || new Error("Offline payment failed");
+
+      toast.success(response?.data?.message || "Marked as Paid (Offline)");
+      return response?.data;
+    } catch (error) {
+      toast.error(getBackendMessage(error));
+      throw error;
+    } finally {
+      setMarkOfflineLoadingId(null);
     }
   };
 
@@ -153,6 +215,12 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
   useEffect(() => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log(
+        "[TransactionsContext] login user (token decoded):",
+        getUser()
+      );
+    }
     handlegetAllData(page, itemPerPage, employeType,searchName);
     handlegetEmployeAccessData();
   }, []);
@@ -186,6 +254,8 @@ export const TransactionsProvider = ({ children }) => {
         InvoiceDetailLoading,
         handleByIdInvoice,
         InvoiceDetail,
+        markInvoicePaidOffline,
+        markOfflineLoadingId,
         setSearchName,
         searchName
       }}

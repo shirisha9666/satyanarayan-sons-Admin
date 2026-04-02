@@ -108,7 +108,14 @@ export const EmployeesProvider = ({ children }) => {
           },
         });
   
-        setAccessData(response?.data?.data);
+        if (process.env.NODE_ENV !== "production") {
+          console.log(
+            "[EmployeesContext] login user details:",
+            response?.data?.data ?? response?.data?.user ?? response?.data
+          );
+        }
+
+        setAccessData(response?.data?.data ?? response?.data?.user ?? null);
       } catch (error) {
         const errormssage = error.response && error.response.data.message;
         console.log("errormssage", errormssage);

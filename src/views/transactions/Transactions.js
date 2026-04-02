@@ -1,8 +1,6 @@
 import {
   Button,
   Box,
-  IconButton,
-  Modal,
   Pagination,
   TextField,
   Typography,
@@ -11,36 +9,30 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "./TransactionsContext";
-import { useBranche } from "../Branches/BranchesContext";
 import { InputAdornment } from "@material-ui/core";
 import { GridSearchIcon } from "@material-ui/data-grid";
+import { isAutheticated } from "src/auth";
 
 const Transactions = () => {
   const navigate = useNavigate();
-  const [activeBtn, setActiveBtn] = useState("");
+  const user = isAutheticated(); // 🔥 logged-in user
+
   const {
     setPage,
     employeesData,
     handlegetAllData,
-
     setItemPerPage,
-    handleDelete,
-    setEmployeType,
+    setSearchByRole,
     employeType,
-    bannerId,
     itemPerPage,
     viewBannerId,
-    delId,
     loading,
     page,
-    searchByRole,
-    setSearchByRole,
-    handleUserSchemas,
     setSearchName,
     searchName,
+    handleUserSchemas,
   } = useTransactions();
 
-  console.log("searchByRole", searchByRole);
   const tableHeadering = [
     "Start",
     "FirstName",
@@ -51,28 +43,46 @@ const Transactions = () => {
     "Actions",
   ];
 
-  let fetchBanner = employeesData?.result;
+  // 🔥 ORIGINAL DATA
+  let fetchBanner = employeesData?.result || [];
+
+  // 🔥 FILTER LOGIC (IMPORTANT)
+  if (user?.role === "admin") {
+    // 👉 ADMIN → show only ONLINE users (branch null)
+    fetchBanner = fetchBanner.filter(
+      (item) =>
+        (!item.branch || item.branch === null) &&
+        item.customerType !== "NO_GOLD_CUSTOMER"
+    );
+  } else {
+    // 👉 EMPLOYEE → show only their branch users
+    fetchBanner = fetchBanner.filter(
+      (item) =>
+        item.branch?._id === user?.branch?._id &&
+        item.customerType !== "NO_GOLD_CUSTOMER"
+    );
+  }
+
   const roles = [
     {
       role: "All",
       sendValue: "",
-      bgColor: "#374151", // slate gray
+      bgColor: "#374151",
       textColor: "#FFFFFF",
     },
     {
       role: "Regular_Customers",
       sendValue: "REGULAR_CUSTOMER",
-      bgColor: "#1E3A8A", // deep blue
+      bgColor: "#1E3A8A",
       textColor: "#FFFFFF",
     },
     {
       role: "Not Taken Schemes",
       sendValue: "NO_GOLD_CUSTOMER",
-      bgColor: "#065F46", // emerald green
+      bgColor: "#065F46",
       textColor: "#FFFFFF",
     },
   ];
-  console.log("fetchBanner transactions", fetchBanner);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -86,203 +96,118 @@ const Transactions = () => {
       <div className="col-lg-12">
         <div className="card">
           <div className="card-body">
-            <div className="row ml-0 mr-0 mb-10">
-              <div className="col-sm-12 col-md-12 d-flex justify-content-between align-items-center ">
-                <div className="dataTables_length w-50">
-                  <label className="w-100">
-                    Show
-                    <select
-                      style={{ width: "10%" }}
-                      onChange={(e) => {
-                        let val = e.target.value;
-                        setItemPerPage(Number(val));
-                        handlegetAllData(
-                          page,
-                          Number(val),
-                          employeType,
-                          searchName,
-                        );
-                      }}
-                      className="
-                                       select-w
-                                       custom-select custom-select-sm
-                                       form-control form-control-sm
-                                     "
-                    >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    entries
-                  </label>
-                </div>
-              </div>
-              <div className="d-flex justify-content-between">
-                <div
-                  style={{ display: "flex", gap: "12px", marginTop: "10px" }}
-                >
-                  {roles.map((val) => (
-                    <Button
-                      onClick={() => {
-                        setSearchByRole(val.sendValue);
 
-                        handlegetAllData(
-                          page,
-                          itemPerPage,
-                          val.sendValue,
-                          searchName,
-                        );
-                      }}
-                      variant="contained"
-                      style={{
-                        background:
-                          employeType === val.sendValue
-                            ? "#D4AF37"
-                            : val.bgColor,
-                        color:
-                          employeType === val.sendValue
-                            ? "#1B1A1A"
-                            : val.textColor,
-                        fontWeight: "bold",
-                        padding: "8px 20px",
-                        borderRadius: "10px",
-                        textTransform: "none",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      {val.role}
-                    </Button>
-                  ))}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    marginTop: "10px",
-                  }}
-                >
-                  <TextField
-                    size="small"
-                    placeholder="Search by first Name"
-                    autoComplete="off"
-                    value={searchName}
-                    onChange={handleSearchChange}
-                    sx={{
-                      width: "280px",
-                      backgroundColor: "#fff",
-                      borderRadius: "8px",
+            {/* 🔍 FILTER + SEARCH */}
+            <div className="d-flex justify-content-between mb-3">
+
+              {/* FILTER BUTTONS */}
+              <div style={{ display: "flex", gap: "12px" }}>
+                {roles.map((val) => (
+                  <Button
+                    key={val.role}
+                    onClick={() => {
+                      setSearchByRole(val.sendValue);
+                      handlegetAllData(
+                        page,
+                        itemPerPage,
+                        val.sendValue,
+                        searchName
+                      );
                     }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <GridSearchIcon style={{ color: "#888" }} />
-                        </InputAdornment>
-                      ),
+                    variant="contained"
+                    style={{
+                      background:
+                        employeType === val.sendValue
+                          ? "#D4AF37"
+                          : val.bgColor,
+                      color:
+                        employeType === val.sendValue
+                          ? "#1B1A1A"
+                          : val.textColor,
+                      fontWeight: "bold",
+                      borderRadius: "10px",
+                      textTransform: "none",
                     }}
-                  />
-                </div>
+                  >
+                    {val.role}
+                  </Button>
+                ))}
               </div>
+
+              {/* SEARCH */}
+              <TextField
+                size="small"
+                placeholder="Search by first Name"
+                autoComplete="off"
+                value={searchName}
+                onChange={handleSearchChange}
+                sx={{
+                  width: "280px",
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <GridSearchIcon style={{ color: "#888" }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </div>
 
-            <div className="table-responsive table-shoot mt-3">
-              <table
-                className="table table-centered table-nowrap"
-                style={{ border: "1px solid" }}
-              >
-                <thead
-                  className="thead-info"
-                  style={{ background: "rgb(140, 213, 213)" }}
-                >
+            {/* 📊 TABLE */}
+            <div className="table-responsive">
+              <table className="table table-bordered">
+                <thead style={{ background: "#8cd5d5" }}>
                   <tr>
                     {tableHeadering.map((head) => (
-                      <th className={head === "Actions" ? "text-center" : ""}>
-                        {" "}
-                        {head}
-                      </th>
+                      <th key={head}>{head}</th>
                     ))}
                   </tr>
                 </thead>
+
                 <tbody>
-                  {!loading && fetchBanner?.length === 0 && (
-                    <tr className="text-center">
-                      <td colSpan="6">
-                        <h5>No Data Available</h5>
+                  {!loading && fetchBanner.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="text-center">
+                        No Data Available
                       </td>
                     </tr>
                   )}
+
                   {loading ? (
                     <tr>
-                      <td className="text-center" colSpan="6">
+                      <td colSpan="7" className="text-center">
                         Loading...
                       </td>
                     </tr>
                   ) : (
-                    fetchBanner &&
-                    fetchBanner.map((item, i) => (
-                      <tr key={i}>
-                        {/* Employee ID */}
-                        <td>{item?.createdAt}</td>
+                    fetchBanner.map((item) => (
+                      <tr key={item._id}>
+                        <td>{item.createdAt}</td>
+                        <td>{item.firstname}</td>
+                        <td>{item.email}</td>
+                        <td>{item.phone}</td>
+                        <td>{item.customerType}</td>
+                        <td>{item.status}</td>
 
-                        {/* Role */}
-                        <td>{item?.firstname}</td>
-
-                        {/* Name */}
-                        {/* <td>{item?.name || "-"}</td> */}
-
-                        {/* Phone */}
-                        <td>{item?.email}</td>
-
-                        {/* Access */}
-
-                        {/* Gold Schemes Added */}
-                        <td>{item?.phone}</td>
-                        <td>{item?.customerType}</td>
-                        {/* Status */}
-                        <td>{item?.status}</td>
-
-                        {/* Actions */}
-                        <td
-                          style={{
-                            textAlign: "center",
-                            verticalAlign: "middle",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "10px",
-                              justifyContent: "center",
-                              alignItems: "center",
+                        <td className="text-center">
+                          <button
+                            className="btn btn-primary"
+                            onClick={async () => {
+                              await handleUserSchemas(item._id);
+                              navigate(
+                                `/Customers/All/user/Schemas/${item.firstname}/${item._id}`
+                              );
                             }}
                           >
-                            <button
-                              disabled={
-                                item?.customerType === "NO_GOLD_CUSTOMER"
-                              }
-                              style={{
-                                color: "white",
-                                backgroundColor: "#3f51b5",
-                              }}
-                              type="button"
-                              className="btn btn-primary waves-effect waves-light btn-table"
-                              onClick={async () => {
-                                setActiveBtn("View");
-                                await handleUserSchemas(item._id);
-
-                                navigate(
-                                  `/Customers/All/user/Schemas/${item?.firstname}/${item._id}`,
-                                );
-                              }}
-                            >
-                              {viewBannerId === item._id ? (
-                                <CircularProgress size={25} />
-                              ) : (
-                                "View"
-                              )}
-                            </button>
-                          </div>
+                            {viewBannerId === item._id ? (
+                              <CircularProgress size={20} />
+                            ) : (
+                              "View"
+                            )}
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -291,21 +216,28 @@ const Transactions = () => {
               </table>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "right" }}>
+            {/* 📄 PAGINATION */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Pagination
                 count={employeesData?.totalPages}
                 page={page}
                 onChange={(e, value) => {
                   setPage(value);
-                  handlegetAllData(value, itemPerPage, employeType, searchName);
+                  handlegetAllData(
+                    value,
+                    itemPerPage,
+                    employeType,
+                    searchName
+                  );
                 }}
-                color="primary"
               />
             </div>
+
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 export default Transactions;

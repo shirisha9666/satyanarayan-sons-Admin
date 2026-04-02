@@ -223,6 +223,7 @@ import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
 import TransctionInvoice from "./views/transactions/Invoice";
 import Anniversary from "./views/annivarsaryCampaign/AnnivarsaryCampaign";
 import OfflineUsersPage from "./views/transactions/offlineusers";
+import PayInstallmentsPage from "./views/transactions/Payinstallements";
 
 const GoogleAuthWrapper = () => {
   return (
@@ -371,6 +372,7 @@ const routes = [
     element: deleteChapterData,
     navName: "Customers",
   },
+  { path: "/payInstallments", name: "Installments", element: PayInstallmentsPage , navName: "" },
   //------------------ End customers Route-------------------------
 
   // {

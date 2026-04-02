@@ -1,16 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import { CBadge, CSpinner } from "@coreui/react";
-import axios from "axios";
-import { isAutheticated } from "src/auth";
 import { useEmployees } from "src/views/employes/EmployeesContext";
-import { CircularProgress } from "@material-ui/core";
+
+const normalizeRole = (role) =>
+  String(role || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+
+const getAccessList = (accessData) => {
+  const access =
+    accessData?.access ?? accessData?.accessTo ?? accessData?.permissions;
+
+  if (Array.isArray(access)) return access;
+
+  if (access && typeof access === "object") {
+    return Object.keys(access).filter((key) => access[key]);
+  }
+
+  return [];
+};
 
 export const AppSidebarNav = ({ items }) => {
   const location = useLocation();
-  let token = isAutheticated();
   const { handlegetEmployeAccessData, accessData, accessLoading } =
     useEmployees();
 
@@ -113,10 +128,10 @@ export const AppSidebarNav = ({ items }) => {
   
 const filterNavByAccess = (items = [], access = [], role = "") => {
   // 🔓 Admin & Branch Manager → full access
-  if (role === "admin" || role === "branch_manager") {
+  if (role === "admin") {
     return items;
   }
-
+  
   return items
     .map((item) => {
       // 🔹 Parent menu (like Settings)
@@ -151,11 +166,10 @@ const filterNavByAccess = (items = [], access = [], role = "") => {
 
 
   
-  let userAccess = accessData?.access || [];
-  const userRole = accessData?.role;
+  const userRole = normalizeRole(accessData?.role);
+  const userAccess = getAccessList(accessData);
 
-const filteredItems = filterNavByAccess(items, userAccess, userRole);
-  console.log("accessData", items);
+  const filteredItems = filterNavByAccess(items, userAccess, userRole);
 
   return (
     // <React.Fragment>

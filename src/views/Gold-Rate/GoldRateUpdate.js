@@ -113,6 +113,7 @@ const GoldRateUpdate = () => {
                 onChange={handleChange}
                 fullWidth
                 required
+                readOnly
               />
             </Grid>
             <Grid item xs={12}>
@@ -137,6 +138,7 @@ const GoldRateUpdate = () => {
                 onChange={handleChange}
                 fullWidth
                 required
+                readOnly
               />
             </Grid>
 

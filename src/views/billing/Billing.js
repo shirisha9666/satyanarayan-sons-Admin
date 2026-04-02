@@ -5,7 +5,6 @@ import { isAutheticated } from "src/auth";
 import axios from "axios";
 import { CircularProgress } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-import { useBilling } from "./billingContext";
 
 const tableheadings = [
   "Date",
@@ -13,12 +12,26 @@ const tableheadings = [
   "TransactionId",
   "Customer Name",
   "Total Amount",
-
   "Status",
   "Action",
 ];
 
 const Billing = () => {
+  const token = isAutheticated();
+  const user = isAutheticated(); // 🔥 logged-in user
+
+  const [search, setSearch] = useState("");
+  const [searchByDate, setSearchByDate] = useState("");
+  const { appdetails } = useCustomer();
+
+  const [totalpages, setTotalPages] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [loading, setLoading] = useState(false);
+  const [biling, setBiling] = useState([]);
+  const navigate = useNavigate();
+
   const formatDateForBackend = (dateStr) => {
     if (!dateStr) return "";
     const date = new Date(dateStr);
@@ -31,37 +44,24 @@ const Billing = () => {
       .replace(",", "");
   };
 
-  const token = isAutheticated();
-  const [search, setSearch] = useState();
-  const [searchByDate, setSearchByDate] = useState();
-  const { appdetails } = useCustomer();
-
-  const [totalpages, setTotalPages] = useState();
-  const [itemPerPage, setItemPerPage] = useState(5);
-
-  const [currentPage, setCurrentPage] = useState();
-  const [errormsge, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [biling, setBiling] = useState([]);
-  const navigate = useNavigate();
-
   const getBiling = async (
     invoiceNo = search,
-    page = 1,
+    page = currentPage,
     limit = itemPerPage,
-    date = searchByDate,
+    date = searchByDate
   ) => {
     try {
       setLoading(true);
-      console.log("date", date);
+
       const params = { limit, page };
+
       if (invoiceNo && invoiceNo.trim() !== "") {
         params.invoiceNo = invoiceNo.trim();
       }
+
       if (date) {
-        params.startDate = formatDateForBackend(searchByDate);
+        params.startDate = formatDateForBackend(date);
       }
-      console.log(" params.startDate", params.startDate);
 
       const res = await axios.get("/api/billing/get", {
         params,
@@ -69,120 +69,92 @@ const Billing = () => {
       });
 
       setBiling(res?.data);
-      setTotalPages(res.data.totalPages);
-      setItemPerPage(limit);
-      // setCurrentPage(data.currentPage);
+      setTotalPages(res?.data?.totalPages || 1);
     } catch (error) {
-      const msg = error.response?.data?.message || "Internal Server Error";
-      setErrorMessage(msg);
+      console.log("Billing error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getBiling(search, currentPage, itemPerPage, searchByDate);
+    getBiling();
   }, [search, currentPage, itemPerPage, searchByDate]);
 
-  let billingFetchData = biling?.AllSchemas;
+  // 🔥 ORIGINAL DATA
+  let billingFetchData = biling?.AllSchemas || [];
+
+  // 🔥 FILTER LOGIC (IMPORTANT)
+  if (user?.role === "admin") {
+    // 👉 ADMIN → only ONLINE (branch null)
+    billingFetchData = billingFetchData.filter(
+      (item) => !item?.branch || item.branch === null
+    );
+  } else {
+    // 👉 EMPLOYEE → only their branch
+    billingFetchData = billingFetchData.filter(
+      (item) => item?.branch?._id === user?.branch?._id
+    );
+  }
 
   const summaryData = [
     {
       title: "Total Sales",
-      value: `${biling?.summary?.totalSales}`,
+      value: `${biling?.summary?.totalSales || 0}`,
       color: "#27ae60",
     },
     {
       title: "Total Customers",
-      value: `${biling?.summary?.totalCustomers}   `,
+      value: `${biling?.summary?.totalCustomers || 0}`,
       color: "#111",
     },
-
     {
       title: "Total Received Amount",
-      value: `₹  ${biling?.summary?.totalReceivedAmount}`,
+      value: `₹ ${biling?.summary?.totalReceivedAmount || 0}`,
       color: "#111",
     },
   ];
 
-  // const handlePrev = () => {
-  //   if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  // };
-  // const handleNext = () => {
-  //   if (currentPage < totalpages) setCurrentPage((prev) => prev - 1);
-  // };
-
   const handlePrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+
   const handleNext = () => {
-    if (currentPage < totalpages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalpages) setCurrentPage(currentPage + 1);
   };
+
   return (
     <>
       <div>
         <h3>Billing</h3>
       </div>
+
       <div className="billing-page">
         <main className="billing-main">
+
+          {/* 🔍 FILTERS */}
           <header className="billing-header">
-            {/* <div className="date-range-picker">
-              <label htmlFor="filterDate" className="date-label">
-                Select Date:
-              </label>
-              <input
-                type="text"
-                id="filterDate"
-                placeholder="dd/mm/yyyy"
-                value={searchByDate}
-                onChange={(e) => setSearchByDate(e.target.value)}
-                className="date-input"
-              />
-              <button
-                className="orders-view-btn p-2"
-                onClick={() => setSearchByDate(selectedDate)}
-              >
-                Filter
-              </button>
-            </div> */}
-
             <div className="date-range-picker">
-              <label htmlFor="filterDate" className="date-label">
-                Select Date:
-              </label>
-
+              <label>Select Date:</label>
               <input
                 type="date"
-                id="filterDate"
                 value={searchByDate}
                 onChange={(e) => {
-                  let val = e.target.value;
                   setSearchByDate(e.target.value);
-                  getBiling(search, currentPage, itemPerPage, val);
                 }}
-                className="date-input"
               />
             </div>
 
-            <div className="">
-              <input
-                className="billing-search "
-                type="text"
-                placeholder="Search By Invoice Number"
-                value={search}
-                onChange={(e) => {
-                  let val = e.target.value;
-                  setSearch(val);
-                  getBiling(val, currentPage, itemPerPage, searchByDate);
-                }}
-              />
-            </div>
+            <input
+              className="billing-search"
+              type="text"
+              placeholder="Search By Invoice Number"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </header>
 
+          {/* 📊 SUMMARY */}
           <section className="summary-cards">
             {summaryData.map((s) => (
               <div className="card" key={s.title}>
@@ -194,122 +166,54 @@ const Billing = () => {
             ))}
           </section>
 
+          {/* 📋 TABLE */}
           <section className="billing-table-wrap">
             <table className="billing-table">
               <thead>
                 <tr>
                   {tableheadings.map((val) => (
-                    <th>{val}</th>
+                    <th key={val}>{val}</th>
                   ))}
                 </tr>
               </thead>
+
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="9" className="text-center py-10">
-                      <div className="flex justify-center items-center">
-                        <CircularProgress
-                          size={50}
-                          thickness={5}
-                          style={{ color: "#1976d2" }}
-                        />
-                      </div>
+                    <td colSpan="7" className="text-center">
+                      <CircularProgress size={40} />
+                    </td>
+                  </tr>
+                ) : billingFetchData.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="text-center">
+                      No Data Available
                     </td>
                   </tr>
                 ) : (
-                  billingFetchData?.map((r, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "odd" : "even"}>
+                  billingFetchData.map((r, i) => (
+                    <tr key={i}>
                       <td>{r?.createdAt}</td>
                       <td>{r?.InvoiceNo}</td>
+                      <td>{r?.transactionId || "Offline"}</td>
                       <td>
-                        {r?.InvoiceId?.TransactionId === null
-                          ? "Null"
-                          : r?.transactionId}
+                        {r?.customerId?.firstname}{" "}
+                        {r?.customerId?.lastname}
                       </td>
-                      <td className="text-center">
-                        {r?.customerId?.firstname} {r?.customerId?.lastname}
+                      <td>
+                        ₹{r?.totalPricewithGst || r?.InvoiceId?.Amount}
                       </td>
-                      <td className="text-center">
-                        {r.InvoiceId?.Amount === "0"
-                          ? r?.InvoiceId?.Amount
-                          : `₹${r?.totalPricewithGst}`}
-                      </td>
-
-                      {/* <td>{r.due}</td> */}
                       <td>{r?.status}</td>
-                      {/* <td>
-                                                <div style={{ display: "flex", gap: "10px" }}>
-                                                    <button
-                                                        className="orders-view-btn p-2"
-                                                        onClick={() =>
-                                                            navigate(`/view/${r.userId._id}`)
-                                                        }
-                                                    >
-                                                        View
-                                                    </button>
-                                                    <div>
-                                                        <button
-                                                            className="orders-view-btn p-2"
-                                                            onClick={() =>
 
-                                                                navigate(`/invoice/${r.userId._id}`)
-                                                            }
-                                                        >
-                                                            Invoice
-                                                        </button>
-                                                    </div>
-
-                                                </div>
-                                            </td> */}
                       <td>
-                        <div style={{ display: "flex", gap: "10px" }}>
-                          <button
-                            style={{
-                              backgroundColor: "#1E88E5",
-                              color: "#fff",
-                              border: "none",
-                              padding: "6px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: "500",
-                              transition: "all 0.2s ease-in-out",
-                            }}
-                            onMouseOver={(e) =>
-                              (e.target.style.backgroundColor = "#1565C0")
-                            }
-                            onMouseOut={(e) =>
-                              (e.target.style.backgroundColor = "#1E88E5")
-                            }
-                            // onClick={() => navigate(`/view/${r?.userId?._id}`)}
-                            onClick={() =>
-                              navigate(`/Customers/user/Invoice/${r?._id}`)
-                            }
-                          >
-                            👁 View
-                          </button>
-
-                          {/* <button
-                            style={{
-                              backgroundColor: "#43A047",
-                              color: "#fff",
-                              border: "none",
-                              padding: "6px 14px",
-                              borderRadius: "6px",
-                              cursor: "pointer",
-                              fontWeight: "500",
-                              transition: "all 0.2s ease-in-out",
-                            }}
-                            onMouseOver={(e) =>
-                              (e.target.style.backgroundColor = "#2E7D32")
-                            }
-                            onMouseOut={(e) =>
-                              (e.target.style.backgroundColor = "#43A047")
-                            }
-                            onClick={() => navigate(`/user/invoice/${r?.userId?.name}/${r?.userId?._id}`)}
-                          >
-                            🧾 Invoice
-                          </button> */}
-                        </div>
+                        <button
+                          className="view-btn"
+                          onClick={() =>
+                            navigate(`/Customers/user/Invoice/${r?._id}`)
+                          }
+                        >
+                          👁 View
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -317,76 +221,9 @@ const Billing = () => {
               </tbody>
             </table>
 
-            {/* <div className="orders-pagination">
-                            <button
-                                className="orders-page-btn"
-                                onClick={handlePrev}
-                                disabled={currentPage === 1}
-                            >
-                                ‹
-                            </button>
-
-                            {Array.from({ length: totalpages }, (_, i) => {
-                                const isActive = currentPage === i + 1;
-                                return (
-                                    <button
-                                        key={i + 1}
-                                        className={
-                                            isActive
-                                                ? "orders-page-num-active"
-                                                : "orders-page-num-inactive"
-                                        }
-                                        onClick={() => setCurrentPage(i + 1)}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                );
-                            })}
-
-                            <button
-                                className="orders-page-btn"
-                                onClick={handleNext}
-                                disabled={currentPage === totalpages}
-                            >
-                                ›
-                            </button>
-                        </div> */}
-            {/* <div className="orders-pagination">
-              <button
-                className="page-nav-btn"
-                onClick={handlePrev}
-                disabled={currentPage === 1}
-              >
-                ‹
-              </button>
-
-              {Array.from({ length: totalpages }, (_, i) => {
-                const isActive = currentPage === i + 1;
-                return (
-                  <button
-                    key={i + 1}
-                    className={`page-num-btn ${isActive ? "active" : ""}`}
-                    onClick={() => setCurrentPage(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                );
-              })}
-
-              <button
-                className="page-nav-btn"
-                onClick={handleNext}
-                disabled={currentPage === totalpages}
-              >
-                ›
-              </button>
-            </div> */}
+            {/* 🔢 PAGINATION */}
             <div className="orders-pagination">
-              <button
-                className="page-nav-btn"
-                onClick={handlePrev}
-                disabled={currentPage === 1}
-              >
+              <button onClick={handlePrev} disabled={currentPage === 1}>
                 ‹
               </button>
 
@@ -395,9 +232,7 @@ const Billing = () => {
                 return (
                   <button
                     key={page}
-                    className={`page-num-btn ${
-                      currentPage === page ? "active" : ""
-                    }`}
+                    className={currentPage === page ? "active" : ""}
                     onClick={() => setCurrentPage(page)}
                   >
                     {page}
@@ -406,7 +241,6 @@ const Billing = () => {
               })}
 
               <button
-                className="page-nav-btn"
                 onClick={handleNext}
                 disabled={currentPage === totalpages}
               >
@@ -416,19 +250,19 @@ const Billing = () => {
           </section>
         </main>
       </div>
+
+      {/* FOOTER */}
       <footer className="orders-footer">
-        {appdetails?.map((val, index) => {
-          return (
-            <a
-              href="https://neonflake.com"
-              target="_blank"
-              rel="noreferrer"
-              key={index}
-            >
-              {val.copyrightMessage}
-            </a>
-          );
-        })}
+        {appdetails?.map((val, index) => (
+          <a
+            href="https://neonflake.com"
+            target="_blank"
+            rel="noreferrer"
+            key={index}
+          >
+            {val.copyrightMessage}
+          </a>
+        ))}
       </footer>
     </>
   );

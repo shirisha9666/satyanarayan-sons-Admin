@@ -87,6 +87,7 @@ import {
 
 import { cilList } from "@coreui/icons";
 import { cilLayers } from "@coreui/icons";
+
 const _nav = [
   {
     component: CNavItem,
@@ -153,7 +154,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: "Gold Schemes",
+    name: "Online Gold Schemes",
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     to: "/gold-schemes",
     group: "Settings",
@@ -189,9 +190,17 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: "Offline Payments",
+    name: "Join Schemes",
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     to: "/offlineusers",
+    group: "Employees & Access",
+  },
+
+  {
+    component: CNavItem,
+    name: "Pay Installments",
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    to: "/payInstallments",
     group: "Employees & Access",
   },
   
