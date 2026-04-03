@@ -164,12 +164,38 @@ const filterNavByAccess = (items = [], access = [], role = "") => {
     .filter(Boolean);
 };
 
+const filterNavByRoleScope = (items = [], role = "") => {
+  const disallowedPathsByRole = {
+    admin: ["/offlineusers", "/payInstallments"],
+    branch_manager: ["/gold-schemes"],
+    employee: ["/gold-schemes"],
+  };
+
+  const disallowed = disallowedPathsByRole[role] || [];
+
+  return items
+    .map((item) => {
+      if (item.items && item.items.length > 0) {
+        const filteredChildren = filterNavByRoleScope(item.items, role);
+        if (filteredChildren.length === 0) return null;
+        return { ...item, items: filteredChildren };
+      }
+
+      if (item.to && disallowed.includes(item.to)) return null;
+      return item;
+    })
+    .filter(Boolean);
+};
+
 
   
   const userRole = normalizeRole(accessData?.role);
   const userAccess = getAccessList(accessData);
 
-  const filteredItems = filterNavByAccess(items, userAccess, userRole);
+  const filteredItems = filterNavByRoleScope(
+    filterNavByAccess(items, userAccess, userRole),
+    userRole
+  );
 
   return (
     // <React.Fragment>

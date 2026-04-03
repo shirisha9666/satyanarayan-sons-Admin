@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { isAutheticated } from "src/auth";
 import { getUser } from "src/loginUserdetails";
 import axios from "axios";
+import toast from "react-hot-toast";
 import {
   FormControl,
   InputLabel,
@@ -355,6 +356,29 @@ const GoldForm = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const token = isAutheticated();
 
+  const [plans, setPlans] = useState([]);
+  const [selectedPlanId, setSelectedPlanId] = useState("");
+
+  const [fullName, setFullName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+
+  const [nomineeName, setNomineeName] = useState("");
+  const [nomineePhone, setNomineePhone] = useState("");
+  const [nomineeRelationship, setNomineeRelationship] = useState("");
+
+  const [introducerName, setIntroducerName] = useState("");
+  const [introducerPhone, setIntroducerPhone] = useState("");
+
+  const [bankName, setBankName] = useState("");
+  const [accountHolderName, setAccountHolderName] = useState("");
+  const [accountNo, setAccountNo] = useState("");
+  const [ifscCode, setIfscCode] = useState("");
+
+  const [idProofNumber, setIdProofNumber] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const [goldRateAvg, setGoldRateAvg] = useState(false);
   const [goldRatePurchase, setGoldRatePurchase] = useState(false);
   const [planBonus, setPlanBonus] = useState(false);
@@ -362,15 +386,18 @@ const GoldForm = () => {
 
   const [uploadFile, setUploadFile] = useState(null);
   const [membershipNo, setMembershipNo] = useState("");
+  const [lastCreatedMembershipNo, setLastCreatedMembershipNo] = useState("");
   const [paymentType, setPaymentType] = useState("");
 const [transactionId, setTransactionId] = useState("");
 
-  const idOptions = ["Aadhar", "PAN", "Driving Licence", "Passport"];
+  const idOptions = ["Aadhar Card", "PAN Card", "Driving Licence", "Voter ID"];
   const getTodayDate = () => {
   return new Date().toISOString().split("T")[0];};
 const getCompletionDate = () => {
   const date = new Date();
-  date.setMonth(date.getMonth() + 11); // 👉 11 months added
+  const plan = plans.find((p) => String(p?._id) === String(selectedPlanId));
+  const months = plan?.Months ? Number(plan.Months) : 11;
+  date.setMonth(date.getMonth() + months);
   return date.toISOString().split("T")[0];
 };
 const [branch, setBranch] = useState({
@@ -381,7 +408,7 @@ const [branch, setBranch] = useState({
 const fetchMembershipId = async () => {
   try {
     const res = await axios.post(
-      "/api/get/membership/",
+      "/api/gold/scheme/get/membership/",
       {}, // 🔥 no need to send branch
       {
         headers: {
@@ -400,6 +427,25 @@ useEffect(() => {
     fetchMembershipId();
   }
 }, [token]);
+
+useEffect(() => {
+  let cancelled = false;
+
+  const fetchPlans = async () => {
+    try {
+      const res = await axios.get("/api/gold/schema/get/all");
+      if (cancelled) return;
+      setPlans(res?.data?.result || []);
+    } catch (err) {
+      console.log("Plans error:", err);
+    }
+  };
+
+  fetchPlans();
+  return () => {
+    cancelled = true;
+  };
+}, []);
 const [branchLoading, setBranchLoading] = useState(false);
 
 useEffect(() => {
@@ -444,6 +490,191 @@ useEffect(() => {
   };
 }, [token]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
+
+    if (!selectedPlanId) {
+      toast.error("Please select a scheme plan");
+      return;
+    }
+
+    const cleanedName = String(fullName || "").trim();
+    const cleanedMobile = String(mobile || "").replace(/[^\d]/g, "").trim();
+    const cleanedEmail = String(email || "").trim();
+    const cleanedAddress = String(address || "").trim();
+
+    if (!cleanedName) {
+      toast.error("Please enter customer name");
+      return;
+    }
+
+    if (!cleanedMobile) {
+      toast.error("Please enter mobile number");
+      return;
+    }
+
+    if (!cleanedAddress) {
+      toast.error("Please enter address");
+      return;
+    }
+
+    if (!goldRateAvg && !goldRatePurchase) {
+      toast.error("Please select gold rate option");
+      return;
+    }
+
+    if (goldRateAvg && goldRatePurchase) {
+      toast.error("Please select only one gold rate option");
+      return;
+    }
+
+    const goldRateOption = goldRateAvg ? "AVG_RATE" : "TIME_OF_PURCHASE";
+
+    if (!selectedId) {
+      toast.error("Please select ID proof type");
+      return;
+    }
+
+    if (!uploadFile) {
+      toast.error("Please upload ID proof");
+      return;
+    }
+
+    if (!paymentType) {
+      toast.error("Please select payment type");
+      return;
+    }
+
+    if (
+      (paymentType === "upi" || paymentType === "online") &&
+      !String(transactionId || "").trim()
+    ) {
+      toast.error("Transaction ID is required for UPI/Online payments");
+      return;
+    }
+
+    if (!acceptTerms) {
+      toast.error("Please accept terms & conditions");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("name", cleanedName);
+    if (cleanedEmail) formData.append("email", cleanedEmail);
+    formData.append("mobile", cleanedMobile);
+    formData.append("phoneNo", cleanedMobile);
+    formData.append("address", cleanedAddress);
+
+    if (String(nomineeName || "").trim()) {
+      formData.append("nomineeName", String(nomineeName).trim());
+    }
+    if (String(nomineePhone || "").trim()) {
+      formData.append("nomineePhone", String(nomineePhone).trim());
+    }
+    if (String(nomineeRelationship || "").trim()) {
+      formData.append("nomineeRelationship", String(nomineeRelationship).trim());
+    }
+
+    if (String(introducerName || "").trim()) {
+      formData.append("introducerName", String(introducerName).trim());
+    }
+    if (String(introducerPhone || "").trim()) {
+      formData.append("introducerPhone", String(introducerPhone).trim());
+    }
+
+    if (String(bankName || "").trim()) {
+      formData.append("bankName", String(bankName).trim());
+    }
+    if (String(accountHolderName || "").trim()) {
+      formData.append("accountHolderName", String(accountHolderName).trim());
+    }
+    if (String(accountNo || "").trim()) {
+      formData.append("accountNo", String(accountNo).trim());
+    }
+    if (String(ifscCode || "").trim()) {
+      formData.append("ifscCode", String(ifscCode).trim());
+    }
+
+    if (String(idProofNumber || "").trim()) {
+      formData.append("idProofNumber", String(idProofNumber).trim());
+    }
+
+    formData.append("goldRateOption", goldRateOption);
+    formData.append("bonus", String(planBonus));
+    formData.append("noVAupto10", String(planNoVA));
+    if (String(membershipNo || "").trim()) {
+      formData.append("membershipNo", String(membershipNo).trim());
+    }
+    formData.append("idProofType", selectedId);
+    formData.append("idProofFile", uploadFile);
+    formData.append("isTermsAccepted", "true");
+    formData.append("paymentMethod", paymentType);
+    if (String(transactionId || "").trim()) {
+      formData.append("transactionId", String(transactionId).trim());
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await axios.post(
+        `/api/gold/scheme/offline/create/${selectedPlanId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const createdNo = res?.data?.scheme?.membershipNo || "";
+      if (createdNo) {
+        setLastCreatedMembershipNo(createdNo);
+      }
+
+      toast.success(
+        createdNo
+          ? `Scheme created (${createdNo})`
+          : res?.data?.message || "Scheme created"
+      );
+
+      // reset form
+      setFullName("");
+      setMobile("");
+      setEmail("");
+      setAddress("");
+      setNomineeName("");
+      setNomineePhone("");
+      setNomineeRelationship("");
+      setIntroducerName("");
+      setIntroducerPhone("");
+      setBankName("");
+      setAccountHolderName("");
+      setAccountNo("");
+      setIfscCode("");
+      setIdProofNumber("");
+      setSelectedId("");
+      setUploadFile(null);
+      setGoldRateAvg(false);
+      setGoldRatePurchase(false);
+      setPlanBonus(false);
+      setPlanNoVA(false);
+      setPaymentType("");
+      setTransactionId("");
+      setAcceptTerms(false);
+
+      await fetchMembershipId();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to create scheme");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div style={styles.page}>
@@ -466,7 +697,7 @@ useEffect(() => {
 
         {/* FORM BODY */}
         <div style={styles.formBody}>
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSubmit}>
 
             {/* 1. MEMBERSHIP */}
             <Section num="1" title="Membership Details">
@@ -505,19 +736,68 @@ useEffect(() => {
   readOnly
 />
               </div>
+
+              <div style={{ marginTop: "14px" }}>
+                <CustomSelect
+                  label="Scheme Plan"
+                  value={selectedPlanId}
+                  onChange={(e) => setSelectedPlanId(e.target.value)}
+                >
+                  <option value="">Select Scheme Plan</option>
+                  {plans.map((p) => (
+                    <option key={p._id} value={p._id}>
+                      {p.Scheme_Name} | ₹{p.Monthly_Installment} | {p.Months} Months
+                    </option>
+                  ))}
+                </CustomSelect>
+              </div>
+
+              {lastCreatedMembershipNo && (
+                <div
+                  style={{
+                    marginTop: "10px",
+                    fontSize: "12px",
+                    color: "#92400e",
+                    fontWeight: 600,
+                  }}
+                >
+                  Last created Membership No: {lastCreatedMembershipNo}
+                </div>
+              )}
             </Section>
 
             {/* 2. PERSONAL INFO */}
             <Section num="2" title="Personal Information">
               <div style={{ marginBottom: "14px" }}>
-                <Input label="Full Name" placeholder="Enter your full name" />
+                <Input
+                  label="Full Name"
+                  placeholder="Enter your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
               </div>
               <div style={{ ...styles.grid2, marginBottom: "14px" }}>
                
-                <Input label="Mobile" placeholder="Mobile number" />
-                 <Input label="Email Address" type="email" placeholder="email@example.com" />
+                <Input
+                  label="Mobile"
+                  placeholder="Mobile number"
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
+                />
+                 <Input
+                  label="Email Address"
+                  type="email"
+                  placeholder="email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
-              <Textarea label="Address" placeholder="Full residential address" />
+              <Textarea
+                label="Address"
+                placeholder="Full residential address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
               
               {/* <Textarea label="Address" placeholder="Full residential address" /> */}
             </Section>
@@ -525,9 +805,23 @@ useEffect(() => {
             {/* 3. NOMINEE */}
             <Section num="3" title="Nominee Details">
               <div style={styles.grid3}>
-                <Input label="Nominee Name" placeholder="Full name" />
-                <Input label="Nominee Phone" placeholder="Phone number" />
-                <CustomSelect label="Relationship">
+                <Input
+                  label="Nominee Name"
+                  placeholder="Full name"
+                  value={nomineeName}
+                  onChange={(e) => setNomineeName(e.target.value)}
+                />
+                <Input
+                  label="Nominee Phone"
+                  placeholder="Phone number"
+                  value={nomineePhone}
+                  onChange={(e) => setNomineePhone(e.target.value)}
+                />
+                <CustomSelect
+                  label="Relationship"
+                  value={nomineeRelationship}
+                  onChange={(e) => setNomineeRelationship(e.target.value)}
+                >
                   <option value="">Select</option>
                   <option>Spouse</option>
                   <option>Father</option>
@@ -545,23 +839,49 @@ useEffect(() => {
               <div style={{ marginBottom: "10px" }}>
                 <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>Gold Rate Option</label>
                 <div style={styles.grid2}>
-                  {[
-                    { state: goldRateAvg, set: setGoldRateAvg, label: "Average Rate", desc: "Based on monthly average" },
-                    { state: goldRatePurchase, set: setGoldRatePurchase, label: "Rate at Purchase", desc: "Live rate on purchase date" },
-                  ].map(({ state, set, label, desc }) => (
-                    <label key={label} style={styles.checkCard(state)}>
-                      <input
-                        type="checkbox"
-                        checked={state}
-                        onChange={(e) => set(e.target.checked)}
-                        style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
-                      />
-                      <div>
-                        <p style={{ margin: 0, ...styles.checkLabel(state) }}>{label}</p>
-                        <p style={{ margin: 0, ...styles.checkDesc }}>{desc}</p>
-                      </div>
-                    </label>
-                  ))}
+                  <label style={styles.checkCard(goldRateAvg)}>
+                    <input
+                      type="radio"
+                      name="goldRateOption"
+                      checked={goldRateAvg}
+                      onChange={() => {
+                        setGoldRateAvg(true);
+                        setGoldRatePurchase(false);
+                      }}
+                      style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
+                    />
+                    <div>
+                      <p style={{ margin: 0, ...styles.checkLabel(goldRateAvg) }}>
+                        Average Rate
+                      </p>
+                      <p style={{ margin: 0, ...styles.checkDesc }}>
+                        Based on monthly average
+                      </p>
+                    </div>
+                  </label>
+
+                  <label style={styles.checkCard(goldRatePurchase)}>
+                    <input
+                      type="radio"
+                      name="goldRateOption"
+                      checked={goldRatePurchase}
+                      onChange={() => {
+                        setGoldRatePurchase(true);
+                        setGoldRateAvg(false);
+                      }}
+                      style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
+                    />
+                    <div>
+                      <p
+                        style={{ margin: 0, ...styles.checkLabel(goldRatePurchase) }}
+                      >
+                        Rate at Purchase
+                      </p>
+                      <p style={{ margin: 0, ...styles.checkDesc }}>
+                        Live rate on purchase date
+                      </p>
+                    </div>
+                  </label>
                 </div>
               </div>
               <div>
@@ -607,6 +927,15 @@ useEffect(() => {
                 ))}
               </div>
 
+              <div style={{ marginTop: "14px" }}>
+                <Input
+                  label="ID Proof Number (optional)"
+                  placeholder="Enter ID proof number"
+                  value={idProofNumber}
+                  onChange={(e) => setIdProofNumber(e.target.value)}
+                />
+              </div>
+
               {selectedId && (
                 <div
                   style={styles.uploadZone}
@@ -635,15 +964,35 @@ useEffect(() => {
             {/* 6. BANK DETAILS */}
             <Section num="6" title="Bank Details">
               <div style={{ ...styles.grid2, marginBottom: "14px" }}>
-                <Input label="Bank Name" placeholder="e.g. State Bank of India" />
+                <Input
+                  label="Bank Name"
+                  placeholder="e.g. State Bank of India"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                />
                 <Input label="Branch" placeholder="Branch name" />
               </div>
               <div style={{ marginBottom: "14px" }}>
-                <Input label="Account Holder Name" placeholder="Name as per bank records" />
+                <Input
+                  label="Account Holder Name"
+                  placeholder="Name as per bank records"
+                  value={accountHolderName}
+                  onChange={(e) => setAccountHolderName(e.target.value)}
+                />
               </div>
               <div style={styles.grid2}>
-                <Input label="Account Number" placeholder="Account number" />
-                <Input label="IFSC Code" placeholder="e.g. SBIN0001234" />
+                <Input
+                  label="Account Number"
+                  placeholder="Account number"
+                  value={accountNo}
+                  onChange={(e) => setAccountNo(e.target.value)}
+                />
+                <Input
+                  label="IFSC Code"
+                  placeholder="e.g. SBIN0001234"
+                  value={ifscCode}
+                  onChange={(e) => setIfscCode(e.target.value)}
+                />
               </div>
             </Section>
             <Section num="7" title="Payment Details">
@@ -703,10 +1052,11 @@ useEffect(() => {
 
               <button
                 type="submit"
-                disabled={!acceptTerms}
-                style={styles.submitBtn(!acceptTerms)}
+                disabled={!acceptTerms || submitting}
+                style={styles.submitBtn(!acceptTerms || submitting)}
                 onMouseEnter={(e) => {
-                  if (acceptTerms) e.currentTarget.style.transform = "scale(1.01)";
+                  if (acceptTerms && !submitting)
+                    e.currentTarget.style.transform = "scale(1.01)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "scale(1)";
@@ -715,7 +1065,7 @@ useEffect(() => {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Submit Application
+                {submitting ? "Submitting..." : "Submit Application"}
               </button>
             </div>
 

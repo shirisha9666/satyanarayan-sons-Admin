@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { isAutheticated } from "src/auth";
 
 const s = {
   page: {
@@ -131,49 +134,143 @@ const s = {
 };
 
 export default function PayInstallmentsPage() {
+  const token = isAutheticated();
   const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
   const [customer, setCustomer] = useState(null);
+  const [schemeId, setSchemeId] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [receiptNo, setReceiptNo] = useState("");
-  const [receiptFile, setReceiptFile] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [transactionId, setTransactionId] = useState("");
+  const [paying, setPaying] = useState(false);
 
-  const dummyData = {
-    name: "Raju",
-    membershipId: "TE-00009",
-    schemeName: "Bonus Scheme",
-    monthlyAmount: 2000,
-    installments: [
-      { month: 1, status: "PAID", date: "01 Jan 2025", receipt: "RCP-001" },
-      { month: 2, status: "PAID", date: "01 Feb 2025", receipt: "RCP-002" },
-      { month: 3, status: "PENDING", date: "—", receipt: "—" },
-      { month: 4, status: "PENDING", date: "—", receipt: "—" },
-    ],
+  const formatDate = (d) => {
+    try {
+      return new Date(d).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return "—";
+    }
   };
 
-  const handleSearch = () => {
-    if (!search.trim()) return;
-    setCustomer(dummyData);
+  const loadScheme = async (id) => {
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
+
+    setDetailsLoading(true);
+    try {
+      const resp = await axios.get(`/api/gold/scheme/installments/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const scheme = resp?.data?.scheme;
+      const installments = resp?.data?.installments || [];
+
+      setSchemeId(scheme?._id || id);
+      setCustomer({
+        name:
+          scheme?.name ||
+          `${scheme?.userId?.firstname || ""} ${scheme?.userId?.lastname || ""}`.trim(),
+        membershipId: scheme?.membershipNo || "—",
+        schemeName: scheme?.Scheme_ID?.Scheme_Name || "—",
+        monthlyAmount: Number(scheme?.Scheme_ID?.Monthly_Installment || 0),
+        installments: installments.map((inst) => ({
+          month: inst.installmentNo,
+          status: inst.status,
+          date: inst.paidAt ? formatDate(inst.paidAt) : "—",
+          receipt: inst.invoiceNo || "—",
+        })),
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to load scheme");
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    const q = String(search || "").trim();
+    if (!q) return;
+
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
+
+    setSearchLoading(true);
+    setResults([]);
+    setCustomer(null);
+    setSchemeId(null);
+
+    try {
+      const resp = await axios.get("/api/gold/scheme/installments/search", {
+        params: { q },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const list = resp?.data?.result || [];
+      setResults(list);
+
+      if (list.length === 0) {
+        toast.error("No schemes found");
+        return;
+      }
+
+      if (list.length === 1) {
+        await loadScheme(list[0].schemeId);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Search failed");
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const nextPending = customer?.installments.find((i) => i.status === "PENDING");
   const paidInstallments = customer?.installments.filter((i) => i.status === "PAID") || [];
   const totalPaid = paidInstallments.length * (customer?.monthlyAmount || 0);
 
-  const handleSubmitPayment = () => {
-    if (!receiptNo || !receiptFile) {
-      alert("Please fill all details");
+  const handleSubmitPayment = async () => {
+    if (!schemeId) return;
+
+    if (
+      (paymentMethod === "upi" || paymentMethod === "online") &&
+      !String(transactionId || "").trim()
+    ) {
+      toast.error("Transaction ID is required for UPI/Online payments");
       return;
     }
-    const updatedInstallments = customer.installments.map((inst) =>
-      inst.month === nextPending.month
-        ? { ...inst, status: "PAID", date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }), receipt: receiptNo }
-        : inst
-    );
-    setCustomer({ ...customer, installments: updatedInstallments });
-    setShowModal(false);
-    setReceiptNo("");
-    setReceiptFile(null);
-    alert(`Month ${nextPending.month} marked as PAID ✅`);
+
+    setPaying(true);
+    try {
+      await axios.post(
+        `/api/gold/scheme/installments/${schemeId}/pay`,
+        {
+          paymentMethod,
+          transactionId: String(transactionId || "").trim() || null,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      toast.success("Installment paid successfully");
+      setShowModal(false);
+      setPaymentMethod("cash");
+      setTransactionId("");
+      await loadScheme(schemeId);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Payment failed");
+    } finally {
+      setPaying(false);
+    }
   };
 
   return (
@@ -206,12 +303,75 @@ export default function PayInstallmentsPage() {
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
-          <button style={s.searchBtn} onClick={handleSearch}>
+          <button
+            style={{
+              ...s.searchBtn,
+              opacity: searchLoading ? 0.7 : 1,
+              cursor: searchLoading ? "not-allowed" : "pointer",
+            }}
+            onClick={handleSearch}
+            disabled={searchLoading}
+          >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#fff" strokeWidth="2.5"/><path d="M21 21l-4.35-4.35" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/></svg>
-            Search
+            {searchLoading ? "Searching..." : "Search"}
           </button>
         </div>
       </div>
+
+      {/* SEARCH RESULTS (when phone matches multiple schemes) */}
+      {results.length > 1 && (
+        <div style={{ ...s.card, marginBottom: "20px" }}>
+          <div style={s.sectionHead}>
+            <div style={s.badge}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  stroke="#fff"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span style={s.sectionTitle}>Select Scheme</span>
+          </div>
+          <div style={s.sectionBody}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {results.map((r) => (
+                <div
+                  key={r.schemeId}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "12px",
+                    background: "#fffbeb",
+                    borderRadius: "12px",
+                    border: "1px solid #fde68a",
+                    padding: "12px 14px",
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 700, color: "#1c1917" }}>
+                      {r.membershipNo} — {r.customerName}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#92400e" }}>
+                      {r.schemeName} | Pending: {r.pendingInstallments}
+                    </div>
+                  </div>
+                  <button
+                    style={{ ...s.payBtn, padding: "10px 14px" }}
+                    onClick={() => loadScheme(r.schemeId)}
+                    disabled={detailsLoading}
+                  >
+                    {detailsLoading ? "Loading..." : "View"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CUSTOMER SECTION */}
       {customer && (
@@ -339,36 +499,41 @@ export default function PayInstallmentsPage() {
                 <span style={{ fontSize: "22px", fontWeight: 700, color: "#b45309" }}>₹{customer.monthlyAmount.toLocaleString()}</span>
               </div>
 
-              <label style={s.modalLabel}>Receipt Number</label>
-              <input
+              <label style={s.modalLabel}>Payment Method</label>
+              <select
                 style={s.modalInput}
-                type="text"
-                placeholder="e.g. RCP-003"
-                value={receiptNo}
-                onChange={(e) => setReceiptNo(e.target.value)}
-              />
-
-              <label style={s.modalLabel}>Upload Receipt</label>
-              <div
-                style={{
-                  border: "2px dashed #fcd88a", borderRadius: "10px",
-                  padding: "14px", textAlign: "center", background: "#fffbf0",
-                  cursor: "pointer", marginBottom: "18px",
-                }}
-                onClick={() => document.getElementById("modalFileInput").click()}
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ margin: "0 auto 6px", display: "block" }}>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <p style={{ margin: 0, fontSize: "13px", color: "#92400e", fontWeight: 600 }}>
-                  {receiptFile ? receiptFile.name : "Click to upload receipt"}
-                </p>
-                <p style={{ margin: "3px 0 0", fontSize: "11px", color: "#b45309" }}>JPG, PNG or PDF</p>
-                <input id="modalFileInput" type="file" style={{ display: "none" }}
-                  onChange={(e) => setReceiptFile(e.target.files[0] || null)} />
-              </div>
+                <option value="cash">Cash</option>
+                <option value="upi">UPI</option>
+                <option value="online">Online</option>
+              </select>
 
-              <button style={s.submitBtn} onClick={handleSubmitPayment}>Confirm Payment</button>
+              {(paymentMethod === "upi" || paymentMethod === "online") && (
+                <>
+                  <label style={s.modalLabel}>Transaction ID</label>
+                  <input
+                    style={s.modalInput}
+                    type="text"
+                    placeholder="Enter Transaction ID"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                  />
+                </>
+              )}
+
+              <button
+                style={{
+                  ...s.submitBtn,
+                  opacity: paying ? 0.7 : 1,
+                  cursor: paying ? "not-allowed" : "pointer",
+                }}
+                onClick={handleSubmitPayment}
+                disabled={paying}
+              >
+                {paying ? "Processing..." : "Confirm Payment"}
+              </button>
               <button style={s.cancelBtn} onClick={() => setShowModal(false)}>Cancel</button>
             </div>
           </div>
