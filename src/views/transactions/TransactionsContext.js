@@ -103,7 +103,15 @@ export const TransactionsProvider = ({ children }) => {
   const handleAllUserInvoice = async (id) => {
     try {
       setInvoiceTableLoading(id);
-      let resp = await axios.get(`/api/customer/get/user/all/${id}`, {
+
+      const isObjectId = (v) =>
+        typeof v === "string" && /^[a-f\\d]{24}$/i.test(v);
+
+      const url = isObjectId(id)
+        ? `/api/customer/get/user/all/${id}`
+        : `/api/customer/get/user/all/by-membership/${encodeURIComponent(id)}`;
+
+      let resp = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

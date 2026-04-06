@@ -29,13 +29,26 @@ const GoldSchemaAdd = () => {
     useGoldSchema();
   const { category, handleCategorySubcategoryFilter, subcategorys } =
     useCategory();
+
+  const computePlanDetails = (schemeName) => {
+    const monthly = 5000;
+    const months = 11;
+    const isBonus = String(schemeName || "")
+      .toLowerCase()
+      .includes("bonus");
+
+    return {
+      Monthly_Installment: monthly,
+      Months: months,
+      Total_Amount: isBonus ? monthly * (months + 1) : monthly * months,
+    };
+  };
   const [productDetails, setProductDetails] = useState({
     Scheme_Name: "",
-    Monthly_Installment: "",
-    Months: "",
+    Monthly_Installment: 5000,
+    Months: 11,
     Gold_Type: "",
     Total_Amount: "",
-    Members: "",
     // Start_Date: "",
     End_Date: "",
   });
@@ -47,6 +60,15 @@ const GoldSchemaAdd = () => {
       ...prev,
       [name]: value,
     }));
+
+    if (name === "Scheme_Name") {
+      const computed = computePlanDetails(value);
+      setProductDetails((prev) => ({
+        ...prev,
+        Scheme_Name: value,
+        ...computed,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -63,10 +85,9 @@ const GoldSchemaAdd = () => {
       formData.append("Months", productDetails.Months);
       formData.append("Total_Amount", productDetails.Total_Amount);
 
-      formData.append("Members", productDetails.Members);
       formData.append("Gold_Type", productDetails.Gold_Type);
       // formData.append("Start_Date", productDetails.Start_Date);
-      formData.append("End_Date", productDetails.End_Date);
+      if (productDetails.End_Date) formData.append("End_Date", productDetails.End_Date);
 
       const res = await axios.post("/api/gold/schema/create", formData, {
         headers: {
@@ -123,7 +144,7 @@ const GoldSchemaAdd = () => {
                 fullWidth
                 required
               >
-                {["Saving Scheme","Bonus Scheme"].map((scheme) => (
+                {["Bonus Plan", "No V.A upto 10%"].map((scheme) => (
                   <MenuItem key={scheme} value={scheme}>
                     {scheme}
                   </MenuItem>
@@ -137,7 +158,7 @@ const GoldSchemaAdd = () => {
                 label="Monthly Installment"
                 name="Monthly_Installment"
                 value={productDetails.Monthly_Installment}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
                 required
               />
@@ -164,7 +185,7 @@ const GoldSchemaAdd = () => {
                 label="Months"
                 name="Months"
                 value={productDetails.Months}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
                 required
               />
@@ -175,18 +196,7 @@ const GoldSchemaAdd = () => {
                 label="Total Amount"
                 name="Total_Amount"
                 value={productDetails.Total_Amount}
-                onChange={handleChange}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Members"
-                name="Members"
-                value={productDetails.Members}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
                 required
               />
@@ -212,7 +222,6 @@ const GoldSchemaAdd = () => {
                 value={productDetails.End_Date}
                 onChange={handleChange}
                 fullWidth
-                required
               />
             </Grid>
 

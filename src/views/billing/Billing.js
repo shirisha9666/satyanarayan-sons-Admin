@@ -18,7 +18,6 @@ const tableheadings = [
 
 const Billing = () => {
   const token = isAutheticated();
-  const user = isAutheticated(); // 🔥 logged-in user
 
   const [search, setSearch] = useState("");
   const [searchByDate, setSearchByDate] = useState("");
@@ -48,7 +47,7 @@ const Billing = () => {
     invoiceNo = search,
     page = currentPage,
     limit = itemPerPage,
-    date = searchByDate
+    date = searchByDate,
   ) => {
     try {
       setLoading(true);
@@ -81,21 +80,8 @@ const Billing = () => {
     getBiling();
   }, [search, currentPage, itemPerPage, searchByDate]);
 
-  // 🔥 ORIGINAL DATA
-  let billingFetchData = biling?.AllSchemas || [];
-
-  // 🔥 FILTER LOGIC (IMPORTANT)
-  if (user?.role === "admin") {
-    // 👉 ADMIN → only ONLINE (branch null)
-    billingFetchData = billingFetchData.filter(
-      (item) => !item?.branch || item.branch === null
-    );
-  } else {
-    // 👉 EMPLOYEE → only their branch
-    billingFetchData = billingFetchData.filter(
-      (item) => item?.branch?._id === user?.branch?._id
-    );
-  }
+  // Backend already scopes: admin => online-only, staff => branch-only.
+  const billingFetchData = biling?.AllSchemas || [];
 
   const summaryData = [
     {
@@ -110,7 +96,7 @@ const Billing = () => {
     },
     {
       title: "Total Received Amount",
-      value: `₹ ${biling?.summary?.totalReceivedAmount || 0}`,
+      value: ` ${biling?.summary?.totalReceivedAmount || 0}`,
       color: "#111",
     },
   ];
@@ -131,8 +117,7 @@ const Billing = () => {
 
       <div className="billing-page">
         <main className="billing-main">
-
-          {/* 🔍 FILTERS */}
+          {/* ðŸ” FILTERS */}
           <header className="billing-header">
             <div className="date-range-picker">
               <label>Select Date:</label>
@@ -154,7 +139,7 @@ const Billing = () => {
             />
           </header>
 
-          {/* 📊 SUMMARY */}
+          {/* ðŸ“Š SUMMARY */}
           <section className="summary-cards">
             {summaryData.map((s) => (
               <div className="card" key={s.title}>
@@ -166,7 +151,7 @@ const Billing = () => {
             ))}
           </section>
 
-          {/* 📋 TABLE */}
+          {/* ðŸ“‹ TABLE */}
           <section className="billing-table-wrap">
             <table className="billing-table">
               <thead>
@@ -197,12 +182,9 @@ const Billing = () => {
                       <td>{r?.InvoiceNo}</td>
                       <td>{r?.transactionId || "Offline"}</td>
                       <td>
-                        {r?.customerId?.firstname}{" "}
-                        {r?.customerId?.lastname}
+                        {r?.customerId?.firstname} {r?.customerId?.lastname}
                       </td>
-                      <td>
-                        ₹{r?.totalPricewithGst || r?.InvoiceId?.Amount}
-                      </td>
+                      <td>{r?.totalPricewithGst || r?.InvoiceId?.Amount}</td>
                       <td>{r?.status}</td>
 
                       <td>
@@ -212,7 +194,7 @@ const Billing = () => {
                             navigate(`/Customers/user/Invoice/${r?._id}`)
                           }
                         >
-                          👁 View
+                           View
                         </button>
                       </td>
                     </tr>
@@ -221,10 +203,10 @@ const Billing = () => {
               </tbody>
             </table>
 
-            {/* 🔢 PAGINATION */}
+            {/* ðŸ”¢ PAGINATION */}
             <div className="orders-pagination">
               <button onClick={handlePrev} disabled={currentPage === 1}>
-                ‹
+              prev
               </button>
 
               {Array.from({ length: totalpages }, (_, i) => {
@@ -240,11 +222,8 @@ const Billing = () => {
                 );
               })}
 
-              <button
-                onClick={handleNext}
-                disabled={currentPage === totalpages}
-              >
-                ›
+              <button onClick={handleNext} disabled={currentPage === totalpages}>
+                Next
               </button>
             </div>
           </section>
@@ -269,3 +248,4 @@ const Billing = () => {
 };
 
 export default Billing;
+

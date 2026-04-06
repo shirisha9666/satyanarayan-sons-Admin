@@ -190,6 +190,13 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: "Branch Dashboard",
+    icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
+    to: "/branch-dashboard",
+    group: "Employees & Access",
+  },
+  {
+    component: CNavItem,
     name: "Join Schemes",
     icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     to: "/offlineusers",

@@ -41,12 +41,25 @@ const GoldSchemaUpdate = () => {
 
   const oldValue = viewDetails;
 
+  const computePlanDetails = (schemeName) => {
+    const monthly = 5000;
+    const months = 11;
+    const isBonus = String(schemeName || "")
+      .toLowerCase()
+      .includes("bonus");
+
+    return {
+      Monthly_Installment: monthly,
+      Months: months,
+      Total_Amount: isBonus ? monthly * (months + 1) : monthly * months,
+    };
+  };
+
   const [productDetails, setProductDetails] = useState({
     Scheme_Name: "",
-    Monthly_Installment: "",
-    Months: "",
+    Monthly_Installment: 5000,
+    Months: 11,
     Total_Amount: "",
-    Members: "",
     Gold_Type: "",
     End_Date: "",
   });
@@ -56,14 +69,13 @@ const GoldSchemaUpdate = () => {
 
   useEffect(() => {
     if (oldValue) {
-      setProductDetails({
-        Scheme_Name: oldValue.Scheme_Name || "",
-        Gold_Type: oldValue.Gold_Type,
+      const schemeName = oldValue.Scheme_Name || "";
+      const computed = computePlanDetails(schemeName);
 
-        Monthly_Installment: oldValue.Monthly_Installment || "",
-        Months: oldValue.Months || "",
-        Total_Amount: oldValue.Total_Amount || "",
-        Members: oldValue.Members || "",
+      setProductDetails({
+        Scheme_Name: schemeName,
+        Gold_Type: oldValue.Gold_Type,
+        ...computed,
         End_Date: oldValue.End_Date ? oldValue.End_Date.split("T")[0] : "",
       });
     }
@@ -75,6 +87,15 @@ const GoldSchemaUpdate = () => {
       ...prev,
       [name]: value,
     }));
+
+    if (name === "Scheme_Name") {
+      const computed = computePlanDetails(value);
+      setProductDetails((prev) => ({
+        ...prev,
+        Scheme_Name: value,
+        ...computed,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -91,10 +112,9 @@ const GoldSchemaUpdate = () => {
       formData.append("Months", productDetails.Months);
       formData.append("Total_Amount", productDetails.Total_Amount);
 
-      formData.append("Members", productDetails.Members);
       formData.append("Gold_Type", productDetails.Gold_Type);
       // formData.append("Start_Date", productDetails.Start_Date);
-      formData.append("End_Date", productDetails.End_Date);
+      if (productDetails.End_Date) formData.append("End_Date", productDetails.End_Date);
 
       const res = await axios.patch(`/api/gold/schema/update/${id}`, formData, {
         headers: {
@@ -146,13 +166,20 @@ const GoldSchemaUpdate = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                autoComplete="off"
-                label="Scheme Name"
+                select
+                label="Scheme Type"
                 name="Scheme_Name"
                 value={productDetails.Scheme_Name}
                 onChange={handleChange}
                 fullWidth
-              />
+                required
+              >
+                {["Bonus Plan", "No V.A upto 10%"].map((scheme) => (
+                  <MenuItem key={scheme} value={scheme}>
+                    {scheme}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
 
             <Grid item xs={12}>
@@ -161,7 +188,7 @@ const GoldSchemaUpdate = () => {
                 label="Monthly Installment"
                 name="Monthly_Installment"
                 value={productDetails.Monthly_Installment}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
               />
             </Grid>
@@ -172,7 +199,7 @@ const GoldSchemaUpdate = () => {
                 label="Months"
                 name="Months"
                 value={productDetails.Months}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
               />
             </Grid>
@@ -182,7 +209,7 @@ const GoldSchemaUpdate = () => {
                 label="Total Amount"
                 name="Total_Amount"
                 value={productDetails.Total_Amount}
-                onChange={handleChange}
+                InputProps={{ readOnly: true }}
                 fullWidth
               />
             </Grid>
@@ -201,16 +228,6 @@ const GoldSchemaUpdate = () => {
                   <MenuItem value={subcat}>{subcat}</MenuItem>
                 ))}
               </TextField>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="off"
-                label="Members"
-                name="Members"
-                value={productDetails.Members}
-                onChange={handleChange}
-                fullWidth
-              />
             </Grid>
 
             <Grid item xs={12}>

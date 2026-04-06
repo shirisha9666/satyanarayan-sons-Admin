@@ -3,47 +3,65 @@ import { CRow, CCol, CWidgetStatsA } from "@coreui/react";
 import { isAutheticated } from "src/auth";
 import axios from "axios";
 import { CircularProgress } from "@material-ui/core";
-import { useSeries } from "../series/SeriesContext";
-import { useCategory } from "../category/CategoryContext";
-import { useSubCategory } from "../subcategory/subCategoryContext";
-import { useProduct } from "../Product/ProductContenxt";
 
-const WidgetsDropdown = ({ genre = [] }) => {
-  const { category } = useCategory();
-  const { banner } = useSubCategory();
-  const { products, loading, handlegetAllProductsCount, productCount } =
-    useProduct();
+const WidgetsDropdown = () => {
+  const user = isAutheticated();
+
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({});
 
   useEffect(() => {
-    handlegetAllProductsCount();
+    const fetchDashboard = async () => {
+      try {
+        const res = await axios.get("/api/dashboard", {
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+        });
+
+        setData(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
   }, []);
 
-    const colors = ["primary", "dark", "secondary", "info", "success"];
-
-  console.log("products0000000000000000000000000000", productCount);
-
   return (
+    <div className="px-3 py-2">
+      
+      {/* 🔥 TITLE */}
+      <h4 className="mb-3 fw-semibold text-dark">
+        {user?.role === "admin"
+          ? "Admin Dashboard"
+          : "Branch Dashboard"}
+      </h4>
 
-     <div className="px-3 py-2">
-      {/* ===== OVERVIEW ===== */}
-      <h4 className="mb-3 fw-semibold text-dark">Overview</h4>
-
+      {/* 🔥 OVERVIEW */}
       <CRow className="mb-4">
+        
         <CCol sm={6} lg={3}>
           <CWidgetStatsA
             className="shadow-sm h-100"
-            color="info"
-            value={loading ? <CircularProgress size={22} /> : category?.result?.length}
-            title="Total Categories"
+            color="primary"
+            value={loading ? <CircularProgress size={22} /> : data?.totalCustomers}
+            title={
+              user?.role === "admin"
+                ? "Total Customers"
+                : "Branch Customers"
+            }
           />
         </CCol>
 
         <CCol sm={6} lg={3}>
           <CWidgetStatsA
             className="shadow-sm h-100"
-            color="warning"
-            value={loading ? <CircularProgress size={22} /> : banner?.category?.length}
-            title="Total Subcategories"
+            color="info"
+            value={loading ? <CircularProgress size={22} /> : data?.totalSchemes}
+            title="Total Schemes"
           />
         </CCol>
 
@@ -51,27 +69,67 @@ const WidgetsDropdown = ({ genre = [] }) => {
           <CWidgetStatsA
             className="shadow-sm h-100"
             color="success"
-            value={loading ? <CircularProgress size={22} /> : products?.totalBanners}
-            title="Total Products"
+            value={loading ? <CircularProgress size={22} /> : data?.totalPaid}
+            title="Total Paid Amount"
+          />
+        </CCol>
+
+        <CCol sm={6} lg={3}>
+          <CWidgetStatsA
+            className="shadow-sm h-100"
+            color="danger"
+            value={loading ? <CircularProgress size={22} /> : data?.totalPending}
+            title="Pending Amount"
+          />
+        </CCol>
+
+      </CRow>
+
+      {/* 🔥 SCHEME STATUS */}
+      <h5 className="mb-3 fw-semibold text-dark">Scheme Status</h5>
+
+      <CRow className="mb-4">
+        <CCol sm={6} lg={3}>
+          <CWidgetStatsA
+            className="shadow-sm h-100"
+            color="success"
+            value={loading ? <CircularProgress size={22} /> : data?.activeSchemes}
+            title="Active Schemes"
+          />
+        </CCol>
+
+        <CCol sm={6} lg={3}>
+          <CWidgetStatsA
+            className="shadow-sm h-100"
+            color="secondary"
+            value={loading ? <CircularProgress size={22} /> : data?.completedSchemes}
+            title="Completed Schemes"
           />
         </CCol>
       </CRow>
 
-      {/* ===== CATEGORY WISE ===== */}
-      <h4 className="mb-3 fw-semibold text-dark">Category-wise Products</h4>
+      {/* 🔥 UPCOMING PAYMENTS */}
+      <h5 className="mb-3 fw-semibold text-dark">Upcoming Payments</h5>
 
       <CRow>
-        {productCount?.map((val, index) => (
-          <CCol sm={6} lg={3} key={val.categoryName}>
-            <CWidgetStatsA
-              className="mb-4 shadow-sm h-100"
-              color={colors[index % colors.length]}
-              value={loading ? <CircularProgress size={22} /> : val.totalProducts}
-              title={val.categoryName}
-            />
-          </CCol>
-        ))}
+        {loading ? (
+          <CircularProgress />
+        ) : data?.upcomingPayments?.length > 0 ? (
+          data.upcomingPayments.map((val, index) => (
+            <CCol sm={6} lg={3} key={index}>
+              <CWidgetStatsA
+                className="mb-4 shadow-sm h-100"
+                color="warning"
+                value={val?.name}
+                title={`Due: ${val?.nextPaymentDate}`}
+              />
+            </CCol>
+          ))
+        ) : (
+          <p>No upcoming payments</p>
+        )}
       </CRow>
+
     </div>
   );
 };

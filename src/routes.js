@@ -213,13 +213,13 @@ import BranchUpdate from "./views/Branches/BranchesUpdate";
 import BranchCreate from "./views/Branches/BranchesAdd";
 import Branches from "./views/Branches/Branches";
 import ViewBranches from "./views/Branches/BranchesView"
+import BranchDashboard from "./views/Branches/BranchDashboard";
 import AddEmployee from "./views/employes/EmployeesAdd";
 import EmployeUpdate from "./views/employes/EmployeesUpdate";
 import Employees from "./views/employes/Employees";
 import EmployeeDetails from "./views/employes/EmployessView";
 import Transactions from "./views/transactions/Transactions";
 import GoldSchemeDetails from "./views/transactions/TransctionsUserInvoices";
-import UserAllSchemesTable from "./views/transactions/TransctionsAllUserScheme";
 import TransctionInvoice from "./views/transactions/Invoice";
 import Anniversary from "./views/annivarsaryCampaign/AnnivarsaryCampaign";
 import OfflineUsersPage from "./views/transactions/offlineusers";
@@ -711,6 +711,12 @@ const routes = [
     name: "Branches",
     element: ViewBranches,
     navName: "Settings",
+  },
+  {
+    path: "/branch-dashboard",
+    name: "Branch Dashboard",
+    element: BranchDashboard,
+    navName: "Employees & Access",
   },
 
 
@@ -1234,15 +1240,9 @@ const routes = [
     navName: "Customers ",
   },
   {
-    path: "/Customers/All/invoices/:start/:schemename/:name/:id",
+    path: "/Customers/scheme/:membershipNo",
     name: "Customers ",
     element: GoldSchemeDetails,
-    navName: "Customers ",
-  },
-  {
-    path: "/Customers/All/user/Schemas/:name/:id",
-    name: "Customers ",
-    element: UserAllSchemesTable,
     navName: "Customers ",
   },
 

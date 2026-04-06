@@ -358,6 +358,8 @@ const GoldForm = () => {
 
   const [plans, setPlans] = useState([]);
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const isBonusPlan = selectedPlanId === "bonus";
+  const isNoVAPlan = selectedPlanId === "noVA";
 
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -381,8 +383,6 @@ const GoldForm = () => {
 
   const [goldRateAvg, setGoldRateAvg] = useState(false);
   const [goldRatePurchase, setGoldRatePurchase] = useState(false);
-  const [planBonus, setPlanBonus] = useState(false);
-  const [planNoVA, setPlanNoVA] = useState(false);
 
   const [uploadFile, setUploadFile] = useState(null);
   const [membershipNo, setMembershipNo] = useState("");
@@ -607,8 +607,8 @@ useEffect(() => {
     }
 
     formData.append("goldRateOption", goldRateOption);
-    formData.append("bonus", String(planBonus));
-    formData.append("noVAupto10", String(planNoVA));
+    formData.append("bonus", String(isBonusPlan));
+    formData.append("noVAupto10", String(isNoVAPlan));
     if (String(membershipNo || "").trim()) {
       formData.append("membershipNo", String(membershipNo).trim());
     }
@@ -662,8 +662,6 @@ useEffect(() => {
       setUploadFile(null);
       setGoldRateAvg(false);
       setGoldRatePurchase(false);
-      setPlanBonus(false);
-      setPlanNoVA(false);
       setPaymentType("");
       setTransactionId("");
       setAcceptTerms(false);
@@ -701,8 +699,8 @@ useEffect(() => {
 
             {/* 1. MEMBERSHIP */}
             <Section num="1" title="Membership Details">
-              <div style={{ ...styles.grid2, marginBottom: "14px" }}>
-               <Input
+  <div style={{ ...styles.grid2, marginBottom: "14px" }}>
+    <Input
       label="Date of Joining"
       type="date"
       value={getTodayDate()}
@@ -715,56 +713,106 @@ useEffect(() => {
       value={getCompletionDate()}
       readOnly
     />
+  </div>
 
-              </div>
-              <div style={styles.grid2}>
-                <Input
-  label="Branch"
-  value={
-    branchLoading
-      ? "Loading..."
-      : `${branch?.name || branch?.id || ""}${
-          branch?.code ? ` (${branch.code})` : ""
-        }`
-  }
-  placeholder="Branch"
-  readOnly
-/>
-                <Input
-  label="Membership No."
-  value={membershipNo}
-  readOnly
-/>
-              </div>
+  <div style={styles.grid2}>
+    <Input
+      label="Branch"
+      value={
+        branchLoading
+          ? "Loading..."
+          : `${branch?.name || branch?.id || ""}${
+              branch?.code ? ` (${branch.code})` : ""
+            }`
+      }
+      readOnly
+    />
 
-              <div style={{ marginTop: "14px" }}>
-                <CustomSelect
-                  label="Scheme Plan"
-                  value={selectedPlanId}
-                  onChange={(e) => setSelectedPlanId(e.target.value)}
-                >
-                  <option value="">Select Scheme Plan</option>
-                  {plans.map((p) => (
-                    <option key={p._id} value={p._id}>
-                      {p.Scheme_Name} | ₹{p.Monthly_Installment} | {p.Months} Months
-                    </option>
-                  ))}
-                </CustomSelect>
-              </div>
+    <Input
+      label="Membership No."
+      value={membershipNo}
+      readOnly
+    />
+  </div>
 
-              {lastCreatedMembershipNo && (
-                <div
-                  style={{
-                    marginTop: "10px",
-                    fontSize: "12px",
-                    color: "#92400e",
-                    fontWeight: 600,
-                  }}
-                >
-                  Last created Membership No: {lastCreatedMembershipNo}
-                </div>
-              )}
-            </Section>
+  {/* 🔥 SCHEME PLAN SELECTION (2 FIXED PLANS) */}
+  <div style={{ marginTop: "14px" }}>
+  <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>
+    Scheme Plan
+  </label>
+
+  <div style={styles.grid2}>
+    
+    {/* BONUS PLAN */}
+    <div
+      style={styles.checkCard(selectedPlanId === "bonus")}
+      onClick={() => setSelectedPlanId("bonus")}
+    >
+      <div>
+        <p style={styles.checkLabel(selectedPlanId === "bonus")}>
+          Bonus Plan
+        </p>
+        <p style={styles.checkDesc}>
+          ₹5000 × 11 Months + Bonus Included
+        </p>
+      </div>
+    </div>
+
+    {/* NO VA PLAN */}
+    <div
+      style={styles.checkCard(selectedPlanId === "noVA")}
+      onClick={() => setSelectedPlanId("noVA")}
+    >
+      <div>
+        <p style={styles.checkLabel(selectedPlanId === "noVA")}>
+          No V.A upto 10% Plan
+        </p>
+        <p style={styles.checkDesc}>
+          ₹5000 × 11 Months + No V.A upto 10%
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  {/* 🔥 GOLD RATE OPTION */}
+  <div style={{ marginTop: "14px" }}>
+    <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>
+      Gold Rate Option
+    </label>
+
+    <div style={styles.grid2}>
+      <label style={styles.radioCard(goldRateAvg)}>
+        <input
+          type="radio"
+          name="goldRate"
+          checked={goldRateAvg}
+          onChange={() => {
+            setGoldRateAvg(true);
+            setGoldRatePurchase(false);
+          }}
+        />
+        Average Rate
+      </label>
+
+      <label style={styles.radioCard(goldRatePurchase)}>
+        <input
+          type="radio"
+          name="goldRate"
+          checked={goldRatePurchase}
+          onChange={() => {
+            setGoldRatePurchase(true);
+            setGoldRateAvg(false);
+          }}
+        />
+        Rate at Purchase
+      </label>
+    </div>
+  </div>
+
+  
+</Section>
 
             {/* 2. PERSONAL INFO */}
             <Section num="2" title="Personal Information">
@@ -834,82 +882,11 @@ useEffect(() => {
               </div>
             </Section>
 
-            {/* 4. PLAN OPTIONS */}
-            <Section num="4" title="Gold Rate & Plan Options">
-              <div style={{ marginBottom: "10px" }}>
-                <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>Gold Rate Option</label>
-                <div style={styles.grid2}>
-                  <label style={styles.checkCard(goldRateAvg)}>
-                    <input
-                      type="radio"
-                      name="goldRateOption"
-                      checked={goldRateAvg}
-                      onChange={() => {
-                        setGoldRateAvg(true);
-                        setGoldRatePurchase(false);
-                      }}
-                      style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
-                    />
-                    <div>
-                      <p style={{ margin: 0, ...styles.checkLabel(goldRateAvg) }}>
-                        Average Rate
-                      </p>
-                      <p style={{ margin: 0, ...styles.checkDesc }}>
-                        Based on monthly average
-                      </p>
-                    </div>
-                  </label>
+            
+           
 
-                  <label style={styles.checkCard(goldRatePurchase)}>
-                    <input
-                      type="radio"
-                      name="goldRateOption"
-                      checked={goldRatePurchase}
-                      onChange={() => {
-                        setGoldRatePurchase(true);
-                        setGoldRateAvg(false);
-                      }}
-                      style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
-                    />
-                    <div>
-                      <p
-                        style={{ margin: 0, ...styles.checkLabel(goldRatePurchase) }}
-                      >
-                        Rate at Purchase
-                      </p>
-                      <p style={{ margin: 0, ...styles.checkDesc }}>
-                        Live rate on purchase date
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <div>
-                <label style={{ ...styles.label, marginBottom: "8px", display: "block" }}>Plan Benefits</label>
-                <div style={styles.grid2}>
-                  {[
-                    { state: planBonus, set: setPlanBonus, label: "Bonus Included", desc: "Eligible for scheme bonus" },
-                    { state: planNoVA, set: setPlanNoVA, label: "No V.A. up to 10%", desc: "Value addition waived" },
-                  ].map(({ state, set, label, desc }) => (
-                    <label key={label} style={styles.checkCard(state)}>
-                      <input
-                        type="checkbox"
-                        checked={state}
-                        onChange={(e) => set(e.target.checked)}
-                        style={{ accentColor: "#d97706", width: "15px", height: "15px", marginTop: "2px", flexShrink: 0, cursor: "pointer" }}
-                      />
-                      <div>
-                        <p style={{ margin: 0, ...styles.checkLabel(state) }}>{label}</p>
-                        <p style={{ margin: 0, ...styles.checkDesc }}>{desc}</p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </Section>
-
-            {/* 5. ID PROOF */}
-            <Section num="5" title="ID Proof Details">
+            {/* 4. ID PROOF */}
+            <Section num="4" title="ID Proof Details">
               <label style={{ ...styles.label, marginBottom: "10px", display: "block" }}>Select ID Type</label>
               <div style={styles.grid4}>
                 {idOptions.map((id) => (
@@ -961,8 +938,8 @@ useEffect(() => {
               )}
             </Section>
 
-            {/* 6. BANK DETAILS */}
-            <Section num="6" title="Bank Details">
+            {/* 5. BANK DETAILS */}
+            <Section num="5" title="Bank Details">
               <div style={{ ...styles.grid2, marginBottom: "14px" }}>
                 <Input
                   label="Bank Name"
@@ -995,7 +972,7 @@ useEffect(() => {
                 />
               </div>
             </Section>
-            <Section num="7" title="Payment Details">
+            <Section num="6" title="Payment Details">
   <div style={styles.grid2}>
 
     {/* PAYMENT TYPE */}

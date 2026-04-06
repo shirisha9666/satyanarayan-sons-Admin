@@ -39,9 +39,9 @@ import { TransactionsProvider } from "./views/transactions/TransactionsContext";
 // import '@fontsource/roboto';
 
 const setupAxios = () => {
-  axios.defaults.baseURL = "http://localhost:5000";
+ // axios.defaults.baseURL = "http://localhost:5000";
   // latest App deploy
-  //axios.defaults.baseURL = "https://satyanaran-sons-api.onrender.com";
+  axios.defaults.baseURL = "https://satyanaran-sons-api.onrender.com";
 
   // axios.defaults.baseURL = "https://frameji-api.onrender.com";
 

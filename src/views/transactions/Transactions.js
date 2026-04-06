@@ -1,33 +1,25 @@
 import {
-  Button,
   Pagination,
   TextField,
-  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "./TransactionsContext";
 import { InputAdornment } from "@material-ui/core";
 import { GridSearchIcon } from "@material-ui/data-grid";
-import { isAutheticated } from "src/auth";
 
 const Transactions = () => {
   const navigate = useNavigate();
-  const user = isAutheticated();
 
   const {
     setPage,
     employeesData,
     handlegetAllData,
-    setItemPerPage,
-    setSearchByRole,
     employeType,
     itemPerPage,
-    viewBannerId,
     loading,
     page,
     setSearchName,
     searchName,
-    handleUserSchemas,
   } = useTransactions();
 
   // ✅ TABLE HEADERS
@@ -46,21 +38,25 @@ const Transactions = () => {
 
   // ✅ DATA
   let fetchBanner = employeesData?.result || [];
+  const tableRows = fetchBanner.flatMap((user) => {
+    const schemas = Array.isArray(user?.goldSchemas) ? user.goldSchemas : [];
 
-  // ✅ FILTER LOGIC
-  if (user?.role === "admin") {
-    fetchBanner = fetchBanner.filter((item) =>
-      item.goldSchemas?.some(
-        (schema) => schema.type === "online" && !schema.branch
-      )
-    );
-  } else {
-    fetchBanner = fetchBanner.filter(
-      (item) =>
-        item.branch?._id === user?.branch?._id &&
-        item.customerType !== "NO_GOLD_CUSTOMER"
-    );
-  }
+    if (schemas.length === 0) {
+      return [
+        {
+          key: `${user?._id || "user"}-no-scheme`,
+          user,
+          schema: null,
+        },
+      ];
+    }
+
+    return schemas.map((schema, index) => ({
+      key: `${user?._id || "user"}-${schema?._id || index}`,
+      user,
+      schema,
+    }));
+  });
 
   // ✅ SEARCH
   const handleSearchChange = (e) => {
@@ -69,17 +65,9 @@ const Transactions = () => {
     handlegetAllData(page, itemPerPage, employeType, value);
   };
 
-  // ✅ CALCULATE MONTHS
-  const calculateMonths = (start, end) => {
-    if (!start || !end) return 0;
-
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    return (
-      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-      (endDate.getMonth() - startDate.getMonth())
-    );
+  const goToSchemeDetails = (membershipNo) => {
+    if (!membershipNo) return;
+    navigate(`/Customers/scheme/${encodeURIComponent(membershipNo)}`);
   };
 
   return (
@@ -124,7 +112,7 @@ const Transactions = () => {
                 <tbody>
                   {!loading && fetchBanner.length === 0 && (
                     <tr>
-                      <td colSpan="9" className="text-center">
+                      <td colSpan={tableHeadering.length} className="text-center">
                         No Data Available
                       </td>
                     </tr>
@@ -132,49 +120,39 @@ const Transactions = () => {
 
                   {loading ? (
                     <tr>
-                      <td colSpan="9" className="text-center">
+                      <td colSpan={tableHeadering.length} className="text-center">
                         Loading...
                       </td>
                     </tr>
                   ) : (
-                    fetchBanner.map((item) => {
-                      const schema = item.goldSchemas?.[0];
-
-                      // ✅ TOTAL MONTHS
-                      const totalMonths = calculateMonths(
-                        schema?.startDate,
-                        schema?.endDate
-                      );
-
-                      // ✅ PAID MONTHS (example logic)
-                      const paidMonths = schema?.installmentsPaid || 0;
-
-                      // ✅ PENDING MONTHS
-                      const pendingMonths = totalMonths - paidMonths;
+                    tableRows.map(({ key, user, schema }) => {
+                      const membershipNo = schema?.membershipNo;
+                      const paidMonths = schema?.paidMonths ?? 0;
+                      const pendingMonths = schema?.pendingMonths ?? 0;
 
                       return (
-                        <tr key={item._id}>
+                        <tr key={key}>
                           
-                          {/* 🔥 CLICKABLE NAME */}
                           <td
-                            style={{ color: "#007bff", cursor: "pointer" }}
-                            onClick={async () => {
-                              await handleUserSchemas(item._id);
-                              navigate(`/user-details/${item._id}`);
-                            }}
+                            style={
+                              membershipNo
+                                ? { color: "#007bff", cursor: "pointer" }
+                                : undefined
+                            }
+                            onClick={() => goToSchemeDetails(membershipNo)}
                           >
-                            {item.firstname}
+                            {user?.firstname}
                           </td>
 
-                          <td>{item.phone}</td>
-                          <td>{item.email}</td>
+                          <td>{user?.phone}</td>
+                          <td>{user?.email}</td>
 
-                          <td>{item.createdAt}</td>
-                          <td>{item.endDate}</td>
-                          <td>{item.membershipNo}</td>
+                          <td>{schema?.dateOfJoining || "-"}</td>
+                          <td>{schema?.dateOfCompletion || "-"}</td>
+                          <td>{membershipNo || "-"}</td>
 
                           <td>{paidMonths}</td>
-                          <td>{pendingMonths >= 0 ? pendingMonths : 0}</td>
+                          <td>{pendingMonths}</td>
 
                           <td>{schema?.nextPaymentDate || "-"}</td>
 
@@ -182,18 +160,10 @@ const Transactions = () => {
                           <td className="text-center">
                             <button
                               className="btn btn-primary"
-                              onClick={async () => {
-                                await handleUserSchemas(item._id);
-                                navigate(
-                                  `/Customers/All/user/Schemas/${item.firstname}/${item._id}`
-                                );
-                              }}
+                              onClick={() => goToSchemeDetails(membershipNo)}
+                              disabled={!membershipNo}
                             >
-                              {viewBannerId === item._id ? (
-                                <CircularProgress size={20} />
-                              ) : (
-                                "View"
-                              )}
+                              View
                             </button>
                           </td>
                         </tr>
