@@ -1,12 +1,9 @@
 import {
   Button,
-  Box,
   Pagination,
   TextField,
-  Typography,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTransactions } from "./TransactionsContext";
 import { InputAdornment } from "@material-ui/core";
@@ -15,7 +12,7 @@ import { isAutheticated } from "src/auth";
 
 const Transactions = () => {
   const navigate = useNavigate();
-  const user = isAutheticated(); // 🔥 logged-in user
+  const user = isAutheticated();
 
   const {
     setPage,
@@ -33,29 +30,31 @@ const Transactions = () => {
     handleUserSchemas,
   } = useTransactions();
 
+  // ✅ TABLE HEADERS
   const tableHeadering = [
-    "Start",
-    "FirstName",
-    "Email",
+    "Name",
     "Phone",
-    "Customer_Type",
-    "Status",
+    "Email",
+    "Start Date",
+    "End Date",
+    "MemberShip-No",
+    "Paid Months",
+    "Pending Months",
+    "Next Payment Date",
     "Actions",
   ];
 
-  // 🔥 ORIGINAL DATA
+  // ✅ DATA
   let fetchBanner = employeesData?.result || [];
 
-  // 🔥 FILTER LOGIC (IMPORTANT)
+  // ✅ FILTER LOGIC
   if (user?.role === "admin") {
-    // 👉 ADMIN → show only ONLINE users (branch null)
-    fetchBanner = fetchBanner.filter(
-      (item) =>
-        (!item.branch || item.branch === null) &&
-        item.customerType !== "NO_GOLD_CUSTOMER"
+    fetchBanner = fetchBanner.filter((item) =>
+      item.goldSchemas?.some(
+        (schema) => schema.type === "online" && !schema.branch
+      )
     );
   } else {
-    // 👉 EMPLOYEE → show only their branch users
     fetchBanner = fetchBanner.filter(
       (item) =>
         item.branch?._id === user?.branch?._id &&
@@ -63,32 +62,24 @@ const Transactions = () => {
     );
   }
 
-  const roles = [
-    {
-      role: "All",
-      sendValue: "",
-      bgColor: "#374151",
-      textColor: "#FFFFFF",
-    },
-    {
-      role: "Regular_Customers",
-      sendValue: "REGULAR_CUSTOMER",
-      bgColor: "#1E3A8A",
-      textColor: "#FFFFFF",
-    },
-    {
-      role: "Not Taken Schemes",
-      sendValue: "NO_GOLD_CUSTOMER",
-      bgColor: "#065F46",
-      textColor: "#FFFFFF",
-    },
-  ];
-
+  // ✅ SEARCH
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchName(value);
-
     handlegetAllData(page, itemPerPage, employeType, value);
+  };
+
+  // ✅ CALCULATE MONTHS
+  const calculateMonths = (start, end) => {
+    if (!start || !end) return 0;
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    return (
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth())
+    );
   };
 
   return (
@@ -97,48 +88,11 @@ const Transactions = () => {
         <div className="card">
           <div className="card-body">
 
-            {/* 🔍 FILTER + SEARCH */}
+            {/* 🔍 SEARCH */}
             <div className="d-flex justify-content-between mb-3">
-
-              {/* FILTER BUTTONS */}
-              <div style={{ display: "flex", gap: "12px" }}>
-                {roles.map((val) => (
-                  <Button
-                    key={val.role}
-                    onClick={() => {
-                      setSearchByRole(val.sendValue);
-                      handlegetAllData(
-                        page,
-                        itemPerPage,
-                        val.sendValue,
-                        searchName
-                      );
-                    }}
-                    variant="contained"
-                    style={{
-                      background:
-                        employeType === val.sendValue
-                          ? "#D4AF37"
-                          : val.bgColor,
-                      color:
-                        employeType === val.sendValue
-                          ? "#1B1A1A"
-                          : val.textColor,
-                      fontWeight: "bold",
-                      borderRadius: "10px",
-                      textTransform: "none",
-                    }}
-                  >
-                    {val.role}
-                  </Button>
-                ))}
-              </div>
-
-              {/* SEARCH */}
               <TextField
                 size="small"
-                placeholder="Search by first Name"
-                autoComplete="off"
+                placeholder="Search by Name"
                 value={searchName}
                 onChange={handleSearchChange}
                 sx={{
@@ -170,7 +124,7 @@ const Transactions = () => {
                 <tbody>
                   {!loading && fetchBanner.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="text-center">
+                      <td colSpan="9" className="text-center">
                         No Data Available
                       </td>
                     </tr>
@@ -178,39 +132,73 @@ const Transactions = () => {
 
                   {loading ? (
                     <tr>
-                      <td colSpan="7" className="text-center">
+                      <td colSpan="9" className="text-center">
                         Loading...
                       </td>
                     </tr>
                   ) : (
-                    fetchBanner.map((item) => (
-                      <tr key={item._id}>
-                        <td>{item.createdAt}</td>
-                        <td>{item.firstname}</td>
-                        <td>{item.email}</td>
-                        <td>{item.phone}</td>
-                        <td>{item.customerType}</td>
-                        <td>{item.status}</td>
+                    fetchBanner.map((item) => {
+                      const schema = item.goldSchemas?.[0];
 
-                        <td className="text-center">
-                          <button
-                            className="btn btn-primary"
+                      // ✅ TOTAL MONTHS
+                      const totalMonths = calculateMonths(
+                        schema?.startDate,
+                        schema?.endDate
+                      );
+
+                      // ✅ PAID MONTHS (example logic)
+                      const paidMonths = schema?.installmentsPaid || 0;
+
+                      // ✅ PENDING MONTHS
+                      const pendingMonths = totalMonths - paidMonths;
+
+                      return (
+                        <tr key={item._id}>
+                          
+                          {/* 🔥 CLICKABLE NAME */}
+                          <td
+                            style={{ color: "#007bff", cursor: "pointer" }}
                             onClick={async () => {
                               await handleUserSchemas(item._id);
-                              navigate(
-                                `/Customers/All/user/Schemas/${item.firstname}/${item._id}`
-                              );
+                              navigate(`/user-details/${item._id}`);
                             }}
                           >
-                            {viewBannerId === item._id ? (
-                              <CircularProgress size={20} />
-                            ) : (
-                              "View"
-                            )}
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                            {item.firstname}
+                          </td>
+
+                          <td>{item.phone}</td>
+                          <td>{item.email}</td>
+
+                          <td>{item.createdAt}</td>
+                          <td>{item.endDate}</td>
+                          <td>{item.membershipNo}</td>
+
+                          <td>{paidMonths}</td>
+                          <td>{pendingMonths >= 0 ? pendingMonths : 0}</td>
+
+                          <td>{schema?.nextPaymentDate || "-"}</td>
+
+                          {/* ACTION */}
+                          <td className="text-center">
+                            <button
+                              className="btn btn-primary"
+                              onClick={async () => {
+                                await handleUserSchemas(item._id);
+                                navigate(
+                                  `/Customers/All/user/Schemas/${item.firstname}/${item._id}`
+                                );
+                              }}
+                            >
+                              {viewBannerId === item._id ? (
+                                <CircularProgress size={20} />
+                              ) : (
+                                "View"
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
