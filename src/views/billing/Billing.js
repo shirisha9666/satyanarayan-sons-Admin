@@ -79,9 +79,11 @@ const Billing = () => {
   useEffect(() => {
     getBiling();
   }, [search, currentPage, itemPerPage, searchByDate]);
+  console.log("billinggggg",biling)
 
   // Backend already scopes: admin => online-only, staff => branch-only.
   const billingFetchData = biling?.AllSchemas || [];
+  
 
   const summaryData = [
     {
